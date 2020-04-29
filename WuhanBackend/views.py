@@ -20,7 +20,7 @@ def foo(request):
 
 # 综合选题页面查询函数
 @csrf_exempt    #关闭csrf保护功能
-def search_xuanti_news(request):
+def search_xuanti(request):
 
     # 前端查询参数处理
     # all_theme = False
@@ -42,8 +42,8 @@ def search_xuanti_news(request):
     
     # 主题处理
     theme = request.GET['theme']   # 主题参数
-    print(theme)
-    print(request.GET['pageno'])
+    # print(theme)
+    # print(request.GET['pageno'])
 
     words = request.GET['kws'].strip()
     if len(words) > 0:
@@ -71,12 +71,10 @@ def search_xuanti_news(request):
     
 
     if all_keywords is False: # 具有关键词限制
-        # params['keywords'] = words_list
-        # q = q & Q()
         tmp_q = Q()
         for word in words_list:
-            tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系
-            # tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
+            # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
+            tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
         q = q & tmp_q
 
     # 查询语句
@@ -86,6 +84,93 @@ def search_xuanti_news(request):
     result = {}
     result['newsList'] = [model_to_dict(news) for news in news_queryset]
     result['totalElements'] = len(result['newsList'])
+
+    '''
+    # 将数据写入结果文件以便前端调试
+    for news in result['newsList']:
+        news['time'] = news['time'].strftime('%Y-%m-%d')
+    
+    with codecs.open("xuanti_demo.json", "w", 'utf-8') as wf:
+        json.dump(result, wf, indent=4)
+    '''
+    return JsonResponse(result)
+
+# 专家观点页面查询函数
+def search_view(request):
+    
+    # 前端查询参数处理
+    all_time = True
+    all_keywords = True
+
+    # 时间处理    
+    start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
+    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
+    if start_time != end_time:
+        print("start_time != end_time")
+        all_time = False # 如果两者时间不同, 则有时间限制
+    
+    # 主题处理
+    theme = request.GET['theme']   # 主题参数
+
+    words = request.GET['kws'].strip()
+    if len(words) > 0:
+        words_list = re.split(' |,|，|;|：', words)
+        all_keywords = False
+
+    # theme = '南海'
+    # words_list = '军事'
+    # all_keywords = False
+
+    # 组合参数查询, 利用Q的多条件查询
+    # news_q = Q(theme_label=theme)
+    # news_q = Q(newsid='3079863039838360687')
+
+    view_q = Q()
+
+    if all_time is False:   # 具有时间范围限制
+        view_q = view_q & Q(time__range=(start_time, end_time))
+    
+
+    if all_keywords is False: # 具有关键词限制
+        tmp_q = Q()
+        for word in words_list:
+            # tmp_q = tmp_q | Q(viewpoint__contains=word) # 关键词之间是'或'的关系
+            tmp_q = tmp_q & Q(viewpoint__contains=word) # 关键词之间是'与'的关系
+        view_q = view_q & tmp_q
+
+    # 查询语句
+    views_queryset = Viewsinfo.objects.filter(view_q)
+
+
+    # 数据返回封装
+    result = {}
+    result['viewsList'] = []
+    for view in views_queryset:
+        # 此时可以直接通过view.newsid来获取news的相关信息
+        if view.newsid.theme_label == theme:    # 两个条件的筛选并集
+            view_tmp = model_to_dict(view)
+            view_tmp['time'] = view_tmp['time'].strftime('%Y-%m-%d') 
+            view_tmp['newsinfo'] = {
+                'title': view.newsid.title,
+                'time': view.newsid.time.strftime('%Y-%m-%d'),
+                'content': view.newsid.content,
+                'theme': view.newsid.theme_label,
+                'source': view.newsid.customer
+            }
+            # print(view_tmp)
+            result['viewsList'].append(view_tmp)
+
+    result['totalElements'] = len(result['viewsList'])
+
+
+    # 将数据写入结果文件以便前端调试
+    
+    '''
+    with codecs.open("view_demo.json", "w", 'utf-8') as wf:
+        json.dump(result, wf, indent=4)
+    '''
+
+    # print(result['totalElements'])
     return JsonResponse(result)
 
 
