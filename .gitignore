@@ -1,0 +1,18 @@
+.idea
+.vscode
+.ipynb_checkpoints
+
+data/
+log/
+model/
+result
+_pycache_
+
+
+# foo.py
+
+db.sqlite3
+
+*.pyc
+*.docx
+*.doc
