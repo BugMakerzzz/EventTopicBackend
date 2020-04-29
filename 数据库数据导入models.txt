@@ -1,0 +1,2 @@
+1、数据库中的表映射到models：python manage.py inspectdb > WuhanBackend/models.py
+2、django启动命令：python manage.py runserver 0.0.0.0:8000
