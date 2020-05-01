@@ -26,8 +26,9 @@ def search_main(request):
     theme = '南海'   # 主题参数
     # start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d') # 时间参数由前端决定
     # end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d') 
-    start_time = datetime.datetime.strptime('2019-11-22', '%Y-%m-%d')
-    end_time = datetime.datetime.strptime('2019-11-24', '%Y-%m-%d') 
+    start_time = datetime.datetime.strptime('2019-11-21', '%Y-%m-%d')
+    end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
+    delta_time = datetime.timedelta(days=1) # 用于时间轴的不连续问题 
     
     # 组合参数查询, 利用Q的多条件查询
     q = Q()
@@ -39,6 +40,14 @@ def search_main(request):
     
     # 综合选题框和专家观点框数据
     news_views_data = []
+    time_news_dict = {} # 时间-新闻字典构建 {time:[自定义新闻tmp{}]}
+    # 根据查询日期按天递增构建初始化字典
+    nowtime = start_time
+    while nowtime <= end_time:
+        time_news_dict[nowtime.strftime('%Y-%m-%d')] = []
+        nowtime += delta_time
+    
+    influence_max = 0   # 用于计算影响力指数的归一化   
     title_set = set() # 所选数据去重使用
     for n in news_queryset:
         
@@ -47,8 +56,14 @@ def search_main(request):
 
         tmp = {}
         tmp['title'] = title
-        tmp['time'] = n.time.strftime('%Y-%m-%d')
+        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
         tmp['views'] = []
+        tmp['pos_sentiment'] = 0    # 根据新闻的评论计算正负向指数、影响力指数
+        tmp['neg_sentiment'] = 0
+        tmp['influence'] = 0
+        tmp['content_label'] = n.content_label
+
+        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
         for v in Viewsinfo.objects.filter(newsid=n):
             tmp['views'].append(
                 {
@@ -59,18 +74,90 @@ def search_main(request):
                     'viewpoint': v.viewpoint
                 }
             )
+            # 判断专家观点的情绪
+            if v.sentiment > 0.6:
+                tmp['pos_sentiment'] += 1
+            else:
+                tmp['neg_sentiment'] += 1
+            tmp['influence'] += 1 # 有一个专家观点则增加一个新闻的影响力指数, 后续可以根据专家的权重来更改
+
         if len(tmp['views']) == 0: continue # 该新闻没有观点则略过
 
+        # 对新闻的正负向指数进行归一化
+        tmp['pos_sentiment'] = float(tmp['pos_sentiment'])/(tmp['pos_sentiment'] + tmp['neg_sentiment'])
+        tmp['neg_sentiment'] = float(tmp['neg_sentiment'])/(tmp['pos_sentiment'] + tmp['neg_sentiment'])
+        if tmp['influence'] > influence_max: # 记录影响力最大值, 便于后续对影响力数值进行归一化
+            influence_max = tmp['influence']
+        
         # 数据新增
+        time_str = n.time.strftime('%Y-%m-%d')
+        if time_str in time_news_dict:
+            time_news_dict[time_str].append(tmp)
+        else:
+            print("search_main time_news_dict error: time_str not in start_time-end_time")
+
         title_set.add(title)
         news_views_data.append(tmp)
+
+    # 三个统计图数据处理
+    date_list = []
+    hot_num = []
+    sentiment_pos = []
+    sentiment_neg = []
+    influence_data = {} # {content_label:[n_data1, n_data2}
+    
+    for time, newslist in time_news_dict.items():
+        date_list.append(time)
+        # 热度趋势数据处理
+        hot_num.append(len(newslist))
+        # 正负向情感指数处理
+        pos_num = 0
+        neg_num = 0
+        for n in newslist:
+            pos_num += n['pos_sentiment']
+            neg_num += n['neg_sentiment']
+
+            # 右下角事件影响力处理
+            n_data = [n['time'], float(n['influence'])/influence_max * 100, n['title']]
+            
+            influence_label = n['content_label'].split(' ')[0] # 此处仅显示新闻的第一个标签作为新闻分类
+            
+            if influence_label in influence_data:
+                influence_data[influence_label].append(n_data)
+            else:
+                influence_data[influence_label] = [n_data]
+        sentiment_pos.append(pos_num)
+        sentiment_neg.append(neg_num)
 
     # 结果封装
     result = {}
     result["news_views_data"] = news_views_data[:10] # 只返回处理的前10条数据
-    result['hot_data'] = "data"
-    result['sentiment_data'] = "data"
-    result['event_data'] = "data"
+    result['hot_data'] = {
+        'hot_date': date_list,
+        'hot_num': hot_num
+    }
+    result['sentiment_data'] = {
+        'sentiment_date': date_list,
+        'sentiment_pos': sentiment_pos,
+        'sentiment_neg': sentiment_neg
+    }
+
+    # 右下角气泡图数据封装
+    legend_data = []
+    series_data = []
+    for key, value in influence_data.items():
+        legend_data.append(key)
+        series_data.append({
+            'name': key,
+            'type': 'scatter',
+            'data': value
+        })
+
+
+    result['event_data'] = {
+        "lengend": legend_data,
+        "series": series_data
+    }
 
     with codecs.open("mainpage_demo.json", "w", 'utf-8') as wf:
         json.dump(result, wf, indent=4)
@@ -302,14 +389,20 @@ def search_eventa(request):
     # 遍历新闻数据, 获取相关信息
     newsid_set = set()
     time_news_dict = {}
-    for news in news_queryset:
+    # 根据查询日期按天递增构建初始化字典
+    nowtime = start_time
+    delta_time = datetime.timedelta(days=1) # 用于时间轴的不连续问题 
+    while nowtime <= end_time:
+        time_news_dict[nowtime.strftime('%Y-%m-%d')] = []
+        nowtime += delta_time
+    for n in news_queryset:
         # print(type(news.viewsinfo_set))
-        newsid_set.add(news.newsid)
-        time_str = news.time.strftime('%Y-%m-%d')
+        newsid_set.add(n.newsid)
+        time_str = n.time.strftime('%Y-%m-%d')
         if time_str in time_news_dict:
-            time_news_dict[time_str].append(news)
+            time_news_dict[time_str].append(n)
         else:
-            time_news_dict[time_str] = [news]
+            print("search_eventa time_news_dict error: time_str not in start_time-end_time")
     # print(time_news_dict)
 
     # 根据newsid查询观点
@@ -350,12 +443,17 @@ def search_eventa(request):
     for time, newslist in time_news_dict.items():
         # 趋势图数据处理
         tendency_time.append(time)
-        title_tmp = newslist[0].title # 每天的关键事件筛选
-        tendency_news.append({
-            'name': title_tmp,
-            'value': len(newslist)
-        }
-        )
+        if len(newslist) == 0:  # 当天没有检索到新闻的情况
+            tendency_news.append({
+                'name': 'None',
+                'value': 0
+            })
+        else:
+            title_tmp = newslist[0].title # 每天的关键事件筛选
+            tendency_news.append({
+                'name': title_tmp,
+                'value': len(newslist)
+            })
         
         # 时间-新闻轴数据处理
         title_list = []
