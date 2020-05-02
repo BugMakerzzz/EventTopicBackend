@@ -25,7 +25,7 @@ SECRET_KEY = 'x9ls0%n4krs!c@9p*tv@yjw-ra&^+_daab1gh6&m^_y$gdmj6q'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.1.1.11', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -129,12 +129,15 @@ STATIC_URL = '/static/'
 
 #跨域增加忽略
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True # 允许所有主机跨域请求
+'''
 # 跨域请求白名单设置
 CORS_ORIGIN_WHITELIST = (
     # '*'
     "http://127.0.0.1:8090",
+    "http://10.1.1.11:8090"
 )
+'''
 
 CORS_ALLOW_METHODS = (
     'DELETE',
@@ -159,3 +162,4 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
     'Pragma',
 )
+
