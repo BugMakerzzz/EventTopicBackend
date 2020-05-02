@@ -22,8 +22,8 @@ def foo(request):
 def search_main(request):
 
     # 主页面只接收主题信息
-    # theme = request.GET['theme']   # 主题参数
-    theme = '南海'   # 主题参数
+    theme = request.GET['theme']   # 主题参数
+    # theme = '南海'   # 主题参数
     # start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d') # 时间参数由前端决定
     # end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d') 
     start_time = datetime.datetime.strptime('2019-11-21', '%Y-%m-%d')
@@ -162,8 +162,8 @@ def search_main(request):
     with codecs.open("mainpage_demo.json", "w", 'utf-8') as wf:
         json.dump(result, wf, indent=4)
     
-    return JsonResponse({"foo":"title"})
-    # return JsonResponse(result)
+    # return JsonResponse({"foo":"title"})
+    return JsonResponse(result)
 
 
 # 综合选题页面查询函数
@@ -332,7 +332,7 @@ def search_eventa(request):
     # all_content = True
     all_time = False
     all_keywords = True
-    '''
+    
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
     end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
@@ -357,13 +357,13 @@ def search_eventa(request):
     if len(words) > 0:
         words_list = re.split(' |,|，|;|：', words)
         all_keywords = False
-    '''
+    
 
-    theme = '南海'
-    words_list = '军事'
-    start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
-    end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
-    all_keywords = False
+    # theme = '南海'
+    # words_list = '军事'
+    # start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
+    # end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
+    # all_keywords = False
 
     # 组合参数查询, 利用Q的多条件查询
     q = Q()
@@ -530,5 +530,5 @@ def search_eventa(request):
     with codecs.open("eventa_demo.json", "w", 'utf-8') as wf:
         json.dump(result, wf, indent=4)
     
-    return JsonResponse({"foo":"title"})
-    # return JsonResponse(result)
+    # return JsonResponse({"foo":"title"})
+    return JsonResponse(result)
