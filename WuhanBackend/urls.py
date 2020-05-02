@@ -21,11 +21,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # 以下为api
-    path('api/foo/', views.foo, name='foo_url'),
-    path('api/search_main', views.search_main, name='search_main_url'),
-    path('api/search_xuanti', views.search_xuanti, name='search_news_url'),
-    path('api/search_view', views.search_view, name='search_view_url'),
-    path('api/search_eventa',views.search_eventa, name="search_eventa_url")
+    path('foo', views.foo, name='foo_url'),
+    path('search_main', views.search_main, name='search_main_url'),
+    path('search_xuanti', views.search_xuanti, name='search_news_url'),
+    path('search_view', views.search_view, name='search_view_url'),
+    path('search_eventa',views.search_eventa, name="search_eventa_url")
     # path('api/views/', views.foo, name='foo_url'),
     # path('api/events/', views.foo, name='foo_url'),
 
