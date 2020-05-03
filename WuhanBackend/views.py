@@ -229,12 +229,13 @@ def search_xuanti(request):
 
     # 查询语句
     news_queryset = Newsinfo.objects.filter(q)
+    totalElements = len(news_queryset)
     news_queryset = news_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
     # 数据返回封装
     result = {}
     result['newsList'] = [model_to_dict(news) for news in news_queryset]
-    result['totalElements'] = len(result['newsList'])
+    result['totalElements'] = totalElements
 
     '''
     # 将数据写入结果文件以便前端调试
@@ -297,6 +298,7 @@ def search_view(request):
 
     # 查询语句
     views_queryset = Viewsinfo.objects.filter(view_q)
+    totalElements = len(views_queryset)
     views_queryset = views_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
 
@@ -319,7 +321,7 @@ def search_view(request):
         # print(view_tmp)
         result['viewsList'].append(view_tmp)
 
-    result['totalElements'] = len(result['viewsList'])
+    result['totalElements'] = totalElements
 
 
     # 将数据写入结果文件以便前端调试
