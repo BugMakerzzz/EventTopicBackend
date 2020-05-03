@@ -192,6 +192,8 @@ def search_xuanti(request):
     theme = request.GET['theme']   # 主题参数
     # print(theme)
     # print(request.GET['pageno'])
+    pageno = request.GET['pageno'] # 当前页面编号
+    pagesize = request.GET['size'] # 页面数据个数
 
     words = request.GET['kws'].strip()
     if len(words) > 0:
@@ -227,6 +229,7 @@ def search_xuanti(request):
 
     # 查询语句
     news_queryset = Newsinfo.objects.filter(q)
+    news_queryset = news_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
     # 数据返回封装
     result = {}
@@ -260,12 +263,18 @@ def search_view(request):
     # 主题处理
     theme = request.GET['theme']   # 主题参数
 
+    pageno = request.GET['pageno'] # 当前页面编号
+    pagesize = request.GET['size'] # 页面数据个数
+    
+
     words = request.GET['kws'].strip()
     if len(words) > 0:
         words_list = re.split(' |,|，|;|：', words)
         all_keywords = False
-
+    
     # theme = '南海'
+    # pageno = 1
+    # pagesize = 64
     # words_list = '军事'
     # all_keywords = False
 
@@ -288,6 +297,7 @@ def search_view(request):
 
     # 查询语句
     views_queryset = Viewsinfo.objects.filter(view_q)
+    views_queryset = views_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
 
     # 数据返回封装
