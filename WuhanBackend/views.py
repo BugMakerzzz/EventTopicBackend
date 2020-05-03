@@ -192,8 +192,8 @@ def search_xuanti(request):
     theme = request.GET['theme']   # 主题参数
     # print(theme)
     # print(request.GET['pageno'])
-    pageno = request.GET['pageno'] # 当前页面编号
-    pagesize = request.GET['size'] # 页面数据个数
+    pageno = int(request.GET['pageno']) # 当前页面编号
+    pagesize = int(request.GET['size']) # 页面数据个数
 
     words = request.GET['kws'].strip()
     if len(words) > 0:
@@ -263,8 +263,8 @@ def search_view(request):
     # 主题处理
     theme = request.GET['theme']   # 主题参数
 
-    pageno = request.GET['pageno'] # 当前页面编号
-    pagesize = request.GET['size'] # 页面数据个数
+    pageno = int(request.GET['pageno']) # 当前页面编号
+    pagesize = int(request.GET['size']) # 页面数据个数
     
 
     words = request.GET['kws'].strip()
