@@ -7,6 +7,7 @@ import re
 import datetime
 import codecs
 import json
+import pickle
 
 from WuhanBackend.models import Newsinfo, Viewsinfo
 from WuhanBackend.SearchFunc import get_news_by_time, get_news_by_theme
@@ -71,7 +72,8 @@ def search_main(request):
                     'orgname': v.orgname,
                     'pos': v.pos,
                     'verb': v.verb,
-                    'viewpoint': v.viewpoint
+                    'viewpoint': v.viewpoint,
+                    'country': v.country
                 }
             )
             # 判断专家观点的情绪
@@ -129,14 +131,30 @@ def search_main(request):
         sentiment_pos.append(pos_num)
         sentiment_neg.append(neg_num)
 
+
+    # 加载专题下国家-观点数量数据
+    pkl_rf = open("WuhanBackend/dict/" + theme+ "_countryviews_dict.pkl",'rb')
+    countryviews_dict = pickle.load(pkl_rf)
+    max_views = 0
+    mapdata_list = []
+    for key, value in countryviews_dict.items():
+        if value > max_views:
+            max_views = value
+        mapdata_list.append({"name":key, "value":value})
+
     # 结果封装
     result = {}
-    result["news_views_data"] = news_views_data[:10] # 只返回处理的前10条数据
-    result['hot_data'] = {
+    result["news_views_data"] = news_views_data[:20] # 只返回处理的前20条数据
+    result['map_data'] = {  # 地图数据
+        "max": max_views,
+        "min": 0,
+        "data": mapdata_list
+    }
+    result['hot_data'] = {  # 下左数据
         'hot_date': date_list,
         'hot_num': hot_num
     }
-    result['sentiment_data'] = {
+    result['sentiment_data'] = {    #下中数据
         'sentiment_date': date_list,
         'sentiment_pos': sentiment_pos,
         'sentiment_neg': sentiment_neg
@@ -158,9 +176,6 @@ def search_main(request):
         "lengend": legend_data,
         "series": series_data
     }
-
-    with codecs.open("mainpage_demo.json", "w", 'utf-8') as wf:
-        json.dump(result, wf, indent=4)
     
     # return JsonResponse({"foo":"title"})
     return JsonResponse(result)
