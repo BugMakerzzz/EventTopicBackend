@@ -59,6 +59,7 @@ def search_main(request):
         tmp['title'] = title
         tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
         tmp['views'] = []
+        tmp['source'] = n.customer
         tmp['pos_sentiment'] = 0    # 根据新闻的评论计算正负向指数、影响力指数
         tmp['neg_sentiment'] = 0
         tmp['influence'] = 0
@@ -73,7 +74,8 @@ def search_main(request):
                     'pos': v.pos,
                     'verb': v.verb,
                     'viewpoint': v.viewpoint,
-                    'country': v.country
+                    'country': v.country,
+                    'source': n.customer
                 }
             )
             # 判断专家观点的情绪
