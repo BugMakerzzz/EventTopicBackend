@@ -72,11 +72,12 @@ def search_main(request):
     hot_num = []
     sentiment_pos = []
     sentiment_neg = []
+    sorted_data = []
     
     for time, newslist in time_news_dict.items():
-        date_list.append(datetime.datetime.strptime(time, '%Y-%m'))
+        # date_list.append(datetime.datetime.strptime(time, '%Y-%m'))
         # 热度趋势数据处理
-        hot_num.append(len(newslist))
+        # hot_num.append(len(newslist))
         # 正负向情感指数处理
         pos_num = 0
         neg_num = 0
@@ -84,8 +85,17 @@ def search_main(request):
             pos_num += n['pos_sentiment']
             neg_num += n['neg_sentiment']
 
-        sentiment_pos.append(float("%.2f" % pos_num))
-        sentiment_neg.append(float("%.2f" % neg_num))
+        # sentiment_pos.append(float("%.2f" % pos_num))
+        # sentiment_neg.append(float("%.2f" % neg_num))
+        sorted_data.append((datetime.datetime.strptime(time, '%Y-%m'), len(newslist), float("%.2f" % pos_num), float("%.2f" % neg_num)))
+
+    sorted_data = sorted(sorted_data, key=lambda x: x[0]) # 根据时间进行升序排序
+
+    for data in sorted_data:
+        date_list.append(data[0])
+        hot_num.append(data[1])
+        sentiment_pos.append(data[2])
+        sentiment_neg.append(data[3])
 
     # 加载主页面的显示月份(用于左上角、右上角以及右下角的数据处理)
     with codecs.open("WuhanBackend/dict/main_page.json",'r','utf-8') as jf:
