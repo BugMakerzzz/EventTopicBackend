@@ -74,7 +74,7 @@ def search_main(request):
     sentiment_neg = []
     
     for time, newslist in time_news_dict.items():
-        date_list.append(time)
+        date_list.append(datetime.datetime.strptime(time, '%Y-%m'))
         # 热度趋势数据处理
         hot_num.append(len(newslist))
         # 正负向情感指数处理
