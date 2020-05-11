@@ -24,8 +24,8 @@ def search_main(request):
     SHOW_NEWS_NUM = 20 # 显示的新闻个数
 
     # 主页面只接收主题信息
-    # theme = request.GET['theme']   # 主题参数
-    theme = '南海'   # 主题参数
+    theme = request.GET['theme']   # 主题参数
+    # theme = '南海'   # 主题参数
     
     # 组合参数查询, 利用Q的多条件查询
     q = Q()
