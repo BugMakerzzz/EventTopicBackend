@@ -12,7 +12,6 @@ import pickle
 from WuhanBackend.models import Newsinfo, Viewsinfo
 from WuhanBackend.SearchFunc import get_news_by_time, get_news_by_theme
 from WuhanBackend.ClusterVps import k_means_tfidf
-from WuhanBackend.utils import clean_zh_text
 
 
 def foo(request):
@@ -22,19 +21,15 @@ def foo(request):
 # 主页面查询函数
 def search_main(request):
 
+    SHOW_NEWS_NUM = 20 # 显示的新闻个数
+
     # 主页面只接收主题信息
-    theme = request.GET['theme']   # 主题参数
-    # theme = '南海'   # 主题参数
-    # start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d') # 时间参数由前端决定
-    # end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d') 
-    start_time = datetime.datetime.strptime('2019-11-21', '%Y-%m-%d')
-    end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
-    delta_time = datetime.timedelta(days=1) # 用于时间轴的不连续问题 
+    # theme = request.GET['theme']   # 主题参数
+    theme = '南海'   # 主题参数
     
     # 组合参数查询, 利用Q的多条件查询
     q = Q()
     q = q & Q(theme_label=theme)
-    q = q & Q(time__range=(start_time, end_time))
 
     # 查询语句
     news_queryset = Newsinfo.objects.filter(q)
@@ -42,73 +37,41 @@ def search_main(request):
     # 综合选题框和专家观点框数据
     news_views_data = []
     time_news_dict = {} # 时间-新闻字典构建 {time:[自定义新闻tmp{}]}
-    # 根据查询日期按天递增构建初始化字典
-    nowtime = start_time
-    while nowtime <= end_time:
-        time_news_dict[nowtime.strftime('%Y-%m-%d')] = []
-        nowtime += delta_time
-    
-    influence_max = 0   # 用于计算影响力指数的归一化   
+
     title_set = set() # 所选数据去重使用
     for n in news_queryset:
-        
-        title = clean_zh_text(n.title, 2)
+        title = n.title
         if title in title_set: continue # 如果title已经出现过, 则进行去重
 
         tmp = {}
         tmp['title'] = title
-        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+        tmp['newsid'] = n.newsid
+        # tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+        tmp['time'] = n.time.strftime('%Y-%m-%d')
         tmp['views'] = []
         tmp['source'] = n.customer
-        tmp['pos_sentiment'] = 0    # 根据新闻的评论计算正负向指数、影响力指数
-        tmp['neg_sentiment'] = 0
-        tmp['influence'] = 0
+        tmp['pos_sentiment'] = n.positive    # 根据新闻的评论计算正负向指数、影响力指数
+        tmp['neg_sentiment'] = n.negative
+        tmp['influence'] = n.influence
         tmp['content_label'] = n.content_label
-
-        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
-        for v in Viewsinfo.objects.filter(newsid=n):
-            tmp['views'].append(
-                {
-                    'personname': v.personname,
-                    'orgname': v.orgname,
-                    'pos': v.pos,
-                    'verb': v.verb,
-                    'viewpoint': v.viewpoint,
-                    'country': v.country,
-                    'source': n.customer
-                }
-            )
-            # 判断专家观点的情绪
-            if v.sentiment > 0.6:
-                tmp['pos_sentiment'] += 1
-            else:
-                tmp['neg_sentiment'] += 1
-            tmp['influence'] += 1 # 有一个专家观点则增加一个新闻的影响力指数, 后续可以根据专家的权重来更改
-
-        if len(tmp['views']) == 0: continue # 该新闻没有观点则略过
-
-        # 对新闻的正负向指数进行归一化
-        tmp['pos_sentiment'] = float(tmp['pos_sentiment'])/(tmp['pos_sentiment'] + tmp['neg_sentiment'])
-        tmp['neg_sentiment'] = float(tmp['neg_sentiment'])/(tmp['pos_sentiment'] + tmp['neg_sentiment'])
-        if tmp['influence'] > influence_max: # 记录影响力最大值, 便于后续对影响力数值进行归一化
-            influence_max = tmp['influence']
         
         # 数据新增
-        time_str = n.time.strftime('%Y-%m-%d')
+        # time_str = n.time.strftime('%Y-%m-%d') # 按照日进行处理
+        time_str = n.time.strftime('%Y-%m') # 按照月份进行处理
         if time_str in time_news_dict:
             time_news_dict[time_str].append(tmp)
         else:
-            print("search_main time_news_dict error: time_str not in start_time-end_time")
+            time_news_dict[time_str] = [tmp]
+            # print("search_main time_news_dict error: time_str not in start_time-end_time")
 
         title_set.add(title)
         news_views_data.append(tmp)
 
-    # 三个统计图数据处理
+    # 左下,右下 统计图数据处理
     date_list = []
     hot_num = []
     sentiment_pos = []
     sentiment_neg = []
-    influence_data = {} # {content_label:[n_data1, n_data2}
     
     for time, newslist in time_news_dict.items():
         date_list.append(time)
@@ -121,18 +84,48 @@ def search_main(request):
             pos_num += n['pos_sentiment']
             neg_num += n['neg_sentiment']
 
-            # 右下角事件影响力处理
-            n_data = [n['time'], float(n['influence'])/influence_max * 100, n['title']]
-            
-            influence_label = n['content_label'].split(' ')[0] # 此处仅显示新闻的第一个标签作为新闻分类
-            
-            if influence_label in influence_data:
-                influence_data[influence_label].append(n_data)
-            else:
-                influence_data[influence_label] = [n_data]
-        sentiment_pos.append(pos_num)
-        sentiment_neg.append(neg_num)
+        sentiment_pos.append(float("%.2f" % pos_num))
+        sentiment_neg.append(float("%.2f" % neg_num))
 
+    # 加载主页面的显示月份(用于左上角、右上角以及右下角的数据处理)
+    with codecs.open("WuhanBackend/dict/main_page.json",'r','utf-8') as jf:
+        theme_date = json.load(jf)
+    influence_data = {} # {content_label:[n_data1, n_data2} 
+    show_news_list = time_news_dict[theme_date[theme]]   # 获取距离当前最近的趋势波峰时间数据
+    show_news_list = sorted(show_news_list, key=lambda new: new['influence'], reverse=True) # 根据影响力指数进行降序排序 
+    influence_max = show_news_list[0]['influence'] # 用于计算影响力指数的归一化 
+    
+    # 选取SHOW_NEWS_NUM个新闻进行左上角的新闻展示
+    for i in range(0, SHOW_NEWS_NUM): 
+        n = show_news_list[i]
+        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
+        for v in Viewsinfo.objects.filter(newsid=n['newsid']):
+            n['views'].append(
+                {
+                    'personname': v.personname,
+                    'orgname': v.orgname,
+                    'pos': v.pos,
+                    'verb': v.verb,
+                    'viewpoint': v.viewpoint,
+                    'country': v.country,
+                    'source': n['source'],
+                    'time': v.time
+                }
+            )
+    
+    # 选取前100个进行右下角的事件影响力展示
+    for i in range(0, 100):
+        n = show_news_list[i]
+        # 右下角事件影响力处理
+        influence_value = float(n['influence'])/influence_max * 100
+        n_data = [n['time'], influence_value, n['title']]
+            
+        influence_label = n['content_label'].split(' ')[0] # 此处仅显示新闻的第一个标签作为新闻分类
+            
+        if influence_label in influence_data:
+            influence_data[influence_label].append(n_data)
+        else:
+            influence_data[influence_label] = [n_data]
 
     # 加载专题下国家-观点数量数据
     pkl_rf = open("WuhanBackend/dict/" + theme+ "_countryviews_dict.pkl",'rb')
@@ -146,7 +139,7 @@ def search_main(request):
 
     # 结果封装
     result = {}
-    result["news_views_data"] = news_views_data[:20] # 只返回处理的前20条数据
+    result["news_views_data"] = show_news_list[:SHOW_NEWS_NUM] # 只返回设置的新闻个数
     result['map_data'] = {  # 地图数据
         "max": max_views,
         "min": 0,

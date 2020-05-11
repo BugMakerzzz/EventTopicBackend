@@ -15,11 +15,13 @@ class Newsinfo(models.Model):
     content = models.TextField()
     url = models.CharField(max_length=255)
     customer = models.CharField(max_length=255)
-    emotion = models.IntegerField()
     location = models.CharField(max_length=255)
     theme_label = models.CharField(max_length=255)
     content_label = models.CharField(max_length=255)
     country_label = models.CharField(max_length=255)
+    positive = models.FloatField()
+    negative = models.FloatField()
+    influence = models.FloatField()
 
     class Meta:
         # managed = False
