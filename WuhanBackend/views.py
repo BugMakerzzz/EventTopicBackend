@@ -46,8 +46,8 @@ def search_main(request):
         tmp = {}
         tmp['title'] = title
         tmp['newsid'] = n.newsid
-        # tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
-        tmp['time'] = n.time.strftime('%Y-%m-%d')
+        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+        # tmp['time'] = n.time.strftime('%Y-%m-%d')
         tmp['views'] = []
         tmp['source'] = n.customer
         tmp['pos_sentiment'] = n.positive    # 根据新闻的评论计算正负向指数、影响力指数
