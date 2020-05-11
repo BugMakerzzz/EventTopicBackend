@@ -146,8 +146,7 @@ def search_main(request):
         "data": mapdata_list
     }
     result['hot_data'] = {  # 下左数据
-        'hot_date': date_list,
-        'hot_num': hot_num
+        'data': [[date_list[i], hot_num[i]] for i in range(len(date_list))]
     }
     result['sentiment_data'] = {    #下中数据
         'sentiment_date': date_list,
