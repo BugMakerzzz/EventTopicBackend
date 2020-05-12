@@ -201,20 +201,27 @@ def search_xuanti(request):
     all_time = True
     all_keywords = True
 
+    # 主题处理
+    theme = request.GET['theme']   # 主题参数
+
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
     end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
     if start_time != end_time:
-        print("start_time != end_time")
+        # print("start_time != end_time")
         all_time = False # 如果两者时间不同, 则有时间限制
+    else:
+        if theme == "南海": # 默认选取主页面新闻的选取时间
+            start_time = datetime.datetime.strptime('2019-11-01', '%Y-%m-%d')
+            end_time = datetime.datetime.strptime('2019-11-31', '%Y-%m-%d')
+            all_time = False   
 
     # language = request.GET['language']
     # print(language)
     # print(request.GET['kws_kinds'])
     # print(request.GET['include_text'])    # 是否搜索正文内容
     
-    # 主题处理
-    theme = request.GET['theme']   # 主题参数
+
     # print(theme)
     # print(request.GET['pageno'])
     pageno = int(request.GET['pageno']) # 当前页面编号
@@ -279,15 +286,21 @@ def search_view(request):
     all_time = True
     all_keywords = True
 
+    # 主题处理
+    theme = request.GET['theme']   # 主题参数
+    
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
     end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
     if start_time != end_time:
-        print("start_time != end_time")
+        # print("start_time != end_time")
         all_time = False # 如果两者时间不同, 则有时间限制
-    
-    # 主题处理
-    theme = request.GET['theme']   # 主题参数
+    else:
+        if theme == "南海": # 默认选取主页面新闻的选取时间
+            start_time = datetime.datetime.strptime('2019-11-01', '%Y-%m-%d')
+            end_time = datetime.datetime.strptime('2019-11-31', '%Y-%m-%d')
+            all_time = False   
+
 
     pageno = int(request.GET['pageno']) # 当前页面编号
     pagesize = int(request.GET['size']) # 页面数据个数
