@@ -335,7 +335,7 @@ def search_view(request):
         view_q = view_q & tmp_q
 
     # 查询语句
-    views_queryset = Viewsinfo.objects.filter(view_q)
+    views_queryset = Viewsinfo.objects.filter(view_q).order_by('time')
     totalElements = len(views_queryset)
     views_queryset = views_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
