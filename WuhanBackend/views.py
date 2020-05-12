@@ -138,8 +138,14 @@ def search_main(request):
             influence_data[influence_label] = [n_data]
 
     # 加载专题下国家-观点数量数据
+    pkl_rf = open("WuhanBackend/dict/echarts_zhcountry_set.pkl",'rb')
+    zhcountry_set = pickle.load(pkl_rf)
     pkl_rf = open("WuhanBackend/dict/" + theme+ "_countryviews_dict.pkl",'rb')
     countryviews_dict = pickle.load(pkl_rf)
+    # 补全全部国家信息
+    for i in zhcountry_set: 
+        if i not in countryviews_dict:
+            countryviews_dict[i] = 0
     max_views = 0
     mapdata_list = []
     for key, value in countryviews_dict.items():
@@ -543,7 +549,7 @@ def search_eventa(request):
     }
 
     # 事件预测模块处理
-    nextevent_des_list = ['XXX','YYY','ZZZ']
+    nextevent_des_list = ['美舰队航行','发表南海自由航行言论','其它']
     nextevent_exp_list = [24, 25, 36]
     eventpre_data = {
         'legend_data': nextevent_des_list,
