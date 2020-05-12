@@ -264,9 +264,16 @@ def search_xuanti(request):
     totalElements = len(news_queryset)
     news_queryset = news_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
+    title_set = set() # 用于title去重
     # 数据返回封装
     result = {}
-    result['newsList'] = [model_to_dict(news) for news in news_queryset]
+    newsList = []
+    # 根据title去重
+    for new in news_queryset:
+        if new.title not in title_set:
+            title_set.add(new.title)
+            newsList.append(model_to_dict(new))
+    result['newsList'] = newsList
     result['totalElements'] = totalElements
 
     '''
