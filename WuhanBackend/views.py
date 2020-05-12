@@ -260,7 +260,7 @@ def search_xuanti(request):
         q = q & tmp_q
 
     # 查询语句
-    news_queryset = Newsinfo.objects.filter(q)
+    news_queryset = Newsinfo.objects.filter(q).order_by('time')
     totalElements = len(news_queryset)
     news_queryset = news_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
