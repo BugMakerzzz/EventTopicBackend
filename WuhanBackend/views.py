@@ -213,7 +213,7 @@ def search_xuanti(request):
     else:
         if theme == "南海": # 默认选取主页面新闻的选取时间
             start_time = datetime.datetime.strptime('2019-11-01', '%Y-%m-%d')
-            end_time = datetime.datetime.strptime('2019-11-31', '%Y-%m-%d')
+            end_time = datetime.datetime.strptime('2019-11-30', '%Y-%m-%d')
             all_time = False   
 
     # language = request.GET['language']
@@ -298,7 +298,7 @@ def search_view(request):
     else:
         if theme == "南海": # 默认选取主页面新闻的选取时间
             start_time = datetime.datetime.strptime('2019-11-01', '%Y-%m-%d')
-            end_time = datetime.datetime.strptime('2019-11-31', '%Y-%m-%d')
+            end_time = datetime.datetime.strptime('2019-11-30', '%Y-%m-%d')
             all_time = False   
 
 
