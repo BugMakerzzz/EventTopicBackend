@@ -390,19 +390,19 @@ def search_eventa(request):
     # all_content = True
     all_time = False
     all_keywords = True
-    cathe_flag = True # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
+    cathe_flag = False # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
     
     # 以下三行测试开发时使用
-    theme = '南海'
-    start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
-    end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
+    # theme = '南海'
+    # start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
+    # end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
         
     # 主题处理
-    # theme = request.GET['theme']   # 主题参数
+    theme = request.GET['theme']   # 主题参数
 
     # 时间处理    
-    # start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
-    # end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
+    start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
+    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
     
     if start_time != end_time:
         # print("start_time != end_time")
