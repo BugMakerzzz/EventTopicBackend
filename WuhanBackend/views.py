@@ -393,16 +393,16 @@ def search_eventa(request):
     cathe_flag = True # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
     
     # 以下三行测试开发时使用
-    # theme = '南海'
-    # start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
-    # end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
+    theme = '南海'
+    start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
+    end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
         
     # 主题处理
-    theme = request.GET['theme']   # 主题参数
+    # theme = request.GET['theme']   # 主题参数
 
     # 时间处理    
-    start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
-    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
+    # start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
+    # end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
     
     if start_time != end_time:
         # print("start_time != end_time")
@@ -491,7 +491,8 @@ def search_eventa(request):
         view_tmp['view_num'] = len(view_cluster_result[0][key])
         view_tmp['view_list'] = [view_list[i] for i in view_cluster_result[0][key]]
         view_cluster_data.append(view_tmp)
-
+    
+    view_cluster_data = sorted(view_cluster_data, key=lambda x: x['view_num'], reverse=True) # 根据观点数量降序排序
 
     tendency_time = [] # 用于事件分析页面的趋势数据
     tendency_news = []
