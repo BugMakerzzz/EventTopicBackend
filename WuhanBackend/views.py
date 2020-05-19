@@ -390,7 +390,7 @@ def search_eventa(request):
     # all_content = True
     all_time = False
     all_keywords = True
-    cathe_flag = False # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
+    cathe_flag = True # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
     
     # 以下三行测试开发时使用
     # theme = '南海'
