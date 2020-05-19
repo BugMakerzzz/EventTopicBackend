@@ -8,6 +8,7 @@ import datetime
 import codecs
 import json
 import pickle
+import os
 
 from WuhanBackend.models import Newsinfo, Viewsinfo
 from WuhanBackend.SearchFunc import get_news_by_time, get_news_by_theme
@@ -389,10 +390,20 @@ def search_eventa(request):
     # all_content = True
     all_time = False
     all_keywords = True
+    cathe_flag = True # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
     
+    # 以下三行测试开发时使用
+    # theme = '南海'
+    # start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
+    # end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
+        
+    # 主题处理
+    theme = request.GET['theme']   # 主题参数
+
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
     end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
+    
     if start_time != end_time:
         # print("start_time != end_time")
         all_time = False # 如果两者时间不同, 则有时间限制
@@ -400,27 +411,16 @@ def search_eventa(request):
         start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
         end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
 
-    # language = request.GET['language']
-    # print(language)
-    # print(request.GET['kws_kinds'])
-    # print(request.GET['include_text'])    # 是否搜索正文内容
-    
-    # 主题处理
-    theme = request.GET['theme']   # 主题参数
-    # print(theme)
-    # print(request.GET['pageno'])
+    # 根据theme与start_time, end_time检查缓存
+    search_key = theme + "_" + start_time.strftime("%Y%m%d") + "_" + end_time.strftime("%Y%m%d")
+    cache_file_name = "WuhanBackend/cache/" + search_key + ".pkl"
+    if not os.path.exists("WuhanBackend/cache/"):   # 文件夹不存在则创建文件夹
+        os.mkdir("WuhanBackend/cache/")
+    if cathe_flag and os.path.exists(cache_file_name): # 缓存已经存在
+        pkl_rf = open(cache_file_name,'rb')
+        result = pickle.load(pkl_rf)
+        return JsonResponse(result)
 
-    words = request.GET['kws'].strip()
-    if len(words) > 0:
-        words_list = re.split(' |,|，|;|：', words)
-        all_keywords = False
-    
-
-    # theme = '南海'
-    # words_list = '军事'
-    # start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
-    # end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
-    # all_keywords = False
 
     # 组合参数查询, 利用Q的多条件查询
     q = Q()
@@ -582,10 +582,10 @@ def search_eventa(request):
     result['eventpre_data'] = eventpre_data # 用于事件预测模块
     result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
+    
+    # 将查询结果进行缓存
+    pkwf = open(cache_file_name,"wb") 
+    pickle.dump(result, pkwf) 
 
-    
-    with codecs.open("eventa_demo.json", "w", 'utf-8') as wf:
-        json.dump(result, wf, indent=4)
-    
     # return JsonResponse({"foo":"title"})
     return JsonResponse(result)
