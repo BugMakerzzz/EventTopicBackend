@@ -111,6 +111,9 @@ def search_main(request):
         n = show_news_list[i]
         # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
         for v in Viewsinfo.objects.filter(newsid=n['newsid']):
+            # 筛选效果较好的观点
+            if len(v.viewpoint) < 10: continue
+            if v.country == '': continue
             n['views'].append(
                 {
                     'personname': v.personname,
@@ -351,10 +354,13 @@ def search_view(request):
     # 数据返回封装
     result = {}
     result['viewsList'] = []
+    view_set = set() # 观点数据去重处理
     for view in views_queryset:
         # 此时可以直接通过view.newsid来获取news的相关信息
         # if view.newsid.theme_label == theme:    # 两个条件的筛选并集
         # print(type(view.newsid))
+        if view.viewpoint in view_set:
+            continue
         view_tmp = model_to_dict(view)
         view_tmp['time'] = view_tmp['time'].strftime('%Y-%m-%d') 
         view_tmp['newsinfo'] = {
@@ -366,6 +372,7 @@ def search_view(request):
         }
         # print(view_tmp)
         result['viewsList'].append(view_tmp)
+        view_set.add(view.viewpoint)
 
     result['totalElements'] = totalElements
 
