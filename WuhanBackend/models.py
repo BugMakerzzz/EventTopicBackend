@@ -15,17 +15,39 @@ class Newsinfo(models.Model):
     content = models.TextField()
     url = models.CharField(max_length=255)
     customer = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
     theme_label = models.CharField(max_length=255)
     content_label = models.CharField(max_length=255)
     country_label = models.CharField(max_length=255)
     positive = models.FloatField()
     negative = models.FloatField()
     influence = models.FloatField()
+    reliability = models.FloatField()
+    crisis = models.FloatField()
+    persons = models.TextField()
+    orgs = models.TextField()
+    wjwords = models.TextField()
 
     class Meta:
         # managed = False
         db_table = 'newsinfo'
+
+
+class Othernewsinfo(models.Model):
+    newsid = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=255)
+    time = models.DateTimeField()
+    content = models.TextField()
+    url = models.CharField(max_length=255)
+    imgurl = models.CharField(max_length=255)
+    customer = models.CharField(max_length=255)
+    theme_label = models.CharField(max_length=255)
+    language = models.CharField(max_length=255)
+    reliability = models.FloatField()
+    crisis = models.FloatField()
+
+    class Meta:
+        # managed = False
+        db_table = 'othernewsinfo'
 
 
 class Viewsinfo(models.Model):
