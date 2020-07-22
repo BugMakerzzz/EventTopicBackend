@@ -55,6 +55,8 @@ def search_main(request):
         tmp['neg_sentiment'] = n.negative
         tmp['influence'] = n.influence
         tmp['content_label'] = n.content_label
+        tmp['crisis'] = n.crisis
+        tmp['reliability'] = n.reliability
         
         # 数据新增
         # time_str = n.time.strftime('%Y-%m-%d') # 按照日进行处理
