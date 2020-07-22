@@ -103,7 +103,9 @@ def search_main(request):
         theme_date = json.load(jf)
     influence_data = {} # {content_label:[n_data1, n_data2} 
     show_news_list = time_news_dict[theme_date[theme]]   # 获取距离当前最近的趋势波峰时间数据
-    show_news_list = sorted(show_news_list, key=lambda new: new['influence'], reverse=True) # 根据影响力指数进行降序排序 
+    
+    
+    show_news_list = sorted(show_news_list, key=lambda new: new['crisis'], reverse=True) # 根据危机指数进行降序排序 
     influence_max = show_news_list[0]['influence'] # 用于计算影响力指数的归一化 
     
     # 选取SHOW_NEWS_NUM个新闻进行左上角的新闻展示
