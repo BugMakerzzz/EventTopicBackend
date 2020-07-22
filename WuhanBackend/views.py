@@ -218,10 +218,9 @@ def search_xuanti(request):
         # print("start_time != end_time")
         all_time = False # 如果两者时间不同, 则有时间限制
     else:
-        if theme == "南海": # 默认选取主页面新闻的选取时间
-            start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d')
-            end_time = datetime.datetime.strptime('2020-07-01', '%Y-%m-%d')
-            all_time = False   
+        start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d')
+        end_time = datetime.datetime.strptime('2020-07-01', '%Y-%m-%d')
+        all_time = False   
 
     # language = request.GET['language']
     # print(language)
