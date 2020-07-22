@@ -207,17 +207,20 @@ def search_xuanti(request):
 
     # 主题处理
     theme = request.GET['theme']   # 主题参数
+    # theme = '南海'   # 主题参数
 
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
-    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
+    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d') 
+    # start_time = datetime.datetime.strptime('2019-11-01', '%Y-%m-%d')
+    # end_time = datetime.datetime.strptime('2019-11-30', '%Y-%m-%d') 
     if start_time != end_time:
         # print("start_time != end_time")
         all_time = False # 如果两者时间不同, 则有时间限制
     else:
         if theme == "南海": # 默认选取主页面新闻的选取时间
-            start_time = datetime.datetime.strptime('2019-11-01', '%Y-%m-%d')
-            end_time = datetime.datetime.strptime('2019-11-30', '%Y-%m-%d')
+            start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d')
+            end_time = datetime.datetime.strptime('2020-07-01', '%Y-%m-%d')
             all_time = False   
 
     # language = request.GET['language']
@@ -229,9 +232,12 @@ def search_xuanti(request):
     # print(theme)
     # print(request.GET['pageno'])
     pageno = int(request.GET['pageno']) # 当前页面编号
+    # pageno = 1 # 当前页面编号
     pagesize = int(request.GET['size']) # 页面数据个数
+    # pagesize = 64 # 页面数据个数
 
     words = request.GET['kws'].strip()
+    # words = []
     if len(words) > 0:
         words_list = re.split(' |,|，|;|：', words)
         all_keywords = False
@@ -397,7 +403,7 @@ def search_eventa(request):
     # all_content = True
     all_time = False
     all_keywords = True
-    cathe_flag = True # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
+    cathe_flag = False # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
     
     # 以下三行测试开发时使用
     # theme = '南海'
@@ -508,16 +514,19 @@ def search_eventa(request):
     for time, newslist in time_news_dict.items():
         # 趋势图数据处理
         tendency_time.append(time)
-        if len(newslist) == 0:  # 当天没有检索到新闻的情况
+        news_count = len(newslist) # 当天的新闻数量
+        if news_count == 0:  # 当天没有检索到新闻的情况
             tendency_news.append({
                 'name': 'None',
-                'value': 0
+                'value': 0, # 实际曲线
+                'predict_value': 10
             })
         else:
             title_tmp = newslist[0].title # 每天的关键事件筛选
             tendency_news.append({
                 'name': title_tmp,
-                'value': len(newslist)
+                'value': news_count, # 实际趋势曲线
+                'predict_value': news_count + 10, # 预测曲线
             })
         
         # 时间-新闻轴数据处理
