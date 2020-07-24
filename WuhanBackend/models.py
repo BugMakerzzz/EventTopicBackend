@@ -26,6 +26,7 @@ class Newsinfo(models.Model):
     persons = models.TextField()
     orgs = models.TextField()
     wjwords = models.TextField()
+    nextevent = models.TextField()
 
     class Meta:
         # managed = False
@@ -33,7 +34,7 @@ class Newsinfo(models.Model):
 
 
 class Othernewsinfo(models.Model):
-    newsid = models.AutoField(primary_key=True)
+    newsid = models.CharField(primary_key=True, max_length=64)
     title = models.CharField(max_length=255)
     time = models.DateTimeField()
     content = models.TextField()
@@ -51,7 +52,7 @@ class Othernewsinfo(models.Model):
 
 
 class Viewsinfo(models.Model):
-    viewid = models.AutoField(primary_key=True)
+    viewid = models.CharField(primary_key=True, max_length=64)
     personname = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     orgname = models.CharField(max_length=255)

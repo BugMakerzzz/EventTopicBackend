@@ -22,8 +22,7 @@ def foo(request):
 # 主页面查询函数
 def search_main(request):
 
-    SHOW_NEWS_NUM = 20 # 显示的新闻个数
-
+    SHOW_NEWS_NUM = 30 # 显示的新闻个数
     # 主页面只接收主题信息
     theme = request.GET['theme']   # 主题参数
     # theme = '南海'   # 主题参数
@@ -34,11 +33,10 @@ def search_main(request):
 
     # 查询语句
     news_queryset = Newsinfo.objects.filter(q)
-    
-    # 综合选题框和专家观点框数据
-    news_views_data = []
-    time_news_dict = {} # 时间-新闻字典构建 {time:[自定义新闻tmp{}]}
 
+    # 综合选题框和专家观点框数据
+    # total_news_data = []
+    time_news_dict = {} # 时间-新闻字典构建 {time:[自定义新闻tmp{}]}
     title_set = set() # 所选数据去重使用
     for n in news_queryset:
         title = n.title
@@ -68,7 +66,7 @@ def search_main(request):
             # print("search_main time_news_dict error: time_str not in start_time-end_time")
 
         title_set.add(title)
-        news_views_data.append(tmp)
+        # total_news_data.append(tmp)
 
     # 左下,右下 统计图数据处理
     date_list = []
@@ -99,16 +97,139 @@ def search_main(request):
         hot_num.append(data[1])
         sentiment_pos.append(data[2])
         sentiment_neg.append(data[3])
+    
+    # 主页面数据展示(用于左上角、右上角以及右下角的数据处理)
+    start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d') # 主页面时间范围, 2020年以来的数据
+    show_queryset = Newsinfo.objects.filter(q & Q(time__gte=start_time))
+    time_queryset = show_queryset.order_by('-time')
+    crisis_queryset = show_queryset.order_by('-crisis')
+    COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
+    show_news_list = []
+    
+    # 每种条件筛选10条
+    title_set = set()
+    # 根据日期筛选
+    count = 0
+    for n in time_queryset: # 根据日期筛选
+        title = n.title
+        if title in title_set: continue # 如果title已经出现过, 则进行去重
+        if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
+        tmp = {}
+        tmp['title'] = title
+        tmp['newsid'] = n.newsid
+        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+        tmp['views'] = []
+        tmp['source'] = n.customer
+        
+        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
+        for v in Viewsinfo.objects.filter(newsid=n.newsid):
+            # 筛选效果较好的观点
+            if len(v.viewpoint) < 10: continue
+            if v.country == '': continue
+            tmp['views'].append(
+                {
+                    'personname': v.personname,
+                    'orgname': v.orgname,
+                    'pos': v.pos,
+                    'verb': v.verb,
+                    'viewpoint': v.viewpoint,
+                    'country': v.country,
+                    'source': n.customer,
+                    'time': v.time
+                }
+            )
+        
+        show_news_list.append(tmp)
+        title_set.add(n.title)
+        count += 1
+        if count >= 10: break 
+    
+    # 根据危机指数筛选
+    count = 0
+    for n in crisis_queryset: # 根据危机指数筛选
+        title = n.title
+        if title in title_set: continue # 如果title已经出现过, 则进行去重
+        if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
+        tmp = {}
+        tmp['title'] = title
+        tmp['newsid'] = n.newsid
+        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+        tmp['views'] = []
+        tmp['source'] = n.customer
+        
+        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
+        for v in Viewsinfo.objects.filter(newsid=n.newsid):
+            # 筛选效果较好的观点
+            if len(v.viewpoint) < 10: continue
+            if v.country == '': continue
+            tmp['views'].append(
+                {
+                    'personname': v.personname,
+                    'orgname': v.orgname,
+                    'pos': v.pos,
+                    'verb': v.verb,
+                    'viewpoint': v.viewpoint,
+                    'country': v.country,
+                    'source': n.customer,
+                    'time': v.time
+                }
+            )
 
+        show_news_list.append(tmp)
+        title_set.add(n.title)
+        count += 1
+        if count >= 10: break 
+
+    # 根据疫情相关新闻筛选 
+    count = 0
+    for n in COVID_queryset: # 根据疫情相关新闻筛选
+        title = n.title
+        # print(title)
+        if title in title_set: continue # 如果title已经出现过, 则进行去重
+        if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
+        tmp = {}
+        tmp['title'] = title
+        tmp['newsid'] = n.newsid
+        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+        tmp['views'] = []
+        tmp['source'] = n.customer
+        
+        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
+        for v in Viewsinfo.objects.filter(newsid=n.newsid):
+            # 筛选效果较好的观点
+            if len(v.viewpoint) < 10: continue
+            if v.country == '': continue
+            tmp['views'].append(
+                {
+                    'personname': v.personname,
+                    'orgname': v.orgname,
+                    'pos': v.pos,
+                    'verb': v.verb,
+                    'viewpoint': v.viewpoint,
+                    'country': v.country,
+                    'source': n.customer,
+                    'time': v.time
+                }
+            )
+
+        show_news_list.append(tmp)
+        title_set.add(n.title)
+        count += 1
+        if count >= 10: break 
+   
+    
+    '''
     # 加载主页面的显示月份(用于左上角、右上角以及右下角的数据处理)
     with codecs.open("WuhanBackend/dict/main_page.json",'r','utf-8') as jf:
         theme_date = json.load(jf)
     influence_data = {} # {content_label:[n_data1, n_data2} 
-    show_news_list = time_news_dict[theme_date[theme]]   # 获取距离当前最近的趋势波峰时间数据
     
+    show_news_list = time_news_dict[theme_date[theme]]   # 获取距离当前最近的趋势波峰时间数据
     
     show_news_list = sorted(show_news_list, key=lambda new: new['crisis'], reverse=True) # 根据危机指数进行降序排序 
     influence_max = show_news_list[0]['influence'] # 用于计算影响力指数的归一化 
+
+    influence_data = {} # {content_label:[n_data1, n_data2} 
     
     # 选取SHOW_NEWS_NUM个新闻进行左上角的新闻展示
     for i in range(0, SHOW_NEWS_NUM): 
@@ -131,19 +252,26 @@ def search_main(request):
                 }
             )
     
-    # 选取前100个进行右下角的事件影响力展示
-    for i in range(0, 100):
-        n = show_news_list[i]
-        # 右下角事件影响力处理
-        influence_value = float(n['influence'])/influence_max * 100
-        n_data = [n['time'], influence_value, n['title']]
+    '''
+    # 选取crisis前100的数据进行右下角的危机事件展示
+    count = 0
+    title_set = set()
+    crisis_data = {} # {content_label:[n_data1, n_data2} 
+    for n in crisis_queryset:
+        # 右下角事件危机指数处理
+        if n.title in title_set: continue # 如果title已经出现过, 则进行去重
+        crisis_value = n.crisis
+        n_data = [n.time.strftime('%Y-%m-%d %H:%M:%S'), crisis_value, n.title]
+        crisis_label = n.content_label.split(' ')[0] # 此处仅显示新闻的第一个标签作为新闻分类
             
-        influence_label = n['content_label'].split(' ')[0] # 此处仅显示新闻的第一个标签作为新闻分类
-            
-        if influence_label in influence_data:
-            influence_data[influence_label].append(n_data)
+        if crisis_label in crisis_data:
+            crisis_data[crisis_label].append(n_data)
         else:
-            influence_data[influence_label] = [n_data]
+            crisis_data[crisis_label] = [n_data]
+        
+        title_set.add(n.title)
+        count += 1
+        if count >= 100: break 
 
     # 加载专题下国家-观点数量数据
     pkl_rf = open("WuhanBackend/dict/echarts_zhcountry_set.pkl",'rb')
@@ -163,7 +291,7 @@ def search_main(request):
 
     # 结果封装
     result = {}
-    result["news_views_data"] = show_news_list[:SHOW_NEWS_NUM] # 只返回设置的新闻个数
+    result["news_views_data"] = show_news_list # 返回左上角和右上角的新闻数据
     result['map_data'] = {  # 地图数据
         "max": max_views,
         "min": 0,
@@ -181,7 +309,7 @@ def search_main(request):
     # 右下角气泡图数据封装
     legend_data = []
     series_data = []
-    for key, value in influence_data.items():
+    for key, value in crisis_data.items():
         legend_data.append(key)
         series_data.append({
             'name': key,
@@ -273,7 +401,7 @@ def search_xuanti(request):
         q = q & tmp_q
 
     # 查询语句
-    news_queryset = Newsinfo.objects.filter(q).order_by('time')
+    news_queryset = Newsinfo.objects.filter(q).order_by('-time')
     totalElements = len(news_queryset)
     news_queryset = news_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
@@ -410,8 +538,8 @@ def search_eventa(request):
     
     # 以下三行测试开发时使用
     # theme = '南海'
-    # start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
-    # end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
+    # start_time = datetime.datetime.strptime('2020-04-01', '%Y-%m-%d')
+    # end_time = datetime.datetime.strptime('2020-04-15', '%Y-%m-%d')
         
     # 主题处理
     theme = request.GET['theme']   # 主题参数
@@ -424,8 +552,8 @@ def search_eventa(request):
         # print("start_time != end_time")
         all_time = False # 如果两者时间不同, 则有时间限制
     else: # 两者时间相同, 给出默认时间
-        start_time = datetime.datetime.strptime('2019-11-20', '%Y-%m-%d')
-        end_time = datetime.datetime.strptime('2019-11-27', '%Y-%m-%d')
+        start_time = datetime.datetime.strptime('2020-04-01', '%Y-%m-%d')
+        end_time = datetime.datetime.strptime('2020-04-15', '%Y-%m-%d')
 
     # 根据theme与start_time, end_time检查缓存
     search_key = theme + "_" + start_time.strftime("%Y%m%d") + "_" + end_time.strftime("%Y%m%d")
@@ -446,22 +574,22 @@ def search_eventa(request):
         # params['start_time'] = start_time
         # params['end_time'] = end_time
         q = q & Q(time__range=(start_time, end_time))
-    
+    '''
     if all_keywords is False: # 具有关键词限制
         tmp_q = Q()
         for word in words_list:
             # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
             tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
         q = q & tmp_q
-
+    '''
     # 查询语句
     news_queryset = Newsinfo.objects.filter(q)
     # print(news_queryset.count())
 
-
     # 遍历新闻数据, 获取相关信息
     newsid_set = set()
     time_news_dict = {}
+    nextevent_dict = {} # 事件预测字典处理 {event: weight}
     # 根据查询日期按天递增构建初始化字典
     nowtime = start_time
     delta_time = datetime.timedelta(days=1) # 用于时间轴的不连续问题 
@@ -476,6 +604,22 @@ def search_eventa(request):
             time_news_dict[time_str].append(n)
         else:
             print("search_eventa time_news_dict error: time_str not in start_time-end_time")
+        
+        # 事件预测数据处理
+        event_list = n.nextevent.split(',') # 根据','分割多个候选事件
+        for e in event_list:
+            e_str, weight = e.split(':')
+            if e_str in nextevent_dict:
+                if e_str != '无风险事件':
+                    nextevent_dict[e_str] += int(weight) * 10
+                else:
+                    nextevent_dict[e_str] += int(weight)
+            else:
+                if e_str != '无风险事件':
+                    nextevent_dict[e_str] = int(weight) * 10
+                else:
+                    nextevent_dict[e_str] = int(weight)
+
     # print(time_news_dict)
 
     # 根据newsid查询观点
@@ -589,12 +733,13 @@ def search_eventa(request):
     }
 
     # 事件预测模块处理
-    nextevent_des_list = ['美舰队航行','发表南海自由航行言论','其它']
-    nextevent_exp_list = [24, 25, 36]
+    # nextevent_des_list = ['美舰队航行','发表南海自由航行言论','其它']
+    # nextevent_exp_list = [24, 25, 36]
     eventpre_data = {
-        'legend_data': nextevent_des_list,
-        'data': [{'name': x, 'value': y} for x, y in zip(nextevent_des_list, nextevent_exp_list)]
+        'legend_data': list(nextevent_dict.keys()),
+        'data': [{'name': x, 'value': y} for x, y in nextevent_dict.items()]
     }
+    # print(eventpre_data)
 
     # 数据返回封装
     result = {}
