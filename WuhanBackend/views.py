@@ -9,6 +9,7 @@ import codecs
 import json
 import pickle
 import os
+import time
 
 from WuhanBackend.models import Newsinfo, Viewsinfo
 from WuhanBackend.SearchFunc import get_news_by_time, get_news_by_theme
@@ -21,11 +22,12 @@ def foo(request):
 
 # 主页面查询函数
 def search_main(request):
+    
 
     SHOW_NEWS_NUM = 30 # 显示的新闻个数
     # 主页面只接收主题信息
-    theme = request.GET['theme']   # 主题参数
-    # theme = '南海'   # 主题参数
+    # theme = request.GET['theme']   # 主题参数
+    theme = '南海'   # 主题参数
     
     # 组合参数查询, 利用Q的多条件查询
     q = Q()
@@ -75,7 +77,7 @@ def search_main(request):
     sentiment_neg = []
     sorted_data = []
     
-    for time, newslist in time_news_dict.items():
+    for t, newslist in time_news_dict.items():
         # date_list.append(datetime.datetime.strptime(time, '%Y-%m'))
         # 热度趋势数据处理
         # hot_num.append(len(newslist))
@@ -88,7 +90,7 @@ def search_main(request):
 
         # sentiment_pos.append(float("%.2f" % pos_num))
         # sentiment_neg.append(float("%.2f" % neg_num))
-        sorted_data.append((datetime.datetime.strptime(time, '%Y-%m'), len(newslist), float("%.2f" % pos_num), float("%.2f" % neg_num)))
+        sorted_data.append((datetime.datetime.strptime(t, '%Y-%m'), len(newslist), float("%.2f" % pos_num), float("%.2f" % neg_num)))
 
     sorted_data = sorted(sorted_data, key=lambda x: x[0]) # 根据时间进行升序排序
 
@@ -98,19 +100,25 @@ def search_main(request):
         sentiment_pos.append(data[2])
         sentiment_neg.append(data[3])
     
+   
     # 主页面数据展示(用于左上角、右上角以及右下角的数据处理)
     start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d') # 主页面时间范围, 2020年以来的数据
     show_queryset = Newsinfo.objects.filter(q & Q(time__gte=start_time))
-    time_queryset = show_queryset.order_by('-time')
+    # time_queryset = show_queryset.order_by('-time')
     crisis_queryset = show_queryset.order_by('-crisis')
     COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
     show_news_list = []
     
     # 每种条件筛选10条
     title_set = set()
+
+    start = time.time() # 计算主页面的逻辑处理时间
+    
+    '''
     # 根据日期筛选
     count = 0
     for n in time_queryset: # 根据日期筛选
+        
         title = n.title
         if title in title_set: continue # 如果title已经出现过, 则进行去重
         if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
@@ -120,9 +128,10 @@ def search_main(request):
         tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
         tmp['views'] = []
         tmp['source'] = n.customer
+
         
         # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
-        for v in Viewsinfo.objects.filter(newsid=n.newsid):
+        for v in Viewsinfo.objects.filter(newsid=n):
             # 筛选效果较好的观点
             if len(v.viewpoint) < 10: continue
             if v.country == '': continue
@@ -138,12 +147,13 @@ def search_main(request):
                     'time': v.time
                 }
             )
+       
         
         show_news_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= 10: break 
-    
+    '''
     # 根据危机指数筛选
     count = 0
     for n in crisis_queryset: # 根据危机指数筛选
@@ -175,10 +185,13 @@ def search_main(request):
                 }
             )
 
+        if len(tmp['views']) == 0: continue
         show_news_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= 10: break 
+
+    midend = time.time() # 计算程序运行时间
 
     # 根据疫情相关新闻筛选 
     count = 0
@@ -211,48 +224,15 @@ def search_main(request):
                     'time': v.time
                 }
             )
-
+        
+        if len(tmp['views']) == 0: continue
         show_news_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= 10: break 
    
-    
-    '''
-    # 加载主页面的显示月份(用于左上角、右上角以及右下角的数据处理)
-    with codecs.open("WuhanBackend/dict/main_page.json",'r','utf-8') as jf:
-        theme_date = json.load(jf)
-    influence_data = {} # {content_label:[n_data1, n_data2} 
-    
-    show_news_list = time_news_dict[theme_date[theme]]   # 获取距离当前最近的趋势波峰时间数据
-    
-    show_news_list = sorted(show_news_list, key=lambda new: new['crisis'], reverse=True) # 根据危机指数进行降序排序 
-    influence_max = show_news_list[0]['influence'] # 用于计算影响力指数的归一化 
-
-    influence_data = {} # {content_label:[n_data1, n_data2} 
-    
-    # 选取SHOW_NEWS_NUM个新闻进行左上角的新闻展示
-    for i in range(0, SHOW_NEWS_NUM): 
-        n = show_news_list[i]
-        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
-        for v in Viewsinfo.objects.filter(newsid=n['newsid']):
-            # 筛选效果较好的观点
-            if len(v.viewpoint) < 10: continue
-            if v.country == '': continue
-            n['views'].append(
-                {
-                    'personname': v.personname,
-                    'orgname': v.orgname,
-                    'pos': v.pos,
-                    'verb': v.verb,
-                    'viewpoint': v.viewpoint,
-                    'country': v.country,
-                    'source': n['source'],
-                    'time': v.time
-                }
-            )
-    
-    '''
+    end = time.time()
+ 
     # 选取crisis前100的数据进行右下角的危机事件展示
     count = 0
     title_set = set()
@@ -291,6 +271,7 @@ def search_main(request):
 
     # 结果封装
     result = {}
+    show_news_list = sorted(show_news_list, key=lambda x: x['time'], reverse=True) # 将新闻按照时间降序排序
     result["news_views_data"] = show_news_list # 返回左上角和右上角的新闻数据
     result['map_data'] = {  # 地图数据
         "max": max_views,
@@ -322,7 +303,9 @@ def search_main(request):
         "lengend": legend_data,
         "series": series_data
     }
-    
+
+    print(str(midend-start))
+    print(str(end-start))
     # return JsonResponse({"foo":"title"})
     return JsonResponse(result)
 
