@@ -28,6 +28,18 @@ def search_main(request):
     # 主页面只接收主题信息
     # theme = request.GET['theme']   # 主题参数
     theme = '南海'   # 主题参数
+    cathe_flag = True # 是否使用cache
+
+
+    # 根据theme检查缓存
+    search_key = theme + "_mainpage"
+    cache_file_name = "WuhanBackend/cache/" + search_key + ".pkl"
+    if not os.path.exists("WuhanBackend/cache/"):   # 文件夹不存在则创建文件夹
+        os.mkdir("WuhanBackend/cache/")
+    if cathe_flag and os.path.exists(cache_file_name): # 缓存已经存在
+        pkl_rf = open(cache_file_name,'rb')
+        result = pickle.load(pkl_rf)
+        return JsonResponse(result)
     
     # 组合参数查询, 利用Q的多条件查询
     q = Q()
@@ -304,9 +316,14 @@ def search_main(request):
         "series": series_data
     }
 
-    print(str(midend-start))
-    print(str(end-start))
+    # print(str(midend-start))
+    # print(str(end-start))
     # return JsonResponse({"foo":"title"})
+    
+    if cathe_flag:
+        # 将查询结果进行缓存
+        pkwf = open(cache_file_name,"wb") 
+        pickle.dump(result, pkwf) 
     return JsonResponse(result)
 
 
