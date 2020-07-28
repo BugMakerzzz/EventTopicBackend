@@ -20,6 +20,16 @@ def foo(request):
     result = {'what':'foo'}
     return JsonResponse(result)
 
+# 缓存信息清除函数
+def clear_cathe(request):
+    result = {'clear_cathe':'success'}
+    if os.path.exists("WuhanBackend/cache/"):   # 缓存文件夹存在, 清除缓存信息
+        cache_files = os.listdir("WuhanBackend/cache/")
+        for f in cache_files:
+            # print(os.path.join("WuhanBackend/cache/", f))
+            os.remove(os.path.join("WuhanBackend/cache/", f))
+    return JsonResponse(result)
+
 # 主页面查询函数
 def search_main(request):
     
@@ -534,7 +544,7 @@ def search_eventa(request):
     # all_content = True
     all_time = False
     all_keywords = True
-    cathe_flag = False # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
+    cathe_flag = True # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
     
     # 以下三行测试开发时使用
     # theme = '南海'
@@ -748,9 +758,10 @@ def search_eventa(request):
     result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
     
-    # 将查询结果进行缓存
-    pkwf = open(cache_file_name,"wb") 
-    pickle.dump(result, pkwf) 
+    if cathe_flag:
+        # 将查询结果进行缓存
+        pkwf = open(cache_file_name,"wb") 
+        pickle.dump(result, pkwf) 
 
     # return JsonResponse({"foo":"title"})
     return JsonResponse(result)
