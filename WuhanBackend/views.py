@@ -26,8 +26,8 @@ def search_main(request):
 
     SHOW_NEWS_NUM = 30 # 显示的新闻个数
     # 主页面只接收主题信息
-    # theme = request.GET['theme']   # 主题参数
-    theme = '南海'   # 主题参数
+    theme = request.GET['theme']   # 主题参数
+    # theme = '南海'   # 主题参数
     cathe_flag = True # 是否使用cache
 
 
@@ -319,7 +319,7 @@ def search_main(request):
     # print(str(midend-start))
     # print(str(end-start))
     # return JsonResponse({"foo":"title"})
-    
+
     if cathe_flag:
         # 将查询结果进行缓存
         pkwf = open(cache_file_name,"wb") 
