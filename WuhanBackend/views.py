@@ -11,7 +11,7 @@ import pickle
 import os
 import time
 
-from WuhanBackend.models import Newsinfo, Viewsinfo
+from WuhanBackend.models import Newsinfo, Viewsinfo, Othernewsinfo
 from WuhanBackend.SearchFunc import get_news_by_time, get_news_by_theme
 from WuhanBackend.ClusterVps import k_means_tfidf
 
@@ -350,6 +350,13 @@ def search_xuanti(request):
     # 主题处理
     theme = request.GET['theme']   # 主题参数
     # theme = '南海'   # 主题参数
+    language = request.GET['language'] # 语言参数
+    # language = "韩文"
+    language_dict = { # 数据库字段写的时候脑抽了....
+        "英文": "英语",
+        "日文": "日语",
+        "韩文": "韩语"
+    }
 
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
@@ -364,66 +371,67 @@ def search_xuanti(request):
         end_time = datetime.datetime.strptime('2020-07-01', '%Y-%m-%d')
         all_time = False   
 
-    # language = request.GET['language']
-    # print(language)
-    # print(request.GET['kws_kinds'])
-    # print(request.GET['include_text'])    # 是否搜索正文内容
-    
-
-    # print(theme)
-    # print(request.GET['pageno'])
     pageno = int(request.GET['pageno']) # 当前页面编号
     # pageno = 1 # 当前页面编号
     pagesize = int(request.GET['size']) # 页面数据个数
     # pagesize = 64 # 页面数据个数
 
-    words = request.GET['kws'].strip()
-    # words = []
+    # words = request.GET['kws'].strip()
+    words = []
     if len(words) > 0:
         words_list = re.split(' |,|，|;|：', words)
         all_keywords = False
-
-    # 组合参数查询, 利用Q的多条件查询
-    q = Q()
-    q = q & Q(theme_label=theme)
-
-    '''
-    if all_theme is False: # 具有主题限制
-        # params['theme'] = theme_list
-        q = q & Q(theme_label__in=theme_list)
-
-    if all_content is False: # 具有事件标签限制
-        # params['content_label'] = content_label_list
-        q = q & Q(content_label__in=content_label_list)
-    '''
-
-    if all_time is False:   # 具有时间范围限制
-        # params['start_time'] = start_time
-        # params['end_time'] = end_time
-        q = q & Q(time__range=(start_time, end_time))
     
+    if language != "中文":
+        q = Q()
+        q = q & Q(theme_label=theme) & Q(language=language_dict[language])
+        
+        if all_keywords is False: # 具有关键词限制
+            tmp_q = Q()
+            for word in words_list:
+                # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
+                tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
+            q = q & tmp_q
+        news_queryset = Othernewsinfo.objects.filter(q).order_by('-time')
+    else:
+        # 组合参数查询, 利用Q的多条件查询
+        q = Q()
+        q = q & Q(theme_label=theme)
 
-    if all_keywords is False: # 具有关键词限制
-        tmp_q = Q()
-        for word in words_list:
-            # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
-            tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
-        q = q & tmp_q
+        if all_time is False:   # 具有时间范围限制
+            # params['start_time'] = start_time
+            # params['end_time'] = end_time
+            q = q & Q(time__range=(start_time, end_time))
+        
+        if all_keywords is False: # 具有关键词限制
+            tmp_q = Q()
+            for word in words_list:
+                # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
+                tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
+            q = q & tmp_q
 
-    # 查询语句
-    news_queryset = Newsinfo.objects.filter(q).order_by('-time')
-    totalElements = len(news_queryset)
-    news_queryset = news_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
-
-    title_set = set() # 用于title去重
-    # 数据返回封装
-    result = {}
+        # 查询语句
+        news_queryset = Newsinfo.objects.filter(q).order_by('-time')
+    
+    
     newsList = []
+    
     # 根据title去重
+    title_set = set() # 用于title去重
+    
     for new in news_queryset:
         if new.title not in title_set:
             title_set.add(new.title)
             newsList.append(model_to_dict(new))
+    
+    totalElements = len(newsList)
+
+    newsList = newsList[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
+
+
+    # 数据返回封装
+    result = {}
+
     result['newsList'] = newsList
     result['totalElements'] = totalElements
 
@@ -621,12 +629,12 @@ def search_eventa(request):
             e_str, weight = e.split(':')
             if e_str in nextevent_dict:
                 if e_str != '无风险事件':
-                    nextevent_dict[e_str] += int(weight) * 10
+                    nextevent_dict[e_str] += int(weight) * 5
                 else:
                     nextevent_dict[e_str] += int(weight)
             else:
                 if e_str != '无风险事件':
-                    nextevent_dict[e_str] = int(weight) * 10
+                    nextevent_dict[e_str] = int(weight) * 5
                 else:
                     nextevent_dict[e_str] = int(weight)
 
