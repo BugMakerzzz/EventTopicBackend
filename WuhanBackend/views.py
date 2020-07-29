@@ -629,12 +629,12 @@ def search_eventa(request):
             e_str, weight = e.split(':')
             if e_str in nextevent_dict:
                 if e_str != '无风险事件':
-                    nextevent_dict[e_str] += int(weight) * 5
+                    nextevent_dict[e_str] += int(weight)
                 else:
                     nextevent_dict[e_str] += int(weight)
             else:
                 if e_str != '无风险事件':
-                    nextevent_dict[e_str] = int(weight) * 5
+                    nextevent_dict[e_str] = int(weight)
                 else:
                     nextevent_dict[e_str] = int(weight)
 
