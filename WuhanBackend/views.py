@@ -11,6 +11,8 @@ import pickle
 import os
 import time
 
+from WuhanBackend.settings import BASE_DIR
+
 from WuhanBackend.models import Newsinfo, Viewsinfo, Othernewsinfo
 from WuhanBackend.SearchFunc import get_news_by_time, get_news_by_theme
 from WuhanBackend.ClusterVps import k_means_tfidf
@@ -43,9 +45,10 @@ def search_main(request):
 
     # 根据theme检查缓存
     search_key = theme + "_mainpage"
-    cache_file_name = "WuhanBackend/cache/" + search_key + ".pkl"
-    if not os.path.exists("WuhanBackend/cache/"):   # 文件夹不存在则创建文件夹
-        os.mkdir("WuhanBackend/cache/")
+    cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
+    cache_file_name = os.path.join(BASE_DIR, "WuhanBackend/cache/" + search_key + ".pkl")
+    if not os.path.exists(cache_file_dir):   # 文件夹不存在则创建文件夹
+        os.mkdir(cache_file_dir)
     if cathe_flag and os.path.exists(cache_file_name): # 缓存已经存在
         pkl_rf = open(cache_file_name,'rb')
         result = pickle.load(pkl_rf)
@@ -575,9 +578,11 @@ def search_eventa(request):
 
     # 根据theme与start_time, end_time检查缓存
     search_key = theme + "_" + start_time.strftime("%Y%m%d") + "_" + end_time.strftime("%Y%m%d")
-    cache_file_name = "WuhanBackend/cache/" + search_key + ".pkl"
-    if not os.path.exists("WuhanBackend/cache/"):   # 文件夹不存在则创建文件夹
-        os.mkdir("WuhanBackend/cache/")
+    cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
+    cache_file_name = os.path.join(BASE_DIR, "WuhanBackend/cache/" + search_key + ".pkl")
+    # cache_file_name = "WuhanBackend/cache/" + search_key + ".pkl"
+    if not os.path.exists(cache_file_dir):   # 文件夹不存在则创建文件夹
+        os.mkdir(cache_file_dir)
     if cathe_flag and os.path.exists(cache_file_name): # 缓存已经存在
         pkl_rf = open(cache_file_name,'rb')
         result = pickle.load(pkl_rf)
