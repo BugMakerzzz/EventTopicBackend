@@ -279,9 +279,9 @@ def search_main(request):
         if count >= 100: break 
 
     # 加载专题下国家-观点数量数据
-    pkl_rf = open(os.path.join(BASE_DIR,"WuhanBackend/dict/echarts_zhcountry_set.pkl",'rb'))
+    pkl_rf = open(os.path.join(BASE_DIR,"WuhanBackend/dict/echarts_zhcountry_set.pkl"),'rb')
     zhcountry_set = pickle.load(pkl_rf)
-    pkl_rf = open(os.path.join(BASE_DIR,"WuhanBackend/dict/" + theme+ "_countryviews_dict.pkl",'rb'))
+    pkl_rf = open(os.path.join(BASE_DIR,"WuhanBackend/dict/" + theme+ "_countryviews_dict.pkl"),'rb')
     countryviews_dict = pickle.load(pkl_rf)
     # 补全全部国家信息
     for i in zhcountry_set: 
