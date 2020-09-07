@@ -621,13 +621,14 @@ def search_view(request):
     
     # 查询语句
     views_queryset = Viewsinfo.objects.filter(view_q).order_by('time')
-    totalElements = len(views_queryset)
-    views_queryset = views_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
+    # totalElements = len(views_queryset)
+    # views_queryset = views_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
 
     # 数据返回封装
     result = {}
-    result['viewsList'] = []
+    view_list = []
+    # result['viewsList'] = []
     view_set = set() # 观点数据去重处理
     for view in views_queryset:
         # 此时可以直接通过view.newsid来获取news的相关信息
@@ -650,9 +651,10 @@ def search_view(request):
             'source': view.newsid.customer
         }
         # print(view_tmp)
-        result['viewsList'].append(view_tmp)
+        view_list.append(view_tmp)
         view_set.add(view.viewpoint)
 
+    result['viewsList'] = view_list[(pageno - 1) * pagesize: pageno * pagesize]
     result['totalElements'] = totalElements
 
 
