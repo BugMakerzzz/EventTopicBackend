@@ -400,8 +400,8 @@ def search_xuanti(request):
         newsid_list = [] 
         for news in main_result['news_views_data']:
             newsid_list.append(news['newsid'])
-        
-        q = q & Q(newsid__in=newsid_list) # 根据id列表筛选数据
+      
+        q = Q(newsid__in=newsid_list) # 根据id列表筛选数据
         news_queryset = Newsinfo.objects.filter(q).order_by('-time')
 
     # 二级页面的数据查询处理
