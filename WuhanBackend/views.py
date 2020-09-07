@@ -387,7 +387,7 @@ def search_xuanti(request):
         all_keywords = False
     
     # 从主页面初次点进二级页面后的默认数据
-    if default_info：
+    if default_info:
         # 根据theme检查缓存
         search_key = theme + "_mainpage"
         cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
