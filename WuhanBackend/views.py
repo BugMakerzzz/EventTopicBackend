@@ -240,6 +240,7 @@ def search_main(request):
             if v.country == '': continue
             tmp['views'].append(
                 {
+                    'viewid': v.viewid,
                     'personname': v.personname,
                     'orgname': v.orgname,
                     'pos': v.pos,
@@ -462,57 +463,58 @@ def search_xuanti(request):
 def search_view(request):
     
     # 前端查询参数处理
-    all_time = True
     all_keywords = True
-
+    default_info = False # 默认展示数据
+    
     # 主题处理
     theme = request.GET['theme']   # 主题参数
     
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
     end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
-    if start_time != end_time:
-        # print("start_time != end_time")
-        all_time = False # 如果两者时间不同, 则有时间限制
-    else:
-        if theme == "南海": # 默认选取主页面新闻的选取时间
-            start_time = datetime.datetime.strptime('2019-11-01', '%Y-%m-%d')
-            end_time = datetime.datetime.strptime('2019-11-30', '%Y-%m-%d')
-            all_time = False   
-
+    
+    # 刚进入观点页面的展示情况
+    if start_time == end_time:
+        default_info = True
 
     pageno = int(request.GET['pageno']) # 当前页面编号
     pagesize = int(request.GET['size']) # 页面数据个数
     
-
     words = request.GET['kws'].strip()
     if len(words) > 0:
         words_list = re.split(' |,|，|;|：', words)
         all_keywords = False
     
-    # theme = '南海'
-    # pageno = 1
-    # pagesize = 64
-    # words_list = '军事'
-    # all_keywords = False
+    # 观点页面的查询逻辑
+    if default_info:
+        # 根据theme检查缓存
+        search_key = theme + "_mainpage"
+        cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
+        cache_file_name = os.path.join(BASE_DIR, "WuhanBackend/cache/" + search_key + ".pkl")
 
-    # 组合参数查询, 利用Q的多条件查询
-    # news_q = Q(theme_label=theme)
-    # news_q = Q(newsid='3079863039838360687')
+        pkl_rf = open(cache_file_name,'rb')
+        main_result = pickle.load(pkl_rf)
 
-    view_q = Q(newsid__theme_label=theme) # 跨表查询符合条件的view, 正向关联
-
-    if all_time is False:   # 具有时间范围限制
+        # 从主页面数据缓存中获取主页面的展示数据, 然后记录所有的观点id, 从数据库中查询全部信息
+        viewid_list = [] 
+        
+        for news in main_result['news_views_data']:
+            for v in news['views']:
+                viewid_list.append(v['viewid'])
+        view_q = Q(viewid__in=viewid_list) # 根据id列表筛选数据
+    else:
+        view_q = Q(newsid__theme_label=theme) # 跨表查询符合条件的view, 正向关联
         view_q = view_q & Q(time__range=(start_time, end_time))
+        if all_keywords is False: # 具有关键词限制
+            tmp_q = Q()
+            for word in words_list:
+                # tmp_q = tmp_q | Q(viewpoint__contains=word) # 关键词之间是'或'的关系
+                tmp_q = tmp_q & Q(viewpoint__contains=word) # 关键词之间是'与'的关系
+            view_q = view_q & tmp_q
+
     
 
-    if all_keywords is False: # 具有关键词限制
-        tmp_q = Q()
-        for word in words_list:
-            # tmp_q = tmp_q | Q(viewpoint__contains=word) # 关键词之间是'或'的关系
-            tmp_q = tmp_q & Q(viewpoint__contains=word) # 关键词之间是'与'的关系
-        view_q = view_q & tmp_q
-
+    
     # 查询语句
     views_queryset = Viewsinfo.objects.filter(view_q).order_by('time')
     totalElements = len(views_queryset)
