@@ -500,7 +500,7 @@ def search_xuanti(request):
             main_result = pickle.load(pkl_rf)
             for news in main_result['news_views_data']:
                 newsid_list.append(news['newsid'])
-        print(len(newsid_list))
+        # print(len(newsid_list))
         q = Q(newsid__in=newsid_list) # 根据id列表筛选数据
         news_queryset = Newsinfo.objects.filter(q).order_by('-time')
 
