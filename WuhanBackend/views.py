@@ -199,6 +199,7 @@ def search_main(request):
             if v.country == '': continue
             tmp['views'].append(
                 {
+                    'viewid': v.viewid,
                     'personname': v.personname,
                     'orgname': v.orgname,
                     'pos': v.pos,
@@ -369,10 +370,17 @@ def search_xuanti(request):
     if start_time != end_time:
         # print("start_time != end_time")
         all_time = False # 如果两者时间不同, 则有时间限制
+        
+
     else:
         start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d')
         end_time = datetime.datetime.strptime('2020-07-01', '%Y-%m-%d')
-        all_time = False   
+        all_time = False
+
+        search_key = theme + "_mainpage"
+        cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
+        cache_file_name = os.path.join(BASE_DIR, "WuhanBackend/cache/" + search_key + ".pkl")
+
 
     pageno = int(request.GET['pageno']) # 当前页面编号
     # pageno = 1 # 当前页面编号
