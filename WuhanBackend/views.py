@@ -32,9 +32,104 @@ def clear_cathe(request):
             os.remove(os.path.join("WuhanBackend/cache/", f))
     return JsonResponse(result)
 
+# 主页面的新闻筛选展示算法, 用于二级界面缓存文件不存在时的冷启动
+def main_news_show(theme):
+    q = Q(theme_label=theme)
+    # 主页面数据展示(用于左上角、右上角以及右下角的数据处理)
+    start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d') # 主页面时间范围, 2020年以来的数据
+    show_queryset = Newsinfo.objects.filter(q & Q(time__gte=start_time))
+    # time_queryset = show_queryset.order_by('-time')
+    crisis_queryset = show_queryset.order_by('-crisis')
+    COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
+    
+    show_news_list = []
+    
+    # 每种条件筛选20条
+    title_set = set()
+    show_size = 20  # 每种逻辑的show_size
+    start = time.time() # 计算主页面的逻辑处理时间
+    
+    # 根据危机指数筛选
+    count = 0
+    for n in crisis_queryset: # 根据危机指数筛选
+        title = n.title
+        if title in title_set: continue # 如果title已经出现过, 则进行去重
+        if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
+        tmp = {}
+        tmp['title'] = title
+        tmp['newsid'] = n.newsid
+        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+        tmp['views'] = []
+        tmp['source'] = n.customer
+        
+        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
+        for v in Viewsinfo.objects.filter(newsid=n.newsid):
+            # 筛选效果较好的观点
+            if len(v.viewpoint) < 10: continue
+            if v.country == '': continue
+            tmp['views'].append(
+                {
+                    'viewid': v.viewid,
+                    'personname': v.personname,
+                    'orgname': v.orgname,
+                    'pos': v.pos,
+                    'verb': v.verb,
+                    'viewpoint': v.viewpoint,
+                    'country': v.country,
+                    'source': n.customer,
+                    'time': v.time
+                }
+            )
+
+        if len(tmp['views']) == 0: continue
+        show_news_list.append(tmp)
+        title_set.add(n.title)
+        count += 1
+        if count >= show_size: break 
+
+    # 根据疫情相关新闻筛选 
+    count = 0
+    for n in COVID_queryset: # 根据疫情相关新闻筛选
+        title = n.title
+        # print(title)
+        if title in title_set: continue # 如果title已经出现过, 则进行去重
+        if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
+        tmp = {}
+        tmp['title'] = title
+        tmp['newsid'] = n.newsid
+        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+        tmp['views'] = []
+        tmp['source'] = n.customer
+        
+        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
+        for v in Viewsinfo.objects.filter(newsid=n.newsid):
+            # 筛选效果较好的观点
+            if len(v.viewpoint) < 10: continue
+            if v.country == '': continue
+            tmp['views'].append(
+                {
+                    'viewid': v.viewid,
+                    'personname': v.personname,
+                    'orgname': v.orgname,
+                    'pos': v.pos,
+                    'verb': v.verb,
+                    'viewpoint': v.viewpoint,
+                    'country': v.country,
+                    'source': n.customer,
+                    'time': v.time
+                }
+            )
+        
+        if len(tmp['views']) == 0: continue
+        show_news_list.append(tmp)
+        title_set.add(n.title)
+        count += 1
+        if count >= show_size: break
+
+    return show_news_list 
+
 # 主页面查询函数
 def search_main(request):
-    
 
     SHOW_NEWS_NUM = 30 # 显示的新闻个数
     # 主页面只接收主题信息
@@ -132,11 +227,12 @@ def search_main(request):
     # time_queryset = show_queryset.order_by('-time')
     crisis_queryset = show_queryset.order_by('-crisis')
     COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
+    
     show_news_list = []
     
     # 每种条件筛选10条
     title_set = set()
-
+    show_size = 20  # 每种逻辑的show_size
     start = time.time() # 计算主页面的逻辑处理时间
     
     '''
@@ -215,7 +311,7 @@ def search_main(request):
         show_news_list.append(tmp)
         title_set.add(n.title)
         count += 1
-        if count >= 10: break 
+        if count >= show_size: break 
 
     midend = time.time() # 计算程序运行时间
 
@@ -256,7 +352,7 @@ def search_main(request):
         show_news_list.append(tmp)
         title_set.add(n.title)
         count += 1
-        if count >= 10: break 
+        if count >= show_size: break 
    
     end = time.time()
  
@@ -341,7 +437,6 @@ def search_main(request):
         pickle.dump(result, pkwf) 
     return JsonResponse(result)
 
-
 # 综合选题页面查询函数
 @csrf_exempt    #关闭csrf保护功能
 def search_xuanti(request):
@@ -393,15 +488,19 @@ def search_xuanti(request):
         search_key = theme + "_mainpage"
         cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
         cache_file_name = os.path.join(BASE_DIR, "WuhanBackend/cache/" + search_key + ".pkl")
-
-        pkl_rf = open(cache_file_name,'rb')
-        main_result = pickle.load(pkl_rf)
-
+        
+        newsid_list = []
         # 从主页面数据缓存中获取主页面的展示数据, 然后记录其新闻id, 从数据库中查询全部信息
-        newsid_list = [] 
-        for news in main_result['news_views_data']:
-            newsid_list.append(news['newsid'])
-      
+        if not os.path.exists(cache_file_name): # 如果缓存文件不存在
+            news_views_list = main_news_show(theme)
+            for news in news_views_list:
+                newsid_list.append(news['newsid'])
+        else:
+            pkl_rf = open(cache_file_name,'rb')
+            main_result = pickle.load(pkl_rf)
+            for news in main_result['news_views_data']:
+                newsid_list.append(news['newsid'])
+        
         q = Q(newsid__in=newsid_list) # 根据id列表筛选数据
         news_queryset = Newsinfo.objects.filter(q).order_by('-time')
 
@@ -422,7 +521,6 @@ def search_xuanti(request):
             # 组合参数查询, 利用Q的多条件查询
             q = Q()
             q = q & Q(theme_label=theme)
-
             q = q & Q(time__range=(start_time, end_time))
             
             if all_keywords is False: # 具有关键词限制
@@ -492,16 +590,22 @@ def search_view(request):
         cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
         cache_file_name = os.path.join(BASE_DIR, "WuhanBackend/cache/" + search_key + ".pkl")
 
-        pkl_rf = open(cache_file_name,'rb')
-        main_result = pickle.load(pkl_rf)
+        viewid_list = []
+        # 从主页面数据缓存中获取主页面的展示数据, 然后记录所有的观点id, 从数据库中查询全部信息 
+        if not os.path.exists(cache_file_name): # 如果缓存文件不存在
+            # 从主页面数据缓存中获取主页面的展示数据, 然后记录所有的观点id, 从数据库中查询全部信息
+            news_views_list = main_news_show(theme) 
+            for news in news_views_list:
+                for v in news['views']:
+                    viewid_list.append(v['viewid'])
+        else:
+            pkl_rf = open(cache_file_name,'rb')
+            main_result = pickle.load(pkl_rf)
+            for news in main_result['news_views_data']:
+                for v in news['views']:
+                    viewid_list.append(v['viewid'])
 
-        # 从主页面数据缓存中获取主页面的展示数据, 然后记录所有的观点id, 从数据库中查询全部信息
-        viewid_list = [] 
-        
-        for news in main_result['news_views_data']:
-            for v in news['views']:
-                viewid_list.append(v['viewid'])
-        view_q = Q(viewid__in=viewid_list) # 根据id列表筛选数据
+        view_q = Q(viewid__in=viewid_list) # 根据id列表筛选数据    
     else:
         view_q = Q(newsid__theme_label=theme) # 跨表查询符合条件的view, 正向关联
         view_q = view_q & Q(time__range=(start_time, end_time))
@@ -532,6 +636,11 @@ def search_view(request):
         if view.viewpoint in view_set:
             continue
         view_tmp = model_to_dict(view)
+        
+        # 根据国家补全机构
+        if view_tmp['orgname'] == '':
+            view_tmp['orgname'] = view_tmp['country']
+        
         view_tmp['time'] = view_tmp['time'].strftime('%Y-%m-%d') 
         view_tmp['newsinfo'] = {
             'title': view.newsid.title,
@@ -790,3 +899,7 @@ def search_eventa(request):
 
     # return JsonResponse({"foo":"title"})
     return JsonResponse(result)
+
+
+
+   
