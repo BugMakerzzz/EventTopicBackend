@@ -653,7 +653,7 @@ def search_view(request):
         # print(view_tmp)
         view_list.append(view_tmp)
         view_set.add(view.viewpoint)
-
+    totalElements = len(view_list)
     result['viewsList'] = view_list[(pageno - 1) * pagesize: pageno * pagesize]
     result['totalElements'] = totalElements
 
