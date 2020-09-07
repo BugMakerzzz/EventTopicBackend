@@ -350,6 +350,7 @@ def search_xuanti(request):
     # all_content = True
     all_time = True
     all_keywords = True
+    default_info = False
 
     # 主题处理
     theme = request.GET['theme']   # 主题参数
@@ -367,62 +368,71 @@ def search_xuanti(request):
     end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d') 
     # start_time = datetime.datetime.strptime('2019-11-01', '%Y-%m-%d')
     # end_time = datetime.datetime.strptime('2019-11-30', '%Y-%m-%d') 
-    if start_time != end_time:
-        # print("start_time != end_time")
-        all_time = False # 如果两者时间不同, 则有时间限制
+    
+    # 刚刚进入子页面, 未选择时间时的参数状态
+    if start_time == end_time:
+        if language == "中文": # 从缓存中获取要展示的信息
+            default_info = True
+        else:
+            start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d')
+            end_time = datetime.datetime.strptime('2020-07-01', '%Y-%m-%d')
         
-
-    else:
-        start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d')
-        end_time = datetime.datetime.strptime('2020-07-01', '%Y-%m-%d')
-        all_time = False
-
-        search_key = theme + "_mainpage"
-        cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
-        cache_file_name = os.path.join(BASE_DIR, "WuhanBackend/cache/" + search_key + ".pkl")
-
-
     pageno = int(request.GET['pageno']) # 当前页面编号
-    # pageno = 1 # 当前页面编号
     pagesize = int(request.GET['size']) # 页面数据个数
-    # pagesize = 64 # 页面数据个数
 
-    # words = request.GET['kws'].strip()
-    words = []
+    words = request.GET['kws'].strip()
+    # words = []
     if len(words) > 0:
         words_list = re.split(' |,|，|;|：', words)
         all_keywords = False
     
-    if language != "中文":
-        q = Q()
-        q = q & Q(theme_label=theme) & Q(language=language_dict[language])
-        
-        if all_keywords is False: # 具有关键词限制
-            tmp_q = Q()
-            for word in words_list:
-                # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
-                tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
-            q = q & tmp_q
-        news_queryset = Othernewsinfo.objects.filter(q).order_by('-time')
-    else:
-        # 组合参数查询, 利用Q的多条件查询
-        q = Q()
-        q = q & Q(theme_label=theme)
+    # 从主页面初次点进二级页面后的默认数据
+    if default_info：
+        # 根据theme检查缓存
+        search_key = theme + "_mainpage"
+        cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
+        cache_file_name = os.path.join(BASE_DIR, "WuhanBackend/cache/" + search_key + ".pkl")
 
-        if all_time is False:   # 具有时间范围限制
-            # params['start_time'] = start_time
-            # params['end_time'] = end_time
-            q = q & Q(time__range=(start_time, end_time))
-        
-        if all_keywords is False: # 具有关键词限制
-            tmp_q = Q()
-            for word in words_list:
-                # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
-                tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
-            q = q & tmp_q
+        pkl_rf = open(cache_file_name,'rb')
+        main_result = pickle.load(pkl_rf)
 
-        # 查询语句
+        # 从主页面数据缓存中获取主页面的展示数据, 然后记录其新闻id, 从数据库中查询全部信息
+        newsid_list = [] 
+        for news in main_result['news_views_data']:
+            newsid_list.append(news['newsid'])
+        
+        q = q & Q(newsid__in=newsid_list) # 根据id列表筛选数据
         news_queryset = Newsinfo.objects.filter(q).order_by('-time')
+
+    # 二级页面的数据查询处理
+    else:
+        if language != "中文":
+            q = Q()
+            q = q & Q(theme_label=theme) & Q(language=language_dict[language])
+            
+            if all_keywords is False: # 具有关键词限制
+                tmp_q = Q()
+                for word in words_list:
+                    # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
+                    tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
+                q = q & tmp_q
+            news_queryset = Othernewsinfo.objects.filter(q).order_by('-time')
+        else:
+            # 组合参数查询, 利用Q的多条件查询
+            q = Q()
+            q = q & Q(theme_label=theme)
+
+            q = q & Q(time__range=(start_time, end_time))
+            
+            if all_keywords is False: # 具有关键词限制
+                tmp_q = Q()
+                for word in words_list:
+                    # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
+                    tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
+                q = q & tmp_q
+
+            # 查询语句
+            news_queryset = Newsinfo.objects.filter(q).order_by('-time')
     
     
     newsList = []
@@ -446,14 +456,6 @@ def search_xuanti(request):
     result['newsList'] = newsList
     result['totalElements'] = totalElements
 
-    '''
-    # 将数据写入结果文件以便前端调试
-    for news in result['newsList']:
-        news['time'] = news['time'].strftime('%Y-%m-%d')
-    
-    with codecs.open("xuanti_demo.json", "w", 'utf-8') as wf:
-        json.dump(result, wf, indent=4)
-    '''
     return JsonResponse(result)
 
 # 专家观点页面查询函数
