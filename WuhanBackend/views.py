@@ -655,7 +655,7 @@ def search_view(request):
         }
         # print(view_tmp)
         # view_list.append(view_tmp)
-        if view_tmp['personname'] = '':
+        if view_tmp['personname'] == '':
             view_noper_list.append(view_tmp)    
         else:
             view_per_list.append(view_tmp)
