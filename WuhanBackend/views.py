@@ -739,7 +739,7 @@ def search_eventa(request):
         q = q & tmp_q
     '''
     # 查询语句
-    news_queryset = Newsinfo.objects.filter(q).order_by('-crisis')
+    news_queryset = Newsinfo.objects.filter(q).order_by('-time')
     # print(news_queryset.count())
 
     # 遍历新闻数据, 获取相关信息
@@ -747,6 +747,7 @@ def search_eventa(request):
     time_news_dict = {}
     nextevent_dict = {} # 事件预测字典处理 {event: weight}
     nextevent_news = {} # 事件预测触发新闻title {event: newslist}
+    title_set = set() # 根据title进行去重
     # 根据查询日期按天递增构建初始化字典
     nowtime = start_time
     delta_time = datetime.timedelta(days=1) # 用于时间轴的不连续问题 
@@ -755,6 +756,9 @@ def search_eventa(request):
         nowtime += delta_time
     for n in news_queryset:
         # print(type(news.viewsinfo_set))
+        # 根据新闻title进行去重
+        if n.title in title_set:
+            continue
         newsid_set.add(n.newsid)
         time_str = n.time.strftime('%Y-%m-%d')
         if time_str in time_news_dict:
@@ -769,17 +773,17 @@ def search_eventa(request):
             if e_str in nextevent_dict:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] += int(weight)
-                    nextevent_news[e_str].append(n.title + "\t" + time_str)
+                    nextevent_news[e_str].append(n.title + "  " + time_str)
                 else:
                     nextevent_dict[e_str] += int(weight)
             else:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] = int(weight)
-                    nextevent_news[e_str] = [n.title + "\t" + time_str]
+                    nextevent_news[e_str] = [n.title + "  " + time_str]
                 else:
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = []
-
+        title_set.add(n.title)
     # print(time_news_dict)
 
     # 根据newsid查询观点
