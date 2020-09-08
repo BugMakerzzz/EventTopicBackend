@@ -620,7 +620,7 @@ def search_view(request):
 
     
     # 查询语句
-    views_queryset = Viewsinfo.objects.filter(view_q).order_by('time')
+    views_queryset = Viewsinfo.objects.filter(view_q).order_by('-time')
     # totalElements = len(views_queryset)
     # views_queryset = views_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
@@ -628,6 +628,9 @@ def search_view(request):
     # 数据返回封装
     result = {}
     view_list = []
+    view_per_list = [] # 有专家人名的观点
+    view_noper_list = [] # 没有专家人名的观点数据
+    
     # result['viewsList'] = []
     view_set = set() # 观点数据去重处理
     for view in views_queryset:
@@ -651,8 +654,15 @@ def search_view(request):
             'source': view.newsid.customer
         }
         # print(view_tmp)
-        view_list.append(view_tmp)
+        # view_list.append(view_tmp)
+        if view_tmp['personname'] = '':
+            view_noper_list.append(view_tmp)    
+        else:
+            view_per_list.append(view_tmp)
+
         view_set.add(view.viewpoint)
+        
+    view_list = view_per_list + view_noper_list
     totalElements = len(view_list)
     result['viewsList'] = view_list[(pageno - 1) * pagesize: pageno * pagesize]
     result['totalElements'] = totalElements
