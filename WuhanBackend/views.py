@@ -739,13 +739,14 @@ def search_eventa(request):
         q = q & tmp_q
     '''
     # 查询语句
-    news_queryset = Newsinfo.objects.filter(q)
+    news_queryset = Newsinfo.objects.filter(q).order_by('-crisis')
     # print(news_queryset.count())
 
     # 遍历新闻数据, 获取相关信息
     newsid_set = set()
     time_news_dict = {}
     nextevent_dict = {} # 事件预测字典处理 {event: weight}
+    nextevent_news = {} # 事件预测触发新闻title {event: newslist}
     # 根据查询日期按天递增构建初始化字典
     nowtime = start_time
     delta_time = datetime.timedelta(days=1) # 用于时间轴的不连续问题 
@@ -768,11 +769,13 @@ def search_eventa(request):
             if e_str in nextevent_dict:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] += int(weight)
+                    nextevent_news[e_str].append(n.title + "\t" + time_str)
                 else:
                     nextevent_dict[e_str] += int(weight)
             else:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] = int(weight)
+                    nextevent_news[e_str] = [n.title + "\t" + time_str]
                 else:
                     nextevent_dict[e_str] = int(weight)
 
@@ -893,7 +896,7 @@ def search_eventa(request):
     # nextevent_exp_list = [24, 25, 36]
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
-        'data': [{'name': x, 'value': y} for x, y in nextevent_dict.items()]
+        'data': [{'name': x, 'value': y, 'news': nextevent_news[x]} for x, y in nextevent_dict.items()]
     }
     # print(eventpre_data)
 
