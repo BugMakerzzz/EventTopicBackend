@@ -756,8 +756,9 @@ def search_eventa(request):
         nowtime += delta_time
     for n in news_queryset:
         # print(type(news.viewsinfo_set))
+        n_title = n.title.replace("原创",'').replace("转贴",'').replace("参考消息",'')
         # 根据新闻title进行去重
-        if n.title in title_set:
+        if n_title in title_set:
             continue
         newsid_set.add(n.newsid)
         time_str = n.time.strftime('%Y-%m-%d')
@@ -773,17 +774,17 @@ def search_eventa(request):
             if e_str in nextevent_dict:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] += int(weight)
-                    nextevent_news[e_str].append(n.title + "  " + time_str)
+                    nextevent_news[e_str].append(n_title + "  " + time_str)
                 else:
                     nextevent_dict[e_str] += int(weight)
             else:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] = int(weight)
-                    nextevent_news[e_str] = [n.title + "  " + time_str]
+                    nextevent_news[e_str] = [n_title + "  " + time_str]
                 else:
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = []
-        title_set.add(n.title)
+        title_set.add(n_title)
     # print(time_news_dict)
 
     # 根据newsid查询观点
