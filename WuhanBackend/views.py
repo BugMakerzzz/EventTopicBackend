@@ -778,6 +778,7 @@ def search_eventa(request):
                     nextevent_news[e_str] = [n.title + "\t" + time_str]
                 else:
                     nextevent_dict[e_str] = int(weight)
+                    nextevent_news[e_str] = []
 
     # print(time_news_dict)
 
