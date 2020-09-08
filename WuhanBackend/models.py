@@ -45,6 +45,8 @@ class Othernewsinfo(models.Model):
     language = models.CharField(max_length=255)
     reliability = models.FloatField()
     crisis = models.FloatField()
+    title_zh = models.CharField(max_length=255)
+    content_zh = models.TextField()
 
     class Meta:
         # managed = False
