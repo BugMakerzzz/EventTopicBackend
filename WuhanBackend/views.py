@@ -808,18 +808,30 @@ def search_eventa(request):
         # 趋势图数据处理
         tendency_time.append(time)
         news_count = len(newslist) # 当天的新闻数量
+
+        # 根据crisis字段对newslist进行排序
+        newslist = sorted(newslist, key=lambda x: x.crisis, reverse=True) # 根据危机指数进行降序排序
+
         if news_count == 0:  # 当天没有检索到新闻的情况
             tendency_news.append({
                 'name': 'None',
                 'value': 0, # 实际曲线
-                'predict_value': 10
+                'predict_value': 10,
+                'crisis_value': 0
             })
         else:
-            title_tmp = newslist[0].title # 每天的关键事件筛选
+            title_tmp = newslist[0].title # 每天的高风险事件筛选
+            # 计算风险度均值
+            crisis_count = 0
+            for n in newslist:
+                crisis_count += n.crisis
+            crisis_count = float(crisis_count) / news_count
+
             tendency_news.append({
                 'name': title_tmp,
                 'value': news_count, # 实际趋势曲线
                 'predict_value': news_count + 10, # 预测曲线
+                'crisis_value': crisis_count
             })
         
         # 时间-新闻轴数据处理
