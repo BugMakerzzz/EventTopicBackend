@@ -165,7 +165,7 @@ def search_main(request):
         if title in title_set: continue # 如果title已经出现过, 则进行去重
 
         tmp = {}
-        tmp['title'] = title
+        tmp['title'] = title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
         tmp['newsid'] = n.newsid
         tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
         # tmp['time'] = n.time.strftime('%Y-%m-%d')
@@ -756,7 +756,7 @@ def search_eventa(request):
         nowtime += delta_time
     for n in news_queryset:
         # print(type(news.viewsinfo_set))
-        n_title = n.title.replace("原创",'').replace("转贴",'').replace("参考消息",'')
+        n_title = n.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
         # 根据新闻title进行去重
         if n_title in title_set:
             continue
