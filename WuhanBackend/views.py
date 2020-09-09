@@ -846,7 +846,7 @@ def search_eventa(request):
             crisis_count = 0
             for n in newslist:
                 crisis_count += n.crisis
-            crisis_count = float("%.2f" % float(crisis_count) / news_count)
+            crisis_count = float("%.2f" % (float(crisis_count) / news_count))
 
             tendency_news.append({
                 'name': title_tmp,
