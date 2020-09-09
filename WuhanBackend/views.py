@@ -282,7 +282,7 @@ def search_main(request):
         if title in title_set: continue # 如果title已经出现过, 则进行去重
         if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
         tmp = {}
-        tmp['title'] = title
+        tmp['title'] = title.replace("原创",'').replace("转帖",'').replace("参考消息",'') # 过滤title信息
         tmp['newsid'] = n.newsid
         tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
         tmp['views'] = []
@@ -323,7 +323,7 @@ def search_main(request):
         if title in title_set: continue # 如果title已经出现过, 则进行去重
         if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
         tmp = {}
-        tmp['title'] = title
+        tmp['title'] = title.replace("原创",'').replace("转帖",'').replace("参考消息",'') # 过滤title信息
         tmp['newsid'] = n.newsid
         tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
         tmp['views'] = []
@@ -841,12 +841,12 @@ def search_eventa(request):
                 'crisis_value': 0
             })
         else:
-            title_tmp = newslist[0].title # 每天的高风险事件筛选
+            title_tmp = newslist[0].title.replace("原创",'').replace("转帖",'').replace("参考消息",'') # 每天的高风险事件筛选
             # 计算风险度均值
             crisis_count = 0
             for n in newslist:
                 crisis_count += n.crisis
-            crisis_count = float(crisis_count) / news_count
+            crisis_count = float("%.2f" % float(crisis_count) / news_count)
 
             tendency_news.append({
                 'name': title_tmp,
