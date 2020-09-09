@@ -542,6 +542,8 @@ def search_xuanti(request):
     for new in news_queryset:
         if new.title not in title_set:
             title_set.add(new.title)
+            new.title = new.title.replace("原创",'').replace("转帖",'').replace("参考消息",'') # 过滤title信息
+            new.reliability = int(new.reliability) # 将新闻的可靠性指数归为整数
             newsList.append(model_to_dict(new))
     
     totalElements = len(newsList)
