@@ -462,25 +462,26 @@ def search_xuanti(request):
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
     end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d') 
-    # start_time = datetime.datetime.strptime('2019-11-01', '%Y-%m-%d')
-    # end_time = datetime.datetime.strptime('2019-11-30', '%Y-%m-%d') 
-    
-    # 刚刚进入子页面, 未选择时间时的参数状态
-    if start_time == end_time:
-        if language == "中文": # 从缓存中获取要展示的信息
-            default_info = True
-        else:
-            start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d')
-            end_time = datetime.datetime.strptime('2020-07-01', '%Y-%m-%d')
-        
-    pageno = int(request.GET['pageno']) # 当前页面编号
-    pagesize = int(request.GET['size']) # 页面数据个数
 
+    # 关键词处理
     words = request.GET['kws'].strip()
     # words = []
     if len(words) > 0:
         words_list = re.split(' |,|，|;|：', words)
         all_keywords = False
+    
+    # 刚刚进入子页面, 未选择时间时的参数状态
+    if start_time == end_time:
+        if language == "中文" and all_keywords: # 如果时间相同,关键词为空且语言为中文, 则为默认值, 从缓存中获取要展示的信息
+            default_info = True
+        else:
+            start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d')
+            end_time = datetime.datetime.strptime('2020-10-01', '%Y-%m-%d')
+        
+    pageno = int(request.GET['pageno']) # 当前页面编号
+    pagesize = int(request.GET['size']) # 页面数据个数
+
+
     
     # 从主页面初次点进二级页面后的默认数据
     if default_info:
@@ -571,19 +572,26 @@ def search_view(request):
     
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
-    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
+    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')
+
+    # 关键词处理
+    words = request.GET['kws'].strip()
+    if len(words) > 0:
+        words_list = re.split(' |,|，|;|：', words)
+        all_keywords = False  
     
     # 刚进入观点页面的展示情况
     if start_time == end_time:
-        default_info = True
+        if all_keywords: # 时间相同、关键词为空, 则为默认值
+            default_info = True
+        else:   # 如果关键词不为空, 则设置默认时间
+            start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d')
+            end_time = datetime.datetime.strptime('2020-10-01', '%Y-%m-%d')
 
     pageno = int(request.GET['pageno']) # 当前页面编号
     pagesize = int(request.GET['size']) # 页面数据个数
     
-    words = request.GET['kws'].strip()
-    if len(words) > 0:
-        words_list = re.split(' |,|，|;|：', words)
-        all_keywords = False
+
     
     # 观点页面的查询逻辑
     if default_info:
