@@ -620,7 +620,7 @@ def search_view(request):
 
     
     # 查询语句
-    views_queryset = Viewsinfo.objects.filter(view_q).order_by('time')
+    views_queryset = Viewsinfo.objects.filter(view_q).order_by('-time')
     # totalElements = len(views_queryset)
     # views_queryset = views_queryset[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
 
@@ -628,6 +628,9 @@ def search_view(request):
     # 数据返回封装
     result = {}
     view_list = []
+    view_per_list = [] # 有专家人名的观点
+    view_noper_list = [] # 没有专家人名的观点数据
+    
     # result['viewsList'] = []
     view_set = set() # 观点数据去重处理
     for view in views_queryset:
@@ -651,8 +654,15 @@ def search_view(request):
             'source': view.newsid.customer
         }
         # print(view_tmp)
-        view_list.append(view_tmp)
+        # view_list.append(view_tmp)
+        if view_tmp['personname'] == '':
+            view_noper_list.append(view_tmp)    
+        else:
+            view_per_list.append(view_tmp)
+
         view_set.add(view.viewpoint)
+
+    view_list = view_per_list + view_noper_list
     totalElements = len(view_list)
     result['viewsList'] = view_list[(pageno - 1) * pagesize: pageno * pagesize]
     result['totalElements'] = totalElements
@@ -729,13 +739,15 @@ def search_eventa(request):
         q = q & tmp_q
     '''
     # 查询语句
-    news_queryset = Newsinfo.objects.filter(q)
+    news_queryset = Newsinfo.objects.filter(q).order_by('-time')
     # print(news_queryset.count())
 
     # 遍历新闻数据, 获取相关信息
     newsid_set = set()
     time_news_dict = {}
     nextevent_dict = {} # 事件预测字典处理 {event: weight}
+    nextevent_news = {} # 事件预测触发新闻title {event: newslist}
+    title_set = set() # 根据title进行去重
     # 根据查询日期按天递增构建初始化字典
     nowtime = start_time
     delta_time = datetime.timedelta(days=1) # 用于时间轴的不连续问题 
@@ -744,6 +756,10 @@ def search_eventa(request):
         nowtime += delta_time
     for n in news_queryset:
         # print(type(news.viewsinfo_set))
+        n_title = n.title.replace("原创",'').replace("转贴",'').replace("参考消息",'')
+        # 根据新闻title进行去重
+        if n_title in title_set:
+            continue
         newsid_set.add(n.newsid)
         time_str = n.time.strftime('%Y-%m-%d')
         if time_str in time_news_dict:
@@ -758,14 +774,17 @@ def search_eventa(request):
             if e_str in nextevent_dict:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] += int(weight)
+                    nextevent_news[e_str].append(n_title + "  " + time_str)
                 else:
                     nextevent_dict[e_str] += int(weight)
             else:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] = int(weight)
+                    nextevent_news[e_str] = [n_title + "  " + time_str]
                 else:
                     nextevent_dict[e_str] = int(weight)
-
+                    nextevent_news[e_str] = []
+        title_set.add(n_title)
     # print(time_news_dict)
 
     # 根据newsid查询观点
@@ -895,7 +914,7 @@ def search_eventa(request):
     # nextevent_exp_list = [24, 25, 36]
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
-        'data': [{'name': x, 'value': y} for x, y in nextevent_dict.items()]
+        'data': [{'name': x, 'value': y, 'news': nextevent_news[x]} for x, y in nextevent_dict.items()]
     }
     # print(eventpre_data)
 
