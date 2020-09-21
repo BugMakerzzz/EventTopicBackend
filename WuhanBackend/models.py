@@ -47,6 +47,8 @@ class Othernewsinfo(models.Model):
     crisis = models.FloatField()
     title_zh = models.CharField(max_length=255)
     content_zh = models.TextField()
+    persons = models.TextField()
+    orgs = models.TextField()
 
     class Meta:
         # managed = False
