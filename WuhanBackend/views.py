@@ -451,7 +451,22 @@ def search_xuanti(request):
     # 主题处理
     theme = request.GET['theme']   # 主题参数
     # theme = '南海'   # 主题参数
-    language = request.GET['language'] # 语言参数
+    
+    # 如果参数列表(dict类型)中没有language字段, 则返回默认值
+    language = request.GET.get('language', '中文') # 语言参数
+
+    '''
+    try:
+        language = request.GET['language'] # 语言参数
+        print("lack of language para")
+    except:
+        language = '中文'
+    '''
+
+    # 如果没有
+    if language == "":
+        language = '中文'
+
     # language = "韩文"
     language_dict = { # 数据库字段写的时候脑抽了....
         "英文": "英语",
