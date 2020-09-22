@@ -25,11 +25,12 @@ def foo(request):
 # 缓存信息清除函数
 def clear_cathe(request):
     result = {'clear_cathe':'success'}
-    if os.path.exists("WuhanBackend/cache/"):   # 缓存文件夹存在, 清除缓存信息
-        cache_files = os.listdir("WuhanBackend/cache/")
+    cache_file_dir = os.path.join(BASE_DIR, "WuhanBackend/cache/")
+    if os.path.exists(cache_file_dir):   # 缓存文件夹存在, 清除缓存信息
+        cache_files = os.listdir(cache_file_dir)
         for f in cache_files:
             # print(os.path.join("WuhanBackend/cache/", f))
-            os.remove(os.path.join("WuhanBackend/cache/", f))
+            os.remove(os.path.join(cache_file_dir, f))
     return JsonResponse(result)
 
 # 主页面的新闻筛选展示算法, 用于二级界面缓存文件不存在时的冷启动
