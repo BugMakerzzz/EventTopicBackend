@@ -49,6 +49,46 @@ def main_news_show(theme):
     title_set = set()
     show_size = 20  # 每种逻辑的show_size
     start = time.time() # 计算主页面的逻辑处理时间
+
+    # 根据日期筛选
+    count = 0
+    for n in time_queryset: # 根据日期筛选
+        
+        title = n.title
+        if title in title_set: continue # 如果title已经出现过, 则进行去重
+        if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
+        if n.crisis <= 0: continue # 如果当前新闻没有风险度则过滤掉
+        tmp = {}
+        tmp['title'] = title
+        tmp['newsid'] = n.newsid
+        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+        tmp['views'] = []
+        tmp['source'] = n.customer
+
+        
+        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
+        for v in Viewsinfo.objects.filter(newsid=n):
+            # 筛选效果较好的观点
+            if len(v.viewpoint) < 10: continue
+            if v.country == '': continue
+            tmp['views'].append(
+                {
+                    'personname': v.personname,
+                    'orgname': v.orgname,
+                    'pos': v.pos,
+                    'verb': v.verb,
+                    'viewpoint': v.viewpoint,
+                    'country': v.country,
+                    'source': n.customer,
+                    'time': v.time
+                }
+            )
+       
+        
+        show_news_list.append(tmp)
+        title_set.add(n.title)
+        count += 1
+        if count >= 10: break 
     
     # 根据危机指数筛选
     count = 0
@@ -236,7 +276,6 @@ def search_main(request):
     show_size = 20  # 每种逻辑的show_size
     start = time.time() # 计算主页面的逻辑处理时间
     
-    '''
     # 根据日期筛选
     count = 0
     for n in time_queryset: # 根据日期筛选
@@ -244,6 +283,7 @@ def search_main(request):
         title = n.title
         if title in title_set: continue # 如果title已经出现过, 则进行去重
         if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
+        if n.crisis <= 0: continue # 如果当前新闻没有风险度则过滤掉
         tmp = {}
         tmp['title'] = title
         tmp['newsid'] = n.newsid
@@ -275,7 +315,7 @@ def search_main(request):
         title_set.add(n.title)
         count += 1
         if count >= 10: break 
-    '''
+    
     # 根据危机指数筛选
     count = 0
     for n in crisis_queryset: # 根据危机指数筛选
