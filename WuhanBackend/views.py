@@ -73,6 +73,7 @@ def main_news_show(theme):
             if v.country == '': continue
             tmp['views'].append(
                 {
+                    'viewid': v.viewid,
                     'personname': v.personname,
                     'orgname': v.orgname,
                     'pos': v.pos,
@@ -84,11 +85,11 @@ def main_news_show(theme):
                 }
             )
        
-        
+        if len(tmp['views']) == 0: continue        
         show_news_list.append(tmp)
         title_set.add(n.title)
         count += 1
-        if count >= 10: break 
+        if count >= show_size: break 
     
     # 根据危机指数筛选
     count = 0
@@ -299,6 +300,7 @@ def search_main(request):
             if v.country == '': continue
             tmp['views'].append(
                 {
+                    'viewid': v.viewid,
                     'personname': v.personname,
                     'orgname': v.orgname,
                     'pos': v.pos,
@@ -310,11 +312,11 @@ def search_main(request):
                 }
             )
        
-        
+        if len(tmp['views']) == 0: continue        
         show_news_list.append(tmp)
         title_set.add(n.title)
         count += 1
-        if count >= 10: break 
+        if count >= show_size: break 
     
     # 根据危机指数筛选
     count = 0
@@ -772,8 +774,8 @@ def search_eventa(request):
         # print("start_time != end_time")
         all_time = False # 如果两者时间不同, 则有时间限制
     else: # 两者时间相同, 给出默认时间
-        start_time = datetime.datetime.strptime('2020-04-01', '%Y-%m-%d')
-        end_time = datetime.datetime.strptime('2020-04-15', '%Y-%m-%d')
+        start_time = datetime.datetime.strptime('2020-09-01', '%Y-%m-%d')
+        end_time = datetime.datetime.strptime('2020-10-01', '%Y-%m-%d')
 
     # 根据theme与start_time, end_time检查缓存
     search_key = theme + "_" + start_time.strftime("%Y%m%d") + "_" + end_time.strftime("%Y%m%d")
