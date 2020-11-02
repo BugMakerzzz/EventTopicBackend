@@ -423,9 +423,11 @@ def search_main(request):
     crisis_data = {} # {content_label:[n_data1, n_data2} 
     for n in reliability_queryset: # 根据可靠性选取100条可靠性高的新闻
         # 右下角事件危机指数处理
-        if n.title in title_set: continue # 如果title已经出现过, 则进行去重
+        title = n.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
+        if title in title_set: continue # 如果title已经出现过, 则进行去重
         crisis_value = n.crisis
-        n_data = [n.time.strftime('%Y-%m-%d %H:%M:%S'), crisis_value, n.title]
+        if crisis_value < 1: continue # 选取具有风险度的新闻
+        n_data = [n.time.strftime('%Y-%m-%d %H:%M:%S'), crisis_value, title]
         crisis_label = n.content_label.split(' ')[0] # 此处仅显示新闻的第一个标签作为新闻分类
             
         if crisis_label in crisis_data:
@@ -433,7 +435,7 @@ def search_main(request):
         else:
             crisis_data[crisis_label] = [n_data]
         
-        title_set.add(n.title)
+        title_set.add(title)
         count += 1
         if count >= 100: break 
 
