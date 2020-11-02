@@ -177,7 +177,7 @@ def search_main(request):
     # 主页面只接收主题信息
     theme = request.GET['theme']   # 主题参数
     # theme = '南海'   # 主题参数
-    cathe_flag = False # 是否使用cache
+    cathe_flag = True # 是否使用cache
 
 
     # 根据theme检查缓存
@@ -285,7 +285,8 @@ def search_main(request):
     show_queryset = Newsinfo.objects.filter(q & Q(time__gte=start_time))
     time_queryset = show_queryset.order_by('-time')
     crisis_queryset = show_queryset.order_by('-crisis')
-    COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
+    reliability_queryset = show_queryset.order_by('-reliability')
+    # COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
     
     show_news_list = []
     
@@ -375,44 +376,44 @@ def search_main(request):
 
     midend = time.time() # 计算程序运行时间
 
-    # 根据疫情相关新闻筛选 
-    count = 0
-    for n in COVID_queryset: # 根据疫情相关新闻筛选
-        title = n.title
-        # print(title)
-        if title in title_set: continue # 如果title已经出现过, 则进行去重
-        if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
-        tmp = {}
-        tmp['title'] = title.replace("原创",'').replace("转帖",'').replace("参考消息",'') # 过滤title信息
-        tmp['newsid'] = n.newsid
-        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
-        tmp['views'] = []
-        tmp['source'] = n.customer
+    # # 根据疫情相关新闻筛选 
+    # count = 0
+    # for n in COVID_queryset: # 根据疫情相关新闻筛选
+    #     title = n.title
+    #     # print(title)
+    #     if title in title_set: continue # 如果title已经出现过, 则进行去重
+    #     if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
+    #     tmp = {}
+    #     tmp['title'] = title.replace("原创",'').replace("转帖",'').replace("参考消息",'') # 过滤title信息
+    #     tmp['newsid'] = n.newsid
+    #     tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+    #     tmp['views'] = []
+    #     tmp['source'] = n.customer
         
-        # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
-        for v in Viewsinfo.objects.filter(newsid=n.newsid):
-            # 筛选效果较好的观点
-            if len(v.viewpoint) < 10: continue
-            if v.country == '': continue
-            tmp['views'].append(
-                {
-                    'viewid': v.viewid,
-                    'personname': v.personname,
-                    'orgname': v.orgname,
-                    'pos': v.pos,
-                    'verb': v.verb,
-                    'viewpoint': v.viewpoint,
-                    'country': v.country,
-                    'source': n.customer,
-                    'time': v.time
-                }
-            )
+    #     # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
+    #     for v in Viewsinfo.objects.filter(newsid=n.newsid):
+    #         # 筛选效果较好的观点
+    #         if len(v.viewpoint) < 10: continue
+    #         if v.country == '': continue
+    #         tmp['views'].append(
+    #             {
+    #                 'viewid': v.viewid,
+    #                 'personname': v.personname,
+    #                 'orgname': v.orgname,
+    #                 'pos': v.pos,
+    #                 'verb': v.verb,
+    #                 'viewpoint': v.viewpoint,
+    #                 'country': v.country,
+    #                 'source': n.customer,
+    #                 'time': v.time
+    #             }
+    #         )
         
-        if len(tmp['views']) == 0: continue
-        show_news_list.append(tmp)
-        title_set.add(n.title)
-        count += 1
-        if count >= show_size: break 
+    #     if len(tmp['views']) == 0: continue
+    #     show_news_list.append(tmp)
+    #     title_set.add(n.title)
+    #     count += 1
+    #     if count >= show_size: break 
    
     end = time.time()
  
@@ -420,7 +421,7 @@ def search_main(request):
     count = 0
     title_set = set()
     crisis_data = {} # {content_label:[n_data1, n_data2} 
-    for n in crisis_queryset:
+    for n in reliability_queryset: # 根据可靠性选取100条可靠性高的新闻
         # 右下角事件危机指数处理
         if n.title in title_set: continue # 如果title已经出现过, 则进行去重
         crisis_value = n.crisis
@@ -859,13 +860,13 @@ def search_eventa(request):
             if e_str in nextevent_dict:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] += int(weight)
-                    nextevent_news[e_str].append(n_title + "  " + time_str)
+                    nextevent_news[e_str].append(n_title + " " + time_str + " " + n.customer)
                 else:
                     nextevent_dict[e_str] += int(weight)
             else:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] = int(weight)
-                    nextevent_news[e_str] = [n_title + "  " + time_str]
+                    nextevent_news[e_str] = [n_title + " " + time_str + " " + n.customer]
                 else:
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = []
