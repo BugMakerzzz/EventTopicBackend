@@ -177,7 +177,7 @@ def search_main(request):
     # 主页面只接收主题信息
     theme = request.GET['theme']   # 主题参数
     # theme = '南海'   # 主题参数
-    cathe_flag = True # 是否使用cache
+    cathe_flag = False # 是否使用cache
 
 
     # 根据theme检查缓存
@@ -236,6 +236,7 @@ def search_main(request):
     time_count_dict = {}
     for n in news_queryset:
         time_str = n.time.strftime('%Y-%m') # 按照月份进行处理
+        tmp = {}
         if time_str in time_count_dict:
             time_count_dict[time_str]['news_count'] += 1
             time_count_dict[time_str]['pos_sentiment'] += n.positive
