@@ -200,59 +200,75 @@ def search_main(request):
 
     # 综合选题框和专家观点框数据
     # total_news_data = []
-    time_news_dict = {} # 时间-新闻字典构建 {time:[自定义新闻tmp{}]}
-    title_set = set() # 所选数据去重使用
-    for n in news_queryset:
-        title = n.title
-        if title in title_set: continue # 如果title已经出现过, 则进行去重
+    # time_news_dict = {} # 时间-新闻字典构建 {time:[自定义新闻tmp{}]}
+    # title_set = set() # 所选数据去重使用
+    # for n in news_queryset:
+    #     title = n.title
+    #     if title in title_set: continue # 如果title已经出现过, 则进行去重
 
-        tmp = {}
-        tmp['title'] = title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
-        tmp['newsid'] = n.newsid
-        tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
-        # tmp['time'] = n.time.strftime('%Y-%m-%d')
-        tmp['views'] = []
-        tmp['source'] = n.customer
-        tmp['pos_sentiment'] = n.positive    # 根据新闻的评论计算正负向指数、影响力指数
-        tmp['neg_sentiment'] = n.negative
-        tmp['influence'] = n.influence
-        tmp['content_label'] = n.content_label
-        tmp['crisis'] = n.crisis
-        tmp['reliability'] = n.reliability
+    #     tmp = {}
+    #     tmp['title'] = title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
+    #     tmp['newsid'] = n.newsid
+    #     tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+    #     # tmp['time'] = n.time.strftime('%Y-%m-%d')
+    #     tmp['views'] = []
+    #     tmp['source'] = n.customer
+    #     tmp['pos_sentiment'] = n.positive    # 根据新闻的评论计算正负向指数、影响力指数
+    #     tmp['neg_sentiment'] = n.negative
+    #     tmp['influence'] = n.influence
+    #     tmp['content_label'] = n.content_label
+    #     tmp['crisis'] = n.crisis
+    #     tmp['reliability'] = n.reliability
         
-        # 数据新增
-        # time_str = n.time.strftime('%Y-%m-%d') # 按照日进行处理
-        time_str = n.time.strftime('%Y-%m') # 按照月份进行处理
-        if time_str in time_news_dict:
-            time_news_dict[time_str].append(tmp)
-        else:
-            time_news_dict[time_str] = [tmp]
-            # print("search_main time_news_dict error: time_str not in start_time-end_time")
+    #     # 数据新增
+    #     # time_str = n.time.strftime('%Y-%m-%d') # 按照日进行处理
+    #     time_str = n.time.strftime('%Y-%m') # 按照月份进行处理
+    #     if time_str in time_news_dict:
+    #         time_news_dict[time_str].append(tmp)
+    #     else:
+    #         time_news_dict[time_str] = [tmp]
+    #         # print("search_main time_news_dict error: time_str not in start_time-end_time")
 
-        title_set.add(title)
-        # total_news_data.append(tmp)
+    #     title_set.add(title)
+    #     # total_news_data.append(tmp)
 
     # 左下,右下 统计图数据处理
+    time_count_dict = {}
+    for n in news_queryset:
+        time_str = n.time.strftime('%Y-%m') # 按照月份进行处理
+        if time_str in time_count_dict:
+            time_count_dict[time_str]['news_count'] += 1
+            time_count_dict[time_str]['pos_sentiment'] += n.positive
+            time_count_dict[time_str]['neg_sentiment'] += n.negative
+        else:
+            tmp['news_count'] = 1
+            tmp['pos_sentiment'] = n.positive
+            tmp['neg_sentiment'] = n.negative
+            time_count_dict[time_str] = tmp
+    
     date_list = []
     hot_num = []
     sentiment_pos = []
     sentiment_neg = []
     sorted_data = []
     
-    for t, newslist in time_news_dict.items():
-        # date_list.append(datetime.datetime.strptime(time, '%Y-%m'))
-        # 热度趋势数据处理
-        # hot_num.append(len(newslist))
-        # 正负向情感指数处理
-        pos_num = 0
-        neg_num = 0
-        for n in newslist:
-            pos_num += n['pos_sentiment']
-            neg_num += n['neg_sentiment']
+    # for t, newslist in time_news_dict.items():
+    #     # date_list.append(datetime.datetime.strptime(time, '%Y-%m'))
+    #     # 热度趋势数据处理
+    #     # hot_num.append(len(newslist))
+    #     # 正负向情感指数处理
+    #     pos_num = 0
+    #     neg_num = 0
+    #     for n in newslist:
+    #         pos_num += n['pos_sentiment']
+    #         neg_num += n['neg_sentiment']
 
-        # sentiment_pos.append(float("%.2f" % pos_num))
-        # sentiment_neg.append(float("%.2f" % neg_num))
-        sorted_data.append((datetime.datetime.strptime(t, '%Y-%m'), len(newslist), float("%.2f" % pos_num), float("%.2f" % neg_num)))
+    #     # sentiment_pos.append(float("%.2f" % pos_num))
+    #     # sentiment_neg.append(float("%.2f" % neg_num))
+    #     sorted_data.append((datetime.datetime.strptime(t, '%Y-%m'), len(newslist), float("%.2f" % pos_num), float("%.2f" % neg_num)))
+    
+    for t, data in time_count_dict.items():
+        sorted_data.append((datetime.datetime.strptime(t, '%Y-%m'), data['news_count'], float("%.2f" % data['pos_sentiment']), float("%.2f" % data['neg_sentiment'])))
 
     sorted_data = sorted(sorted_data, key=lambda x: x[0]) # 根据时间进行升序排序
 
