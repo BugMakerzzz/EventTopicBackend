@@ -10,6 +10,7 @@ import json
 import pickle
 import os
 import time
+from fuzzywuzzy import fuzz
 
 from WuhanBackend.settings import BASE_DIR
 
@@ -923,10 +924,16 @@ def search_eventa(request):
         tmp_num = int(views_show_num * nextevent_dict[e_str] / total_weight)
         count = 0
         for v in view_query_tmp:
+            sim_flag = False
             if v.viewpoint in view_set: continue    # 观点去重
             if len(v.viewpoint) < 10: continue 
             if len(v.orgname + v.pos + v.personname) < 2: continue
             # if len(v.personname) < 2: continue
+            for old_v in view_set:
+                if fuzz.ratio(v.viewpoint, old_v) > 80:
+                    sim_flag = True
+                    break
+            if sim_flag: continue
             nextevent_views_data.append(
                 {
                     "org": v.orgname + v.pos + v.personname,
