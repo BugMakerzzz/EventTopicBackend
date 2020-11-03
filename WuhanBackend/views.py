@@ -932,7 +932,7 @@ def search_eventa(request):
                     "org": v.orgname + v.pos + v.personname,
                     # "personname": v.personname,
                     "viewpoint": v.verb + v.viewpoint,
-                    "eventname": e_str
+                    "eventname": e_str,
                     "time": v.time
                 }
             )
