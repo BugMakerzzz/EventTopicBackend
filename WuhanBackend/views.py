@@ -925,8 +925,8 @@ def search_eventa(request):
         for v in view_query_tmp:
             if v.viewpoint in view_set: continue    # 观点去重
             if len(v.viewpoint) < 10: continue 
-            if len(v.orgname + v.pos) < 2: continue
-            if len(v.personname) < 2: continue
+            # if len(v.orgname + v.pos) < 2: continue
+            # if len(v.personname) < 2: continue
             nextevent_views_data.append(
                 {
                     "org": v.orgname + v.pos,
