@@ -930,7 +930,7 @@ def search_eventa(request):
             if len(v.orgname + v.pos + v.personname) < 2: continue
             # if len(v.personname) < 2: continue
             for old_v in view_set:
-                if fuzz.ratio(v.viewpoint, old_v) > 80:
+                if fuzz.partial_ratio(v.viewpoint, old_v) > 70:
                     sim_flag = True
                     break
             if sim_flag: continue
