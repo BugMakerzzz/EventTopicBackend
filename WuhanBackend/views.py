@@ -835,6 +835,7 @@ def search_eventa(request):
     time_news_dict = {}
     nextevent_dict = {} # 事件预测字典处理 {event: weight}
     nextevent_news = {} # 事件预测触发新闻title {event: newslist}
+    nextevent_views = {} # 事件预测的支撑观点(从支撑新闻中选取) {event: newsid_list}
     title_set = set() # 根据title进行去重
     # 根据查询日期按天递增构建初始化字典
     nowtime = start_time
@@ -863,12 +864,14 @@ def search_eventa(request):
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] += int(weight)
                     nextevent_news[e_str].append(n_title + " " + time_str + " " + n.customer)
+                    nextevent_views[e_str].append(n.newsid)
                 else:
                     nextevent_dict[e_str] += int(weight)
             else:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = [n_title + " " + time_str + " " + n.customer]
+                    nextevent_views[e_str] = [n.newsid]
                 else:
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = []
@@ -907,6 +910,34 @@ def search_eventa(request):
     
     view_cluster_data = sorted(view_cluster_data, key=lambda x: x['view_num'], reverse=True) # 根据观点数量降序排序
 
+    # 依据事件预测新闻材料的观点展示
+    nextevent_views_data = []
+    view_set = set()
+    views_show_num = 10
+    total_weight = 0
+    for e, w in nextevent_dict.items():
+        total_weight += w   # 计算总权重
+    
+    for e_str, newsid_list in nextevent_views.items():
+        view_query_tmp = Viewsinfo.objects.filter(newsid__in=newsid_list)
+        tmp_num = int(views_show_num * nextevent_dict[e_str] / total_weight)
+        count = 0
+        for v in view_query_tmp:
+            if v.viewpoint in view_set: continue    # 观点去重
+            if len(v.viewpoint) < 20: continue 
+            if len(v.orgname + v.pos) < 2: continue
+            if len(v.personname) < 2: continue
+            nextevent_views_data.append(
+                {
+                    "org": v.orgname + v.pos,
+                    "personname": v.personname,
+                    "viewpoint": v.viewpoint,
+                    "eventname": e_str
+                }
+            )
+            count += 1
+
+    # 事件分析左上角趋势处理
     tendency_time = [] # 用于事件分析页面的趋势数据
     tendency_news = []
     
@@ -1022,6 +1053,7 @@ def search_eventa(request):
     result['eventpre_data'] = eventpre_data # 用于事件预测模块
     result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
+    result['nextevent_views'] = nextevent_views_data # 用于下述的观点模块
     
     if cathe_flag:
         # 将查询结果进行缓存
