@@ -924,7 +924,7 @@ def search_eventa(request):
         count = 0
         for v in view_query_tmp:
             if v.viewpoint in view_set: continue    # 观点去重
-            if len(v.viewpoint) < 20: continue 
+            if len(v.viewpoint) < 10: continue 
             if len(v.orgname + v.pos) < 2: continue
             if len(v.personname) < 2: continue
             nextevent_views_data.append(
@@ -935,6 +935,7 @@ def search_eventa(request):
                     "eventname": e_str
                 }
             )
+            view_set.add(v.viewpoint)
             count += 1
 
     # 事件分析左上角趋势处理
