@@ -1063,7 +1063,7 @@ def search_eventa(request):
     result = {}
     result['tendency_data'] = tendency_data # 用于时间-趋势图
     result['eventpre_data'] = eventpre_data # 用于事件预测模块
-    result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
+    # result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
     result['nextevent_views'] = nextevent_views_data # 用于下述的观点模块
     
