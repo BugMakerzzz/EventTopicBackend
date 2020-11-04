@@ -879,37 +879,37 @@ def search_eventa(request):
         title_set.add(n_title)
     # print(time_news_dict)
 
-    # 根据newsid查询观点
-    view_queryset = Viewsinfo.objects.filter(newsid__in=newsid_set)
-    # print(view_queryset.count())
+    # # 根据newsid查询观点
+    # view_queryset = Viewsinfo.objects.filter(newsid__in=newsid_set)
+    # # print(view_queryset.count())
     
-    # 构建观点聚类结果
-    view_set = set()
-    for view in view_queryset:
-        # print(view.viewpoint)
-        # print(view.newsid)
-        # print(view.viewid)
-        view_set.add(view.viewpoint)
+    # # 构建观点聚类结果
+    # view_set = set()
+    # for view in view_queryset:
+    #     # print(view.viewpoint)
+    #     # print(view.newsid)
+    #     # print(view.viewid)
+    #     view_set.add(view.viewpoint)
 
-    view_list = list(view_set)
-    if len(view_list) == 0:
-        print("search_eventa error: view_list size is 0.")
+    # view_list = list(view_set)
+    # if len(view_list) == 0:
+    #     print("search_eventa error: view_list size is 0.")
 
-    view_cluster_data = []
-    view_cluster_result = k_means_tfidf(view_list, 5, 10)
-    for key in view_cluster_result[0].keys():
-        view_tmp = {}
-        view_tmp['cluster'] = str(key)
-        view_tmp['center'] = view_cluster_result[1][key]
+    # view_cluster_data = []
+    # view_cluster_result = k_means_tfidf(view_list, 5, 10)
+    # for key in view_cluster_result[0].keys():
+    #     view_tmp = {}
+    #     view_tmp['cluster'] = str(key)
+    #     view_tmp['center'] = view_cluster_result[1][key]
 
-        if len(view_tmp['center']) < 10: # 过滤掉聚类效果不好的观点 
-            continue
+    #     if len(view_tmp['center']) < 10: # 过滤掉聚类效果不好的观点 
+    #         continue
 
-        view_tmp['view_num'] = len(view_cluster_result[0][key])
-        view_tmp['view_list'] = [view_list[i] for i in view_cluster_result[0][key]]
-        view_cluster_data.append(view_tmp)
+    #     view_tmp['view_num'] = len(view_cluster_result[0][key])
+    #     view_tmp['view_list'] = [view_list[i] for i in view_cluster_result[0][key]]
+    #     view_cluster_data.append(view_tmp)
     
-    view_cluster_data = sorted(view_cluster_data, key=lambda x: x['view_num'], reverse=True) # 根据观点数量降序排序
+    # view_cluster_data = sorted(view_cluster_data, key=lambda x: x['view_num'], reverse=True) # 根据观点数量降序排序
 
     # 依据事件预测新闻材料的观点展示
     nextevent_views_data = []
@@ -946,6 +946,8 @@ def search_eventa(request):
             view_set.add(v.viewpoint)
             count += 1
             if count > tmp_num: break
+    
+    nextevent_views_data = sorted(nextevent_views_data, key=lambda x: x['time'], reverse=True) # 根据观点时间降序排序
 
     # 事件分析左上角趋势处理
     tendency_time = [] # 用于事件分析页面的趋势数据
