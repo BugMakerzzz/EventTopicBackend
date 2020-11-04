@@ -914,7 +914,7 @@ def search_eventa(request):
     # 依据事件预测新闻材料的观点展示
     nextevent_views_data = []
     view_set = set()
-    views_show_num = 10
+    views_show_num = 15
     total_weight = 0
     for e, w in nextevent_dict.items():
         total_weight += w   # 计算总权重
@@ -945,6 +945,7 @@ def search_eventa(request):
             )
             view_set.add(v.viewpoint)
             count += 1
+            if count > tmp_num: break
 
     # 事件分析左上角趋势处理
     tendency_time = [] # 用于事件分析页面的趋势数据
