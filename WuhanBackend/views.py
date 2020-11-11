@@ -925,7 +925,7 @@ def search_eventa(request):
     nextevent_views_data = sorted(nextevent_views_data, key=lambda x: x['time'], reverse=True) # 根据观点时间降序排序
 
     # 加载关键专家字典
-    with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/echarts_zhcountry_set.pkl"),'r','utf-8') as rf:
+    with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/theme_person.json"),'r','utf-8') as rf:
         theme_person_dict = json.load(rf)
 
     for e_str, newsid_list in nextevent_views.items():
