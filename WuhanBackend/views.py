@@ -841,6 +841,7 @@ def search_eventa(request):
     time_news_dict = {}
     nextevent_dict = {} # 事件预测字典处理 {event: weight}
     nextevent_news = {} # 事件预测触发新闻title {event: newslist}
+    nextevent_timeline_news = {} # 事件预测触发新闻时间链 {event: newslist[特定格式]}
     nextevent_views = {} # 事件预测的支撑观点(从支撑新闻中选取) {event: newsid_list}
     title_set = set() # 根据title进行去重
     # 根据查询日期按天递增构建初始化字典
@@ -871,6 +872,17 @@ def search_eventa(request):
                     nextevent_dict[e_str] += int(weight)
                     nextevent_news[e_str].append(n_title + " " + time_str + " " + n.customer)
                     nextevent_views[e_str].append(n.newsid)
+                    
+                    # 增加时间链新闻对事件预测的支撑
+                    tmp = {}
+                    tmp['id'] = n.newsid
+                    tmp['title'] = n_title
+                    tmp['content'] = n.content
+                    tmp['url'] =  n.url
+                    tmp['foreign'] = False
+                    tmp['dateDay'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+                    nextevent_timeline_news[e_str].append(tmp)
+                    
                 else:
                     nextevent_dict[e_str] += int(weight)
             else:
@@ -878,6 +890,17 @@ def search_eventa(request):
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = [n_title + " " + time_str + " " + n.customer]
                     nextevent_views[e_str] = [n.newsid]
+
+                    # 增加时间链新闻对事件预测的支撑
+                    tmp = {}
+                    tmp['id'] = n.newsid
+                    tmp['title'] = n_title
+                    tmp['content'] = n.content
+                    tmp['url'] =  n.url
+                    tmp['foreign'] = False
+                    tmp['dateDay'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+                    nextevent_timeline_news[e_str] = [tmp]
+
                 else:
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = []
@@ -920,7 +943,7 @@ def search_eventa(request):
     nextevent_views_data = []
     view_set = set()
     views_show_num = 15
-    total_weight = 0
+    total_weight = 0 # 事件预测总权重
     for e, w in nextevent_dict.items():
         total_weight += w   # 计算总权重
     
@@ -1061,6 +1084,7 @@ def search_eventa(request):
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
         'data': [{'name': x, 'value': y, 'news': nextevent_news[x], 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
+        # 'data': [{'name': x, 'value': float(y)/total_weight, 'news': nextevent_news[x], 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
     }
     # print(eventpre_data)
 
@@ -1071,6 +1095,7 @@ def search_eventa(request):
     # result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
     result['nextevent_views'] = nextevent_views_data # 用于下述的观点模块
+    result['nextevent_timeline_news'] = nextevent_timeline_news # 用于时间轴数据, 用于支撑事件预测结果
     
     if cathe_flag:
         # 将查询结果进行缓存
