@@ -1043,6 +1043,7 @@ def search_eventa(request):
     # result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
     result['nextevent_views'] = nextevent_views_data # 用于下述的观点模块
+    result['nextevent_news_pro'] = nextevent_news_pro # 用于事件预测的支撑材料
     
     if cathe_flag:
         # 将查询结果进行缓存
