@@ -921,8 +921,51 @@ def search_eventa(request):
             view_set.add(v.viewpoint)
             count += 1
             if count > tmp_num: break
-    
+
     nextevent_views_data = sorted(nextevent_views_data, key=lambda x: x['time'], reverse=True) # 根据观点时间降序排序
+
+    # 加载关键专家字典
+    with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/echarts_zhcountry_set.pkl"),'r','utf-8') as rf:
+        theme_person_dict = json.load(rf)
+
+    for e_str, newsid_list in nextevent_views.items():
+        view_query_tmp = Viewsinfo.objects.filter(newsid__in=newsid_list)
+        views_list = []
+        for v in view_query_tmp:
+            sim_flag = False
+            if v.viewpoint in view_set: continue    # 观点去重
+            if len(v.viewpoint) < 10: continue 
+            if len(v.orgname + v.pos + v.personname) < 2: continue
+            for old_v in view_set:
+                if fuzz.partial_ratio(v.viewpoint, old_v) > 70:
+                    sim_flag = True
+                    break
+            if sim_flag: continue
+            if v.personname in theme_person_dict: # 从特定的专家字典中展现观点数据
+                views_list.append(
+                    {
+                        "org": theme_person_dict[v.personname]['org'] + v.personname,
+                        "viewpoint": v.verb + v.viewpoint,
+                        "eventname": e_str,
+                        "time": v.time,
+                        "weight": theme_person_dict[v.personname]['weight'],
+                        "recommend": 1,
+                    }
+                )
+            else:
+                views_list.append(
+                    {
+                        "org": v.orgname + v.pos + v.personname,
+                        "viewpoint": v.verb + v.viewpoint,
+                        "eventname": e_str,
+                        "time": v.time,
+                        "weight": 0,
+                        "recommend": 0
+                    }
+                )              
+            view_set.add(v.viewpoint)
+        views_list = sorted(views_list, key=lambda x: x['weight'], reverse=True) # 根据观点时间降序排序
+        nextevent_views_pro[e_str] = views_list
 
     # 事件分析左上角趋势处理
     tendency_time = [] # 用于事件分析页面的趋势数据
@@ -1044,6 +1087,7 @@ def search_eventa(request):
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
     result['nextevent_views'] = nextevent_views_data # 用于下述的观点模块
     result['nextevent_news_pro'] = nextevent_news_pro # 用于事件预测的支撑材料
+    result['nextevent_views_pro'] = nextevent_views_pro # 用于事件预测的支撑观点
     
     if cathe_flag:
         # 将查询结果进行缓存
