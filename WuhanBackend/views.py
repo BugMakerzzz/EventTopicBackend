@@ -747,30 +747,26 @@ def search_view(request):
 def search_eventa(request):
 
     # 前端查询参数处理
-    # all_theme = False
-    # all_content = True
-    all_time = False
-    all_keywords = True
     cathe_flag = True # 不使用cache, 如果事件分析页面算法进行更改则之前的cache全部都需要作废
-    
-    # 以下三行测试开发时使用
-    # theme = '南海'
-    # start_time = datetime.datetime.strptime('2020-04-01', '%Y-%m-%d')
-    # end_time = datetime.datetime.strptime('2020-04-15', '%Y-%m-%d')
         
     # 主题处理
     theme = request.GET['theme']   # 主题参数
 
     # 时间处理    
-    start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
-    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')  
+    # start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
+    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')
+    # 获取30天内的数据进行分析
+    delta_time = datetime.timedelta(days=30)  
+    start_time = end_time - delta_time
     
+    '''
     if start_time != end_time:
         # print("start_time != end_time")
         all_time = False # 如果两者时间不同, 则有时间限制
     else: # 两者时间相同, 给出默认时间
         start_time = datetime.datetime.strptime('2020-09-01', '%Y-%m-%d')
         end_time = datetime.datetime.strptime('2020-10-01', '%Y-%m-%d')
+    '''
 
     # 根据theme与start_time, end_time检查缓存
     search_key = theme + "_" + start_time.strftime("%Y%m%d") + "_" + end_time.strftime("%Y%m%d")
@@ -788,19 +784,8 @@ def search_eventa(request):
     # 组合参数查询, 利用Q的多条件查询
     q = Q()
     q = q & Q(theme_label=theme)
+    q = q & Q(time__range=(start_time, end_time))
 
-    if all_time is False:   # 具有时间范围限制
-        # params['start_time'] = start_time
-        # params['end_time'] = end_time
-        q = q & Q(time__range=(start_time, end_time))
-    '''
-    if all_keywords is False: # 具有关键词限制
-        tmp_q = Q()
-        for word in words_list:
-            # tmp_q = tmp_q | Q(title__contains=word) # 关键词之间是'或'的关系, 使用该模式的话会由于前面的Q()而使其查询结果为全集
-            tmp_q = tmp_q & Q(title__contains=word) # 关键词之间是'与'的关系
-        q = q & tmp_q
-    '''
     # 查询语句
     news_queryset = Newsinfo.objects.filter(q).order_by('-time')
     # print(news_queryset.count())
@@ -810,8 +795,11 @@ def search_eventa(request):
     time_news_dict = {}
     nextevent_dict = {} # 事件预测字典处理 {event: weight}
     nextevent_news = {} # 事件预测触发新闻title {event: newslist}
-    nextevent_timeline_news = {} # 事件预测触发新闻时间链 {event: newslist[特定格式]}
     nextevent_views = {} # 事件预测的支撑观点(从支撑新闻中选取) {event: newsid_list}
+
+    nextevent_news_pro = {}
+    nextevent_views_pro = {}
+    
     title_set = set() # 根据title进行去重
     # 根据查询日期按天递增构建初始化字典
     nowtime = start_time
@@ -842,15 +830,25 @@ def search_eventa(request):
                     nextevent_news[e_str].append(n_title + " " + time_str + " " + n.customer)
                     nextevent_views[e_str].append(n.newsid)
                     
-                    # 增加时间链新闻对事件预测的支撑
+                    # 增加支撑新闻信息
                     tmp = {}
-                    tmp['id'] = n.newsid
                     tmp['title'] = n_title
                     tmp['content'] = n.content
-                    tmp['url'] =  n.url
-                    tmp['foreign'] = False
-                    tmp['dateDay'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
-                    nextevent_timeline_news[e_str].append(tmp)
+                    tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+                    tmp['source'] = n.customer
+                    tmp['crisis'] = n.crisis
+                    
+                    # 处理新闻title, 根据新闻危机词高亮新闻title, 在原字符串增加html高亮标签
+                    wjword_set = set()
+                    for wjwords in n.wjwords.split(" "):
+                        for w in wjwords.split(":")[0].split("-"):
+                            wjword_set.add(w)
+                    
+                    for w in wjword_set:
+                        html_str = '<span style="color: red;">' + w + '</span>'
+                        tmp['title'] = tmp['title'].replace(w, html_str)
+
+                    nextevent_news_pro[e_str].append(tmp)
                     
                 else:
                     nextevent_dict[e_str] += int(weight)
@@ -860,53 +858,33 @@ def search_eventa(request):
                     nextevent_news[e_str] = [n_title + " " + time_str + " " + n.customer]
                     nextevent_views[e_str] = [n.newsid]
 
-                    # 增加时间链新闻对事件预测的支撑
+                    # 增加支撑新闻信息
                     tmp = {}
-                    tmp['id'] = n.newsid
                     tmp['title'] = n_title
                     tmp['content'] = n.content
-                    tmp['url'] =  n.url
-                    tmp['foreign'] = False
-                    tmp['dateDay'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
-                    nextevent_timeline_news[e_str] = [tmp]
+                    tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
+                    tmp['source'] = n.customer
+                    tmp['crisis'] = n.crisis
+                
+                    # 处理新闻title, 根据新闻危机词高亮新闻title, 在原字符串增加html高亮标签
+                    wjword_set = set()
+                    for wjwords in n.wjwords.split(" "):
+                        for w in wjwords.split(":")[0].split("-"):
+                            wjword_set.add(w)
+                    
+                    for w in wjword_set:
+                        html_str = '<span style="color: red;">' + w + '</span>'
+                        tmp['title'] = tmp['title'].replace(w, html_str)
+
+                    nextevent_news_pro[e_str] = [tmp]
+
 
                 else:
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = []
+        
         title_set.add(n_title)
     # print(time_news_dict)
-
-    # # 根据newsid查询观点
-    # view_queryset = Viewsinfo.objects.filter(newsid__in=newsid_set)
-    # # print(view_queryset.count())
-    
-    # # 构建观点聚类结果
-    # view_set = set()
-    # for view in view_queryset:
-    #     # print(view.viewpoint)
-    #     # print(view.newsid)
-    #     # print(view.viewid)
-    #     view_set.add(view.viewpoint)
-
-    # view_list = list(view_set)
-    # if len(view_list) == 0:
-    #     print("search_eventa error: view_list size is 0.")
-
-    # view_cluster_data = []
-    # view_cluster_result = k_means_tfidf(view_list, 5, 10)
-    # for key in view_cluster_result[0].keys():
-    #     view_tmp = {}
-    #     view_tmp['cluster'] = str(key)
-    #     view_tmp['center'] = view_cluster_result[1][key]
-
-    #     if len(view_tmp['center']) < 10: # 过滤掉聚类效果不好的观点 
-    #         continue
-
-    #     view_tmp['view_num'] = len(view_cluster_result[0][key])
-    #     view_tmp['view_list'] = [view_list[i] for i in view_cluster_result[0][key]]
-    #     view_cluster_data.append(view_tmp)
-    
-    # view_cluster_data = sorted(view_cluster_data, key=lambda x: x['view_num'], reverse=True) # 根据观点数量降序排序
 
     # 依据事件预测新闻材料的观点展示
     nextevent_views_data = []
@@ -1053,8 +1031,9 @@ def search_eventa(request):
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
         'data': [{'name': x, 'value': y, 'news': nextevent_news[x], 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
-        # 'data': [{'name': x, 'value': float(y)/total_weight, 'news': nextevent_news[x], 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
+        'data_pro': [{'name': x, 'value': float(y)/total_weight, 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
     }
+    
     # print(eventpre_data)
 
     # 数据返回封装
@@ -1064,7 +1043,6 @@ def search_eventa(request):
     # result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
     result['nextevent_views'] = nextevent_views_data # 用于下述的观点模块
-    result['nextevent_timeline_news'] = nextevent_timeline_news # 用于时间轴数据, 用于支撑事件预测结果
     
     if cathe_flag:
         # 将查询结果进行缓存
