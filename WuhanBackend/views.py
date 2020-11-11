@@ -1030,7 +1030,7 @@ def search_eventa(request):
     }
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
-        'data': [{'name': x, 'value': y, 'news': nextevent_news[x], 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
+        'data': [{'name': x, 'value': y, 'news': nextevent_news[x], 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()],
         'data_pro': [{'name': x, 'value': float(y)/total_weight, 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
     }
     
