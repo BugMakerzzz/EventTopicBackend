@@ -931,6 +931,7 @@ def search_eventa(request):
     for e_str, newsid_list in nextevent_views.items():
         view_query_tmp = Viewsinfo.objects.filter(newsid__in=newsid_list)
         views_list = []
+        view_set = set()
         for v in view_query_tmp:
             sim_flag = False
             if v.viewpoint in view_set: continue    # 观点去重
