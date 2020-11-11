@@ -310,6 +310,10 @@ def search_main(request):
         tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
         tmp['views'] = []
         tmp['source'] = n.customer
+        
+        tmp['crisis'] = n.crisis
+        tmp['nextevent'] = n.nextevent.split(',')[0].split(':')[0]
+        tmp['content_label'] = n.content_label.split(' ')
 
         view_set = set() # 用于观点去重
         # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
@@ -351,6 +355,10 @@ def search_main(request):
         tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
         tmp['views'] = []
         tmp['source'] = n.customer
+
+        tmp['crisis'] = n.crisis
+        tmp['nextevent'] = n.nextevent.split(',')[0].split(':')[0]
+        tmp['content_label'] = n.content_label.split(' ')
         
         view_set = set() # 用于观点去重
         # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
@@ -380,48 +388,9 @@ def search_main(request):
         count += 1
         if count >= show_size: break 
 
-    midend = time.time() # 计算程序运行时间
-
-    # # 根据疫情相关新闻筛选 
-    # count = 0
-    # for n in COVID_queryset: # 根据疫情相关新闻筛选
-    #     title = n.title
-    #     # print(title)
-    #     if title in title_set: continue # 如果title已经出现过, 则进行去重
-    #     if n.influence == 0: continue # 如果当前新闻没有专家观点则滤掉
-    #     tmp = {}
-    #     tmp['title'] = title.replace("原创",'').replace("转帖",'').replace("参考消息",'') # 过滤title信息
-    #     tmp['newsid'] = n.newsid
-    #     tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
-    #     tmp['views'] = []
-    #     tmp['source'] = n.customer
-        
-    #     # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
-    #     for v in Viewsinfo.objects.filter(newsid=n.newsid):
-    #         # 筛选效果较好的观点
-    #         if len(v.viewpoint) < 10: continue
-    #         if v.country == '': continue
-    #         tmp['views'].append(
-    #             {
-    #                 'viewid': v.viewid,
-    #                 'personname': v.personname,
-    #                 'orgname': v.orgname,
-    #                 'pos': v.pos,
-    #                 'verb': v.verb,
-    #                 'viewpoint': v.viewpoint,
-    #                 'country': v.country,
-    #                 'source': n.customer,
-    #                 'time': v.time
-    #             }
-    #         )
-        
-    #     if len(tmp['views']) == 0: continue
-    #     show_news_list.append(tmp)
-    #     title_set.add(n.title)
-    #     count += 1
-    #     if count >= show_size: break 
+    # midend = time.time() # 计算程序运行时间
    
-    end = time.time()
+    # end = time.time()
  
     # 选取crisis前100的数据进行右下角的危机事件展示
     count = 0
