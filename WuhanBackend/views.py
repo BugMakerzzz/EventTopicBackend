@@ -311,10 +311,11 @@ def search_main(request):
         tmp['views'] = []
         tmp['source'] = n.customer
 
-        
+        view_set = set() # 用于观点去重
         # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
         for v in Viewsinfo.objects.filter(newsid=n):
             # 筛选效果较好的观点
+            if v.viewpoint in view_set: continue
             if len(v.viewpoint) < 10: continue
             if v.country == '': continue
             tmp['views'].append(
@@ -330,6 +331,7 @@ def search_main(request):
                     'time': v.time
                 }
             )
+            view_set.add(v.viewpoint)
        
         if len(tmp['views']) == 0: continue        
         show_news_list.append(tmp)
@@ -350,9 +352,11 @@ def search_main(request):
         tmp['views'] = []
         tmp['source'] = n.customer
         
+        view_set = set() # 用于观点去重
         # 遍历新闻的观点然后进行处理, 每次filter都会访问一次数据库
         for v in Viewsinfo.objects.filter(newsid=n.newsid):
             # 筛选效果较好的观点
+            if v.viewpoint in view_set: continue
             if len(v.viewpoint) < 10: continue
             if v.country == '': continue
             tmp['views'].append(
@@ -368,6 +372,7 @@ def search_main(request):
                     'time': v.time
                 }
             )
+            view_set.add(v.viewpoint)
 
         if len(tmp['views']) == 0: continue
         show_news_list.append(tmp)
