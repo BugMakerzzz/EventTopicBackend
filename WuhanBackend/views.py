@@ -845,6 +845,15 @@ def search_eventa(request):
                     # 处理新闻title, 根据新闻危机词高亮新闻title, 在原字符串增加html高亮标签
                     wjword_set = set()
                     wjword_set.add("侦察")
+                    wjword_set.add("两岸")
+                    wjword_set.add("民进党")
+                    wjword_set.add("国民党")
+                    wjword_set.add("统一")
+                    wjword_set.add("胜选")
+                    wjword_set.add("选情")
+                    wjword_set.add("民心")
+                    wjword_set.add("民主")
+                    wjword_set.add("独立")
                     if n.crisis > 0:
                         for wjwords in n.wjwords.split(" "):
                             for w in wjwords.split(":")[0].split("-"):
