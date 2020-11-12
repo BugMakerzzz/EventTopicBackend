@@ -909,6 +909,7 @@ def search_eventa(request):
     for e, w in nextevent_dict.items():
         total_weight += w   # 计算总权重
     
+    '''
     for e_str, newsid_list in nextevent_views.items():
         view_query_tmp = Viewsinfo.objects.filter(newsid__in=newsid_list)
         tmp_num = int(views_show_num * nextevent_dict[e_str] / total_weight)
@@ -938,7 +939,7 @@ def search_eventa(request):
             if count > tmp_num: break
 
     nextevent_views_data = sorted(nextevent_views_data, key=lambda x: x['time'], reverse=True) # 根据观点时间降序排序
-
+    '''
     # 加载关键专家字典
     with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/theme_person.json"),'r','utf-8') as rf:
         theme_person_dict = json.load(rf)
@@ -1102,7 +1103,7 @@ def search_eventa(request):
     result['eventpre_data'] = eventpre_data # 用于事件预测模块
     # result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
-    result['nextevent_views'] = nextevent_views_data # 用于下述的观点模块
+    # result['nextevent_views'] = nextevent_views_data # 用于下述的观点模块
     result['nextevent_news_pro'] = nextevent_news_pro # 用于事件预测的支撑材料
     result['nextevent_views_pro'] = nextevent_views_pro # 用于事件预测的支撑观点
     
