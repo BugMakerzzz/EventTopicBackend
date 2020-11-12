@@ -854,6 +854,8 @@ def search_eventa(request):
                     wjword_set.add("民心")
                     wjword_set.add("民主")
                     wjword_set.add("独立")
+                    wjword_set.add("导弹")
+                    wjword_set.add("动武")
                     if n.crisis > 0:
                         for wjwords in n.wjwords.split(" "):
                             for w in wjwords.split(":")[0].split("-"):
