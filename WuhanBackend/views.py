@@ -673,11 +673,15 @@ def search_view(request):
         view_q = Q(newsid__theme_label=theme) # 跨表查询符合条件的view, 正向关联
         view_q = view_q & Q(time__range=(start_time, end_time))
         if all_keywords is False: # 具有关键词限制
-            tmp_q = Q()
+            per_q = Q()
             for word in words_list:
-                # tmp_q = tmp_q | Q(viewpoint__contains=word) # 关键词之间是'或'的关系
-                tmp_q = tmp_q & Q(viewpoint__contains=word) # 关键词之间是'与'的关系
-            view_q = view_q & tmp_q
+                per_q = per_q | Q(personname__contains=word)
+            
+            content_q = Q()
+            for word in words_list:
+                # content_q = content_q | Q(viewpoint__contains=word) # 关键词之间是'或'的关系
+                content_q = content_q & Q(viewpoint__contains=word) # 关键词之间是'与'的关系
+            view_q = view_q & (per_q | content_q)
 
     
 
