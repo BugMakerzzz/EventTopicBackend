@@ -954,7 +954,7 @@ def search_eventa(request):
                         "org": theme_person_dict[v.personname]['org'] + v.personname,
                         "viewpoint": v.verb + v.viewpoint,
                         "eventname": e_str,
-                        "time": v.time,
+                        "time": v.time.strftime('%Y-%m-%d %H:%M:%S'),
                         "weight": theme_person_dict[v.personname]['weight'],
                         "recommend": 1,
                     }
@@ -965,7 +965,7 @@ def search_eventa(request):
                         "org": v.orgname + v.pos + v.personname,
                         "viewpoint": v.verb + v.viewpoint,
                         "eventname": e_str,
-                        "time": v.time,
+                        "time": v.time.strftime('%Y-%m-%d %H:%M:%S'),
                         "weight": 0,
                         "recommend": 0
                     }
@@ -1078,6 +1078,7 @@ def search_eventa(request):
         "台湾政局核心人物鼓吹台独": "指台湾民间、政坛等组织团体掀起台独浪潮等不利于两岸统一的事件",
         "台湾政局发生大规模人事变化": "指台湾各级政府因选举等行为而发生的较大人事调整事件"
     }
+    del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
         'data': [{'name': x, 'value': y, 'news': nextevent_news[x], 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()],
