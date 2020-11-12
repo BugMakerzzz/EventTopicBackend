@@ -978,7 +978,7 @@ def search_eventa(request):
                         "viewpoint": v.verb + v.viewpoint,
                         "eventname": e_str,
                         "time": v.time.strftime('%Y-%m-%d %H:%M:%S'),
-                        "weight": 0,
+                        "weight": 1,
                         "recommend": 0
                     }
                 )              
