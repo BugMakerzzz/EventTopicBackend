@@ -846,7 +846,7 @@ def search_eventa(request):
                     wjword_set = set()
                     for wjwords in n.wjwords.split(" "):
                         for w in wjwords.split(":")[0].split("-"):
-                            wjword_set.add(w)
+                            if len(w) > 0: wjword_set.add(w)
                     
                     for w in wjword_set:
                         html_str = '<span style="color: red;">' + w + '</span>'
