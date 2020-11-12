@@ -844,6 +844,7 @@ def search_eventa(request):
                     
                     # 处理新闻title, 根据新闻危机词高亮新闻title, 在原字符串增加html高亮标签
                     wjword_set = set()
+                    wjword_set.add("侦察")
                     for wjwords in n.wjwords.split(" "):
                         for w in wjwords.split(":")[0].split("-"):
                             if len(w) > 0: wjword_set.add(w)
