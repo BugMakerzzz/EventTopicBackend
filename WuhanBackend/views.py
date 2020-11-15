@@ -754,6 +754,12 @@ def search_eventa(request):
 
     nextevent_news_pro = {}
     nextevent_views_pro = {}
+
+    nextevent_graph_data = {} # 根据支撑素材构造的图谱数据
+    per_set = set() # 用于节点去重
+    org_set = set()
+    media_set = set()
+    tri_set = set()
     
     title_set = set() # 根据title进行去重
     # 根据查询日期按天递增构建初始化字典
@@ -787,12 +793,38 @@ def search_eventa(request):
                     
                     # 增加支撑新闻信息
                     tmp = {}
+                    tmp['id'] = n.newsid
                     tmp['title'] = n_title
                     tmp['content'] = n.content
                     tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
                     tmp['source'] = n.customer
                     tmp['crisis'] = n.crisis
-                    
+                    # 增加NEW、MEDIA类型的节点
+                    nextevent_graph_data[e_str]['nodelist'].append(
+                        {
+                            "ID": n.newsid,
+                            "name": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
+                            "type": "NEW",
+                            "weight": 1
+                        }
+                    )
+                    if n.customer not in media_set:
+                        nextevent_graph_data[e_str]['nodelist'].append(
+                            {
+                                "ID": n.customer,
+                                "name": n.customer,
+                                "type": "MEDIA",
+                                "weight": 1
+                            }
+                        )
+                        media_set.add(n.customer)
+                    nextevent_graph_data[e_str]['linklist'].append(
+                        {
+                            "SourceID": n.newsid,
+                            "TargetID": n.customer,
+                            "weight": 1
+                        }
+                    )
                     # 处理新闻title, 根据新闻危机词高亮新闻title, 在原字符串增加html高亮标签
                     wjword_set = set()
                     wjword_set.add("侦察")
@@ -809,6 +841,25 @@ def search_eventa(request):
                     wjword_set.add("动武")
                     if n.crisis > 0:
                         for wjwords in n.wjwords.split(" "):
+                            trigger = wjwords.split(":")[0]
+                            # 增加 NEW 与 Tri 之间的关系
+                            if trigger not in tri_set:
+                                nextevent_graph_data[e_str]['nodelist'].append(
+                                    {
+                                        "ID": trigger,
+                                        "name": trigger,
+                                        "type": "TRIGGER",
+                                        "weight": 1
+                                    }
+                                )
+                                tri_set.add(trigger)
+                            nextevent_graph_data[e_str]['linklist'].append(
+                                {
+                                    "SourceID": n.newsid,
+                                    "TargetID": trigger,
+                                    "weight": 1
+                                }
+                            )
                             for w in wjwords.split(":")[0].split("-"):
                                 if len(w) > 0: wjword_set.add(w)
                     
@@ -825,20 +876,82 @@ def search_eventa(request):
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = [n_title + " " + time_str + " " + n.customer]
                     nextevent_views[e_str] = [n.newsid]
+                    nextevent_graph_data[e_str]['nodelist'] = []
+                    nextevent_graph_data[e_str]['linklist'] = []
 
                     # 增加支撑新闻信息
                     tmp = {}
+                    tmp['id'] = n.newsid
                     tmp['title'] = n_title
                     tmp['content'] = n.content
                     tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
                     tmp['source'] = n.customer
                     tmp['crisis'] = n.crisis
-                
+
+                    # 增加NEW、MEDIA类型的节点
+                    nextevent_graph_data[e_str]['nodelist'].append(
+                        {
+                            "ID": n.newsid,
+                            "name": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
+                            "type": "NEW",
+                            "weight": 1
+                        }
+                    )
+                    if n.customer not in media_set:
+                        nextevent_graph_data[e_str]['nodelist'].append(
+                            {
+                                "ID": n.customer,
+                                "name": n.customer,
+                                "type": "MEDIA",
+                                "weight": 1
+                            }
+                        )
+                        media_set.add(n.customer)
+                    nextevent_graph_data[e_str]['linklist'].append(
+                        {
+                            "SourceID": n.newsid,
+                            "TargetID": n.customer,
+                            "weight": 1
+                        }
+                    )
+
                     # 处理新闻title, 根据新闻危机词高亮新闻title, 在原字符串增加html高亮标签
                     wjword_set = set()
-                    for wjwords in n.wjwords.split(" "):
-                        for w in wjwords.split(":")[0].split("-"):
-                            wjword_set.add(w)
+                    wjword_set.add("侦察")
+                    wjword_set.add("两岸")
+                    wjword_set.add("民进党")
+                    wjword_set.add("国民党")
+                    wjword_set.add("统一")
+                    wjword_set.add("胜选")
+                    wjword_set.add("选情")
+                    wjword_set.add("民心")
+                    wjword_set.add("民主")
+                    wjword_set.add("独立")
+                    wjword_set.add("导弹")
+                    wjword_set.add("动武")
+                    if n.crisis > 0:
+                        for wjwords in n.wjwords.split(" "):
+                            trigger = wjwords.split(":")[0]
+                            # 增加 NEW 与 Tri 之间的关系
+                            if trigger not in tri_set: # 如果未出现过改节点则新加
+                                nextevent_graph_data[e_str]['nodelist'].append(
+                                    {
+                                        "ID": trigger,
+                                        "name": trigger,
+                                        "type": "TRIGGER",
+                                        "weight": 1
+                                    }
+                                )
+                                tri_set.add(trigger)
+                            nextevent_graph_data[e_str]['linklist'].append(
+                                {
+                                    "SourceID": n.newsid,
+                                    "TargetID": trigger,
+                                    "weight": 1
+                                }
+                            )
+                            for w in wjwords.split(":")[0].split("-"):
+                                wjword_set.add(w)
                     
                     for w in wjword_set:
                         html_str = '<span style="color: red;">' + w + '</span>'
@@ -862,37 +975,6 @@ def search_eventa(request):
     for e, w in nextevent_dict.items():
         total_weight += w   # 计算总权重
     
-    '''
-    for e_str, newsid_list in nextevent_views.items():
-        view_query_tmp = Viewsinfo.objects.filter(newsid__in=newsid_list)
-        tmp_num = int(views_show_num * nextevent_dict[e_str] / total_weight)
-        count = 0
-        for v in view_query_tmp:
-            sim_flag = False
-            if v.viewpoint in view_set: continue    # 观点去重
-            if len(v.viewpoint) < 10: continue 
-            if len(v.orgname + v.pos + v.personname) < 2: continue
-            # if len(v.personname) < 2: continue
-            for old_v in view_set:
-                if fuzz.partial_ratio(v.viewpoint, old_v) > 70:
-                    sim_flag = True
-                    break
-            if sim_flag: continue
-            nextevent_views_data.append(
-                {
-                    "org": v.orgname + v.pos + v.personname,
-                    # "personname": v.personname,
-                    "viewpoint": v.verb + v.viewpoint,
-                    "eventname": e_str,
-                    "time": v.time
-                }
-            )
-            view_set.add(v.viewpoint)
-            count += 1
-            if count > tmp_num: break
-
-    nextevent_views_data = sorted(nextevent_views_data, key=lambda x: x['time'], reverse=True) # 根据观点时间降序排序
-    '''
     # 加载关键专家字典
     with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/theme_person.json"),'r','utf-8') as rf:
         theme_person_dict = json.load(rf)
@@ -922,6 +1004,61 @@ def search_eventa(request):
                         "recommend": 1,
                     }
                 )
+                # 增加观点节点
+                nextevent_graph_data[e_str]['nodelist'].append(
+                    {
+                        "ID": v.viewid,
+                        "name": v.verb + v.viewpoint + " " + v.time.strftime('%Y-%m-%d %H:%M:%S'),
+                        "type": "VIEW",
+                        "weight": 1
+                    }
+                )
+                # 增加新闻与人名之间的关系
+                nextevent_graph_data[e_str]['linklist'].append(
+                    {
+                        "SourceID": v.newsid,
+                        "TargetID": v.personname,
+                        "weight": 1
+                    }
+                )
+                # 增加人名节点
+                if v.personname not in per_set:
+                    nextevent_graph_data[e_str]['nodelist'].append(
+                        {
+                            "ID": v.personname,
+                            "name": v.personname,
+                            "type": "PERSON",
+                            "weight": 1
+                        }
+                    )
+                    per_set.add(v.personname)
+                # 增加人名与观点间的关系
+                nextevent_graph_data[e_str]['linklist'].append(
+                    {
+                        "SourceID": v.viewid,
+                        "TargetID": v.personname,
+                        "weight": 1
+                      }
+                )
+                # 增加职位节点
+                if v.orgname + v.pos not in org_set:
+                    nextevent_graph_data[e_str]['nodelist'].append(
+                        {
+                            "ID": v.orgname + v.pos,
+                            "name": v.orgname + v.pos,
+                            "type": "ORG",
+                            "weight": 1
+                        }
+                    )
+                    org_set.add(v.orgname + v.pos)
+                # 增加人名与职位间的关系
+                nextevent_graph_data[e_str]['linklist'].append(
+                    {
+                        "SourceID": v.personname,
+                        "TargetID": v.orgname + v.pos,
+                        "weight": 1
+                    }
+                )
             else:
                 views_list.append(
                     {
@@ -932,7 +1069,67 @@ def search_eventa(request):
                         "weight": 1,
                         "recommend": 0
                     }
-                )              
+                )
+                if len(v.personname) > 1: # 人名字符串长度大于1才进行处理
+                    # 增加观点节点
+                    nextevent_graph_data[e_str]['nodelist'].append(
+                        {
+                            "ID": v.viewid,
+                            "name": v.verb + v.viewpoint + " " + v.time.strftime('%Y-%m-%d %H:%M:%S'),
+                            "type": "VIEW",
+                            "weight": 1
+                        }
+                    )
+                    # 增加新闻与人名之间的关系
+                    nextevent_graph_data[e_str]['linklist'].append(
+                        {
+                            "SourceID": v.newsid,
+                            "TargetID": v.personname,
+                            "weight": 1
+                        }
+                    )
+                    # 增加人名与观点间的关系
+                    if v.personname not in per_set:
+                        nextevent_graph_data[e_str]['nodelist'].append(
+                            {
+                                "ID": v.personname,
+                                "name": v.personname,
+                                "type": "PERSON",
+                                "weight": 1
+                            }
+                        )
+                        per_set.add(v.personname)
+                    nextevent_graph_data[e_str]['linklist'].append(
+                        {
+                            "SourceID": v.viewid,
+                            "TargetID": v.personname,
+                            "weight": 1
+                        }
+                    )
+
+                    if len(v.orgname + v.pos) > 2:
+                        # 增加人名与职位间的关系
+                        if v.orgname + v.pos not in org_set:
+                            nextevent_graph_data[e_str]['nodelist'].append(
+                                {
+                                    "ID": v.orgname + v.pos,
+                                    "name": v.orgname + v.pos,
+                                    "type": "ORG",
+                                    "weight": 1
+                                }
+                            )
+                            org_set.add(v.orgname + v.pos)
+                        nextevent_graph_data[e_str]['linklist'].append(
+                            {
+                                "SourceID": v.personname,
+                                "TargetID": v.orgname + v.pos,
+                                "weight": 1
+                            }
+                        )
+
+
+
+
             view_set.add(v.viewpoint)
         views_list = sorted(views_list, key=lambda x: x['weight'], reverse=True) # 根据观点时间降序排序
         nextevent_views_pro[e_str] = views_list
@@ -1028,9 +1225,6 @@ def search_eventa(request):
         "data": timeline_news
     }
 
-    # 事件预测模块处理
-    # nextevent_des_list = ['美舰队航行','发表南海自由航行言论','其它']
-    # nextevent_exp_list = [24, 25, 36]
     
     nextevent_content = {   # 20201011 提供的意见, 增加预测事件的解释, 二期时候可以做成json文件进行读取
         "无风险事件": "其它",
@@ -1054,9 +1248,7 @@ def search_eventa(request):
     result = {}
     result['tendency_data'] = tendency_data # 用于时间-趋势图
     result['eventpre_data'] = eventpre_data # 用于事件预测模块
-    # result['view_cluster_data'] = view_cluster_data # 用于观点聚类模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
-    # result['nextevent_views'] = nextevent_views_data # 用于下述的观点模块
     result['nextevent_news_pro'] = nextevent_news_pro # 用于事件预测的支撑材料
     result['nextevent_views_pro'] = nextevent_views_pro # 用于事件预测的支撑观点
     
