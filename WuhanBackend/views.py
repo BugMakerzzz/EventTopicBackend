@@ -1017,7 +1017,7 @@ def search_eventa(request):
                 # 增加新闻与人名之间的关系
                 nextevent_graph_data[e_str]['linklist'].append(
                     {
-                        "SourceID": v.newsid, # newsid 在这里为Newsinfo的数据
+                        "SourceID": v.newsid.newsid, # newsid 在这里为Newsinfo的数据
                         "TargetID": v.personname,
                         "weight": 1
                     }
@@ -1084,7 +1084,7 @@ def search_eventa(request):
                     # 增加新闻与人名之间的关系
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "SourceID": v.newsid,
+                            "SourceID": v.newsid.newsid,
                             "TargetID": v.personname,
                             "weight": 1
                         }
@@ -1252,7 +1252,7 @@ def search_eventa(request):
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
     result['nextevent_news_pro'] = nextevent_news_pro # 用于事件预测的支撑材料
     result['nextevent_views_pro'] = nextevent_views_pro # 用于事件预测的支撑观点
-    # result['graph_data'] = nextevent_graph_data # 支撑材料转化的图谱数据
+    result['graph_data'] = nextevent_graph_data # 支撑材料转化的图谱数据
     
     if cathe_flag:
         # 将查询结果进行缓存
