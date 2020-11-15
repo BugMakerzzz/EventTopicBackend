@@ -1017,7 +1017,7 @@ def search_eventa(request):
                 # 增加新闻与人名之间的关系
                 nextevent_graph_data[e_str]['linklist'].append(
                     {
-                        "SourceID": v.newsid,
+                        "SourceID": v.newsid, # newsid 在这里为Newsinfo的数据
                         "TargetID": v.personname,
                         "weight": 1
                     }
