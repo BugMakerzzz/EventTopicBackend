@@ -876,6 +876,7 @@ def search_eventa(request):
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = [n_title + " " + time_str + " " + n.customer]
                     nextevent_views[e_str] = [n.newsid]
+                    nextevent_graph_data[e_str] = {}
                     nextevent_graph_data[e_str]['nodelist'] = []
                     nextevent_graph_data[e_str]['linklist'] = []
 
