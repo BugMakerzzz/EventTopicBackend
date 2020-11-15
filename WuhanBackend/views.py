@@ -44,7 +44,7 @@ def main_news_show(theme):
     crisis_queryset = show_queryset.order_by('-crisis')
     COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
     
-    show_news_list = []
+    show_news_date_list = []
     
     # 每种条件筛选20条
     title_set = set()
@@ -87,7 +87,7 @@ def main_news_show(theme):
             )
        
         if len(tmp['views']) == 0: continue        
-        show_news_list.append(tmp)
+        show_news_date_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= show_size: break 
@@ -125,7 +125,7 @@ def main_news_show(theme):
             )
 
         if len(tmp['views']) == 0: continue
-        show_news_list.append(tmp)
+        show_news_date_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= show_size: break 
@@ -164,12 +164,12 @@ def main_news_show(theme):
             )
         
         if len(tmp['views']) == 0: continue
-        show_news_list.append(tmp)
+        show_news_date_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= show_size: break
 
-    return show_news_list 
+    return show_news_date_list 
 
 # 主页面查询函数
 def search_main(request):
@@ -199,39 +199,6 @@ def search_main(request):
     # 查询语句
     news_queryset = Newsinfo.objects.filter(q)
 
-    # 综合选题框和专家观点框数据
-    # total_news_data = []
-    # time_news_dict = {} # 时间-新闻字典构建 {time:[自定义新闻tmp{}]}
-    # title_set = set() # 所选数据去重使用
-    # for n in news_queryset:
-    #     title = n.title
-    #     if title in title_set: continue # 如果title已经出现过, 则进行去重
-
-    #     tmp = {}
-    #     tmp['title'] = title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
-    #     tmp['newsid'] = n.newsid
-    #     tmp['time'] = n.time.strftime('%Y-%m-%d %H:%M:%S')
-    #     # tmp['time'] = n.time.strftime('%Y-%m-%d')
-    #     tmp['views'] = []
-    #     tmp['source'] = n.customer
-    #     tmp['pos_sentiment'] = n.positive    # 根据新闻的评论计算正负向指数、影响力指数
-    #     tmp['neg_sentiment'] = n.negative
-    #     tmp['influence'] = n.influence
-    #     tmp['content_label'] = n.content_label
-    #     tmp['crisis'] = n.crisis
-    #     tmp['reliability'] = n.reliability
-        
-    #     # 数据新增
-    #     # time_str = n.time.strftime('%Y-%m-%d') # 按照日进行处理
-    #     time_str = n.time.strftime('%Y-%m') # 按照月份进行处理
-    #     if time_str in time_news_dict:
-    #         time_news_dict[time_str].append(tmp)
-    #     else:
-    #         time_news_dict[time_str] = [tmp]
-    #         # print("search_main time_news_dict error: time_str not in start_time-end_time")
-
-    #     title_set.add(title)
-    #     # total_news_data.append(tmp)
 
     # 左下,右下 统计图数据处理
     time_count_dict = {}
@@ -254,21 +221,6 @@ def search_main(request):
     sentiment_neg = []
     sorted_data = []
     
-    # for t, newslist in time_news_dict.items():
-    #     # date_list.append(datetime.datetime.strptime(time, '%Y-%m'))
-    #     # 热度趋势数据处理
-    #     # hot_num.append(len(newslist))
-    #     # 正负向情感指数处理
-    #     pos_num = 0
-    #     neg_num = 0
-    #     for n in newslist:
-    #         pos_num += n['pos_sentiment']
-    #         neg_num += n['neg_sentiment']
-
-    #     # sentiment_pos.append(float("%.2f" % pos_num))
-    #     # sentiment_neg.append(float("%.2f" % neg_num))
-    #     sorted_data.append((datetime.datetime.strptime(t, '%Y-%m'), len(newslist), float("%.2f" % pos_num), float("%.2f" % neg_num)))
-    
     for t, data in time_count_dict.items():
         sorted_data.append((datetime.datetime.strptime(t, '%Y-%m'), data['news_count'], float("%.2f" % data['pos_sentiment']), float("%.2f" % data['neg_sentiment'])))
 
@@ -289,11 +241,12 @@ def search_main(request):
     reliability_queryset = show_queryset.order_by('-reliability')
     # COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
     
-    show_news_list = []
+    show_news_date_list = [] # 根据时间筛选的新闻
+    show_news_crisis_list = [] # 根据风险度筛选的新闻
     
     # 每种条件筛选10条
     title_set = set()
-    show_size = 20  # 每种逻辑的show_size
+    show_size = 30  # 每种逻辑的show_size
     start = time.time() # 计算主页面的逻辑处理时间
     
     # 根据日期筛选
@@ -338,7 +291,7 @@ def search_main(request):
             view_set.add(v.viewpoint)
        
         if len(tmp['views']) == 0: continue        
-        show_news_list.append(tmp)
+        show_news_date_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= show_size: break 
@@ -383,14 +336,10 @@ def search_main(request):
             view_set.add(v.viewpoint)
 
         if len(tmp['views']) == 0: continue
-        show_news_list.append(tmp)
+        show_news_crisis_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= show_size: break 
-
-    # midend = time.time() # 计算程序运行时间
-   
-    # end = time.time()
  
     # 选取crisis前100的数据进行右下角的危机事件展示
     count = 0
@@ -432,8 +381,10 @@ def search_main(request):
 
     # 结果封装
     result = {}
-    show_news_list = sorted(show_news_list, key=lambda x: x['time'], reverse=True) # 将新闻按照时间降序排序
-    result["news_views_data"] = show_news_list # 返回左上角和右上角的新闻数据
+    show_news_date_list = sorted(show_news_date_list, key=lambda x: x['time'], reverse=True) # 将新闻按照时间降序排序
+    result["news_views_data"] = show_news_date_list # 返回左上角和右上角的新闻数据
+    result["news_views_time_data"] = show_news_date_list # 返回根据时间排序的新闻
+    result["news_views_crisis_data"] = show_news_crisis_list # 返回根据风险度排序的新闻
     result['map_data'] = {  # 地图数据
         "max": max_views,
         "min": 0,
