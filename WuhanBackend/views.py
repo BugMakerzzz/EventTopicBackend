@@ -387,7 +387,6 @@ def search_main(request):
     eventpre_queryset = Newsinfo.objects.filter(q & Q(time__range=(show_time - delta_time, show_time)))
     
     for n in eventpre_queryset:
-        if n.crisis == 0: continue
         event_list = n.nextevent.split(',') # 根据','分割多个候选事件
         for e in event_list:
             e_str, weight = e.split(':')
