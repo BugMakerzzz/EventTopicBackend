@@ -240,7 +240,7 @@ def search_main(request):
     crisis_queryset = show_queryset.order_by('-crisis')
     reliability_queryset = show_queryset.order_by('-reliability')
     # COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
-    
+
     show_news_date_list = [] # 根据时间筛选的新闻
     show_news_crisis_list = [] # 根据风险度筛选的新闻
     
@@ -379,6 +379,30 @@ def search_main(request):
             max_views = value
         mapdata_list.append({"name":key, "value":value})
 
+    # 事件预测所需要的新闻素材
+    nextevent_dict = {} # 事件预测字典处理 {event: weight}
+    show_time = datetime.datetime.strptime('2020-11-01', '%Y-%m-%d')
+    # 获取30天内的数据进行分析
+    delta_time = datetime.timedelta(days=30)  
+    eventpre_queryset = Newsinfo.objects.filter(q & Q(time__range=(show_time - delta_time, show_time))
+    
+    for n in eventpre_queryset:
+        if n.crisis == 0: continue
+        event_list = n.nextevent.split(',') # 根据','分割多个候选事件
+        for e in event_list:
+            e_str, weight = e.split(':')
+            if e_str in nextevent_dict:
+                nextevent_dict[e_str] += int(weight)
+            else:
+                nextevent_dict[e_str] = int(weight)
+    
+    default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
+    del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
+    eventpre_data = {
+        'legend_data': list(nextevent_dict.keys()),
+        'data': [{'name': x, 'value': float(y)/(y + default_event_weight)} for x, y in nextevent_dict.items()]
+    }
+    
     # 结果封装
     result = {}
     show_news_date_list = sorted(show_news_date_list, key=lambda x: x['time'], reverse=True) # 将新闻按照时间降序排序
@@ -398,6 +422,8 @@ def search_main(request):
         'sentiment_pos': sentiment_pos,
         'sentiment_neg': sentiment_neg
     }
+
+    result['eventpre_data'] = eventpre_data # 事件预测数据
 
     # 右下角气泡图数据封装
     legend_data = []
