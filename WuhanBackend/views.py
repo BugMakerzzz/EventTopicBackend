@@ -381,7 +381,7 @@ def search_main(request):
 
     # 事件预测所需要的新闻素材
     nextevent_dict = {} # 事件预测字典处理 {event: weight}
-    show_time = datetime.datetime.strptime('2020-11-01', '%Y-%m-%d')
+    show_time = datetime.datetime.strptime('2020-11-12', '%Y-%m-%d')
     # 获取30天内的数据进行分析
     delta_time = datetime.timedelta(days=30)  
     eventpre_queryset = Newsinfo.objects.filter(q & Q(time__range=(show_time - delta_time, show_time)))
@@ -986,7 +986,6 @@ def search_eventa(request):
 
                     nextevent_news_pro[e_str] = [tmp]
 
-
                 else:
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = []
@@ -997,11 +996,6 @@ def search_eventa(request):
     # 依据事件预测新闻材料的观点展示
     nextevent_views_data = []
     view_set = set()
-    views_show_num = 15
-    total_weight = 0 # 事件预测总权重
-    for e, w in nextevent_dict.items():
-        total_weight += w   # 计算总权重
-    
     # 加载关键专家字典
     with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/theme_person.json"),'r','utf-8') as rf:
         theme_person_dict = json.load(rf)
@@ -1262,12 +1256,15 @@ def search_eventa(request):
         "台湾政局核心人物鼓吹台独": "指台湾民间、政坛等组织团体掀起台独浪潮等不利于两岸统一的事件",
         "台湾政局发生大规模人事变化": "指台湾各级政府因选举等行为而发生的较大人事调整事件"
     }
+    default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
         'data': [{'name': x, 'value': y, 'news': nextevent_news[x], 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()],
-        'data_pro': [{'name': x, 'value': float(y)/total_weight, 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
+        'data_pro': [{'name': x, 'value': float(y)/(y + default_event_weight), 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
     }
+    
+    print(default_event_weight)
     
     # print(eventpre_data)
 
