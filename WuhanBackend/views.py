@@ -384,7 +384,7 @@ def search_main(request):
     show_time = datetime.datetime.strptime('2020-11-01', '%Y-%m-%d')
     # 获取30天内的数据进行分析
     delta_time = datetime.timedelta(days=30)  
-    eventpre_queryset = Newsinfo.objects.filter(q & Q(time__range=(show_time - delta_time, show_time))
+    eventpre_queryset = Newsinfo.objects.filter(q & Q(time__range=(show_time - delta_time, show_time)))
     
     for n in eventpre_queryset:
         if n.crisis == 0: continue
