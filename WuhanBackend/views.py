@@ -241,6 +241,7 @@ def search_main(request):
     reliability_queryset = show_queryset.order_by('-reliability')
     # COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
 
+    show_news_all_list = []
     show_news_date_list = [] # 根据时间筛选的新闻
     show_news_crisis_list = [] # 根据风险度筛选的新闻
     
@@ -292,6 +293,7 @@ def search_main(request):
        
         if len(tmp['views']) == 0: continue        
         show_news_date_list.append(tmp)
+        show_news_all_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= show_size: break 
@@ -337,6 +339,7 @@ def search_main(request):
 
         if len(tmp['views']) == 0: continue
         show_news_crisis_list.append(tmp)
+        show_news_all_list.append(tmp)
         title_set.add(n.title)
         count += 1
         if count >= show_size: break 
@@ -405,7 +408,7 @@ def search_main(request):
     # 结果封装
     result = {}
     show_news_date_list = sorted(show_news_date_list, key=lambda x: x['time'], reverse=True) # 将新闻按照时间降序排序
-    result["news_views_data"] = show_news_date_list # 返回左上角和右上角的新闻数据
+    result["news_views_data"] = show_news_all_list # 返回左上角和右上角的新闻数据
     result["news_views_time_data"] = show_news_date_list # 返回根据时间排序的新闻
     result["news_views_crisis_data"] = show_news_crisis_list # 返回根据风险度排序的新闻
     result['map_data'] = {  # 地图数据
@@ -779,7 +782,7 @@ def search_eventa(request):
 
     nextevent_news_pro = {}
     nextevent_views_pro = {}
-
+    nextevent_timeline_data = {}
     nextevent_graph_data = {} # 根据支撑素材构造的图谱数据
     per_set = set() # 用于节点去重
     org_set = set()
@@ -815,6 +818,14 @@ def search_eventa(request):
                     nextevent_dict[e_str] += int(weight)
                     nextevent_news[e_str].append(n_title + " " + time_str + " " + n.customer)
                     nextevent_views[e_str].append(n.newsid)
+                    nextevent_timeline_data[e_str].append({
+                        'id' = n.newsid,
+                        'title' = n_title,
+                        'content' = n.content,
+                        'url' =  n.url,
+                        'foreign' = False,
+                        'dateDay' = n.time.strftime('%Y-%m-%d %H:%M:%S')
+                    })
                     
                     # 增加支撑新闻信息
                     tmp = {}
@@ -901,6 +912,14 @@ def search_eventa(request):
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = [n_title + " " + time_str + " " + n.customer]
                     nextevent_views[e_str] = [n.newsid]
+                    nextevent_timeline_data[e_str] = [{
+                        'id' = n.newsid,
+                        'title' = n_title,
+                        'content' = n.content,
+                        'url' =  n.url,
+                        'foreign' = False,
+                        'dateDay' = n.time.strftime('%Y-%m-%d %H:%M:%S')
+                    }]
                     nextevent_graph_data[e_str] = {}
                     nextevent_graph_data[e_str]['nodelist'] = []
                     nextevent_graph_data[e_str]['linklist'] = []
@@ -1253,7 +1272,12 @@ def search_eventa(request):
         "朝鲜采取军事行动等过激行为": "指朝试射/部署导弹、进行核试验、进行炮击等不利于半岛局势的事件",
         "西方国家针对朝鲜进行制裁": "指在韩的军事部署、对朝方的外交谴责、对朝方的经济封锁等制裁事件",
         "台湾政局核心人物鼓吹台独": "指台湾民间、政坛等组织团体掀起台独浪潮等不利于两岸统一的事件",
-        "台湾政局发生大规模人事变化": "指台湾各级政府因选举等行为而发生的较大人事调整事件"
+        "台湾政局发生大规模人事变化": "指台湾各级政府因选举等行为而发生的较大人事调整事件",
+        "美国进行南海“航行自由行动”": "美国军事手段",
+        "美国发布挑衅南海主权和权益言论": "美国外交手段",
+        "中方发布维护南海主权和权益言论": "中国外交手段",
+        "中方在南海举行军事演习或其他部署": "中国军事手段"
+
     }
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
@@ -1275,7 +1299,9 @@ def search_eventa(request):
     result['nextevent_news_pro'] = nextevent_news_pro # 用于事件预测的支撑材料
     result['nextevent_views_pro'] = nextevent_views_pro # 用于事件预测的支撑观点
     result['graph_data'] = nextevent_graph_data # 支撑材料转化的图谱数据
-    
+    result['nextevent_timeline_data'] = nextevent_timeline_data # 将用于支撑事件预测的新闻按照时间轴排列
+    result['report_data'] = {"report_text": "text to WuHan"}
+
     if cathe_flag:
         # 将查询结果进行缓存
         pkwf = open(cache_file_name,"wb") 
