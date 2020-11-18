@@ -19,6 +19,20 @@ from WuhanBackend.SearchFunc import get_news_by_time, get_news_by_theme
 from WuhanBackend.ClusterVps import k_means_tfidf
 
 
+nextevent_content = {   # 20201011 提供的意见, 增加预测事件的解释, 二期时候可以做成json文件进行读取
+    "无风险事件": "其它",
+    "美国在南海挑起争端": "指美国采取南海“航行自由”行动、美国发表挑起南海争端的言论等挑衅事件",
+    "中方采取反制措施": "指中方在南海进行军事演习、在南海岛礁部署新的军事力量、发布相关的外交声明等相关反制事件",
+    "朝鲜采取军事行动等过激行为": "指朝试射/部署导弹、进行核试验、进行炮击等不利于半岛局势的事件",
+    "西方国家针对朝鲜进行制裁": "指在韩的军事部署、对朝方的外交谴责、对朝方的经济封锁等制裁事件",
+    "台湾政局核心人物鼓吹台独": "指台湾民间、政坛等组织团体掀起台独浪潮等不利于两岸统一的事件",
+    "台湾政局发生大规模人事变化": "指台湾各级政府因选举等行为而发生的较大人事调整事件",
+    "美国进行南海航行自由行动": "美国军事手段",
+    "美国发布挑衅南海主权和权益言论": "美国外交手段",
+    "中方发布维护南海主权和权益言论": "中国外交手段",
+    "中方在南海举行军事演习或其他部署": "中国军事手段"
+}
+
 def foo(request):
     result = {'what':'foo'}
     return JsonResponse(result)
@@ -397,13 +411,17 @@ def search_main(request):
                 nextevent_dict[e_str] += int(weight)
             else:
                 nextevent_dict[e_str] = int(weight)
-    
+
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
-        'data': [{'name': x, 'value': float(y)/(y + default_event_weight)} for x, y in nextevent_dict.items()]
+        'data': [{'name': x, 'value': float(y)/(y + default_event_weight),'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
     }
+
+    # 主页面图谱数据
+    with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/" + theme+ "_graph.json"),'r','utf-8') as rf:
+        graph_data = json.load(rf)
     
     # 结果封装
     result = {}
@@ -426,6 +444,7 @@ def search_main(request):
     }
 
     result['eventpre_data'] = eventpre_data # 事件预测数据
+    result['graph_data'] = graph_data   # 主页面图谱数据
 
     # 右下角气泡图数据封装
     legend_data = []
@@ -443,10 +462,6 @@ def search_main(request):
         "lengend": legend_data,
         "series": series_data
     }
-
-    # print(str(midend-start))
-    # print(str(end-start))
-    # return JsonResponse({"foo":"title"})
 
     if cathe_flag:
         # 将查询结果进行缓存
@@ -1166,9 +1181,6 @@ def search_eventa(request):
                             }
                         )
 
-
-
-
             view_set.add(v.viewpoint)
         views_list = sorted(views_list, key=lambda x: x['weight'], reverse=True) # 根据观点时间降序排序
         nextevent_views_pro[e_str] = views_list
@@ -1264,21 +1276,6 @@ def search_eventa(request):
         "data": timeline_news
     }
 
-    
-    nextevent_content = {   # 20201011 提供的意见, 增加预测事件的解释, 二期时候可以做成json文件进行读取
-        "无风险事件": "其它",
-        "美国在南海挑起争端": "指美国采取南海“航行自由”行动、美国发表挑起南海争端的言论等挑衅事件",
-        "中方采取反制措施": "指中方在南海进行军事演习、在南海岛礁部署新的军事力量、发布相关的外交声明等相关反制事件",
-        "朝鲜采取军事行动等过激行为": "指朝试射/部署导弹、进行核试验、进行炮击等不利于半岛局势的事件",
-        "西方国家针对朝鲜进行制裁": "指在韩的军事部署、对朝方的外交谴责、对朝方的经济封锁等制裁事件",
-        "台湾政局核心人物鼓吹台独": "指台湾民间、政坛等组织团体掀起台独浪潮等不利于两岸统一的事件",
-        "台湾政局发生大规模人事变化": "指台湾各级政府因选举等行为而发生的较大人事调整事件",
-        "美国进行南海航行自由行动": "美国军事手段",
-        "美国发布挑衅南海主权和权益言论": "美国外交手段",
-        "中方发布维护南海主权和权益言论": "中国外交手段",
-        "中方在南海举行军事演习或其他部署": "中国军事手段"
-
-    }
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
     eventpre_data = {
