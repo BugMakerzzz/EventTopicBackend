@@ -819,12 +819,12 @@ def search_eventa(request):
                     nextevent_news[e_str].append(n_title + " " + time_str + " " + n.customer)
                     nextevent_views[e_str].append(n.newsid)
                     nextevent_timeline_data[e_str].append({
-                        'id' = n.newsid,
-                        'title' = n_title,
-                        'content' = n.content,
-                        'url' =  n.url,
-                        'foreign' = False,
-                        'dateDay' = n.time.strftime('%Y-%m-%d %H:%M:%S')
+                        'id': n.newsid,
+                        'title': n_title,
+                        'content': n.content,
+                        'url': n.url,
+                        'foreign': False,
+                        'dateDay': n.time.strftime('%Y-%m-%d %H:%M:%S')
                     })
                     
                     # 增加支撑新闻信息
@@ -913,12 +913,12 @@ def search_eventa(request):
                     nextevent_news[e_str] = [n_title + " " + time_str + " " + n.customer]
                     nextevent_views[e_str] = [n.newsid]
                     nextevent_timeline_data[e_str] = [{
-                        'id' = n.newsid,
-                        'title' = n_title,
-                        'content' = n.content,
-                        'url' =  n.url,
-                        'foreign' = False,
-                        'dateDay' = n.time.strftime('%Y-%m-%d %H:%M:%S')
+                        'id': n.newsid,
+                        'title': n_title,
+                        'content': n.content,
+                        'url': n.url,
+                        'foreign': False,
+                        'dateDay': n.time.strftime('%Y-%m-%d %H:%M:%S')
                     }]
                     nextevent_graph_data[e_str] = {}
                     nextevent_graph_data[e_str]['nodelist'] = []
