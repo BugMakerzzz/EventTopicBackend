@@ -237,7 +237,7 @@ def search_main(request):
     start_time = datetime.datetime.strptime('2020-01-01', '%Y-%m-%d') # 主页面时间范围, 2020年以来的数据
     show_queryset = Newsinfo.objects.filter(q & Q(time__gte=start_time))
     time_queryset = show_queryset.order_by('-time')
-    crisis_queryset = show_queryset.order_by('-crisis')
+    crisis_queryset = show_queryset.order_by('-crisis', '-time')
     reliability_queryset = show_queryset.order_by('-reliability')
     # COVID_queryset = Newsinfo.objects.filter(q & (Q(title__contains='新冠') | Q(title__contains='病毒') | Q(title__contains='疫情') | Q(title__contains='肺炎')))
 
