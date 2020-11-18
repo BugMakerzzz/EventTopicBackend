@@ -1263,7 +1263,7 @@ def search_eventa(request):
         'data_pro': [{'name': x, 'value': float(y)/(y + default_event_weight), 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
     }
     
-    print(default_event_weight)
+    # print(default_event_weight)
     
     # print(eventpre_data)
 
