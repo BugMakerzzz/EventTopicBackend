@@ -426,6 +426,7 @@ def search_main(request):
                 nextevent_dict[e_str] = int(weight)
 
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
+    result['debug_nextevent_dict'] = nextevent_dict
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
