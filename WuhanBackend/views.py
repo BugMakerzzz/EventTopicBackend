@@ -424,6 +424,7 @@ def search_main(request):
                 nextevent_dict[e_str] += int(weight)
             else:
                 nextevent_dict[e_str] = int(weight)
+        title_set.add(n_title)
 
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
     
@@ -805,7 +806,6 @@ def search_eventa(request):
     # print(news_queryset.count())
 
     # 遍历新闻数据, 获取相关信息
-    newsid_set = set()
     time_news_dict = {}
     nextevent_dict = {} # 事件预测字典处理 {event: weight}
     nextevent_news = {} # 事件预测触发新闻title {event: newslist}
@@ -838,10 +838,6 @@ def search_eventa(request):
                 sim_flag = True
                 break
         if sim_flag: continue
-        # 根据新闻title进行去重
-        if n_title in title_set:
-            continue
-        newsid_set.add(n.newsid)
         time_str = n.time.strftime('%Y-%m-%d')
         if time_str in time_news_dict:
             time_news_dict[time_str].append(n)
