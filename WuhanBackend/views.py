@@ -403,7 +403,20 @@ def search_main(request):
     delta_time = datetime.timedelta(days=30)  
     eventpre_queryset = Newsinfo.objects.filter(q & Q(time__range=(show_time - delta_time, show_time)))
     
+    title_set = set()
     for n in eventpre_queryset:
+        # print(type(news.viewsinfo_set))
+        sim_flag = False
+        n_title = n.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
+        if len(n_title) < 10: continue
+        for old_t in title_set:
+            if fuzz.partial_ratio(n_title, old_t) > 80:
+                sim_flag = True
+                break
+        if sim_flag: continue
+        # 根据新闻title进行去重
+        if n_title in title_set:
+            continue
         event_list = n.nextevent.split(',') # 根据','分割多个候选事件
         for e in event_list:
             e_str, weight = e.split(':')
@@ -811,9 +824,17 @@ def search_eventa(request):
     while nowtime <= end_time:
         time_news_dict[nowtime.strftime('%Y-%m-%d')] = []
         nowtime += delta_time
+    
     for n in news_queryset:
         # print(type(news.viewsinfo_set))
+        sim_flag = False
         n_title = n.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
+        if len(n_title) < 10: continue
+        for old_t in title_set:
+            if fuzz.partial_ratio(n_title, old_t) > 80:
+                sim_flag = True
+                break
+        if sim_flag: continue
         # 根据新闻title进行去重
         if n_title in title_set:
             continue

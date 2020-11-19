@@ -1,238 +1,149 @@
 {
     "nodelist": [
         {
-            "ID": "美国进行南海航行自由行动",
-            "name": "美国进行南海航行自由行动",
+            "ID": "西方国家针对朝鲜进行制裁",
+            "name": "西方国家针对朝鲜进行制裁",
             "type": "NEXTEVENT",
             "weight": 1
         },
         {
-            "ID": "美国-选举",
-            "name": "美国-选举",
+            "ID": "金正恩-核试验",
+            "name": "金正恩-核试验",
             "type": "TRIGGER",
             "weight": 1
         },
         {
-            "ID": "中国-军演",
-            "name": "中国-军演",
+            "ID": "金正恩-核武器",
+            "name": "金正恩-核武器",
             "type": "TRIGGER",
             "weight": 1
         },
         {
-            "ID": "中国-部署-南海",
-            "name": "中国-部署-南海",
+            "ID": "朝鲜-核试验",
+            "name": "朝鲜-核试验",
             "type": "TRIGGER",
             "weight": 1
         },
         {
-            "ID": "解放军-军舰-南海",
-            "name": "解放军-军舰-南海",
+            "ID": "朝鲜-导弹-发射",
+            "name": "朝鲜-导弹-发射",
             "type": "TRIGGER",
             "weight": 1
         },
         {
-            "ID": "美国发布挑衅南海主权和权益言论",
-            "name": "美国发布挑衅南海主权和权益言论",
+            "ID": "朝鲜-阅兵-金正恩",
+            "name": "朝鲜-阅兵-金正恩",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "朝鲜-核武器",
+            "name": "朝鲜-核武器",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "朝鲜-军演",
+            "name": "朝鲜-军演",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "朝鲜采取军事行动等过激行为",
+            "name": "朝鲜采取军事行动等过激行为",
             "type": "NEXTEVENT",
             "weight": 1
         },
         {
-            "ID": "新冠-南海-军舰",
-            "name": "新冠-南海-军舰",
+            "ID": "美国-朝鲜-制裁",
+            "name": "美国-朝鲜-制裁",
             "type": "TRIGGER",
             "weight": 1
         },
         {
-            "ID": "美国-选举",
-            "name": "美国-选举",
+            "ID": "美国-导弹-半岛",
+            "name": "美国-导弹-半岛",
             "type": "TRIGGER",
             "weight": 1
         },
         {
-            "ID": "美-经济-下滑",
-            "name": "美-经济-下滑",
+            "ID": "美国-韩国-军演",
+            "name": "美国-韩国-军演",
             "type": "TRIGGER",
             "weight": 1
         },
         {
-            "ID": "中国-部署-南海",
-            "name": "中国-部署-南海",
+            "ID": "韩国-朝鲜-军演",
+            "name": "韩国-朝鲜-军演",
             "type": "TRIGGER",
             "weight": 1
         },
         {
-            "ID": "外交部-南海-回应",
-            "name": "外交部-南海-回应",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "中方发布维护南海主权和权益言论",
-            "name": "中方发布维护南海主权和权益言论",
-            "type": "NEXTEVENT",
-            "weight": 1
-        },
-        {
-            "ID": "军舰-进入-南海",
-            "name": "军舰-进入-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美军-航母-南海",
-            "name": "美军-航母-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美军-侦察-南海",
-            "name": "美军-侦察-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美国-航行-自由",
-            "name": "美国-航行-自由",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "南海-局势-升温",
-            "name": "南海-局势-升温",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美军机-飞入-南海",
-            "name": "美军机-飞入-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "中方在南海举行军事演习或其他部署",
-            "name": "中方在南海举行军事演习或其他部署",
-            "type": "NEXTEVENT",
-            "weight": 1
-        },
-        {
-            "ID": "军舰-进入-南海",
-            "name": "军舰-进入-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美军-航母-南海",
-            "name": "美军-航母-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美军-侦察-南海",
-            "name": "美军-侦察-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美-南海-军演",
-            "name": "美-南海-军演",
+            "ID": "美国-韩国-导弹-部署",
+            "name": "美国-韩国-导弹-部署",
             "type": "TRIGGER",
             "weight": 1
         }
     ],
     "linklist": [
         {
-            "SourceID": "美国-选举",
-            "TargetID": "美国进行南海航行自由行动",
+            "SourceID": "金正恩-核试验",
+            "TargetID": "西方国家针对朝鲜进行制裁",
             "weight": 1
         },
         {
-            "SourceID": "中国-军演",
-            "TargetID": "美国进行南海航行自由行动",
+            "SourceID": "金正恩-核武器",
+            "TargetID": "西方国家针对朝鲜进行制裁",
             "weight": 1
         },
         {
-            "SourceID": "中国-部署-南海",
-            "TargetID": "美国进行南海航行自由行动",
+            "SourceID": "朝鲜-核试验",
+            "TargetID": "西方国家针对朝鲜进行制裁",
             "weight": 1
         },
         {
-            "SourceID": "解放军-军舰-南海",
-            "TargetID": "美国进行南海航行自由行动",
+            "SourceID": "朝鲜-导弹-发射",
+            "TargetID": "西方国家针对朝鲜进行制裁",
             "weight": 1
         },
         {
-            "SourceID": "新冠-南海-军舰",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "SourceID": "朝鲜-阅兵-金正恩",
+            "TargetID": "西方国家针对朝鲜进行制裁",
             "weight": 1
         },
         {
-            "SourceID": "美国-选举",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "SourceID": "朝鲜-核武器",
+            "TargetID": "西方国家针对朝鲜进行制裁",
             "weight": 1
         },
         {
-            "SourceID": "美-经济-下滑",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "SourceID": "朝鲜-军演",
+            "TargetID": "西方国家针对朝鲜进行制裁",
             "weight": 1
         },
         {
-            "SourceID": "中国-部署-南海",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "SourceID": "美国-朝鲜-制裁",
+            "TargetID": "朝鲜采取军事行动等过激行为",
             "weight": 1
         },
         {
-            "SourceID": "外交部-南海-回应",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "SourceID": "美国-导弹-半岛",
+            "TargetID": "朝鲜采取军事行动等过激行为",
             "weight": 1
         },
         {
-            "SourceID": "军舰-进入-南海",
-            "TargetID": "中方发布维护南海主权和权益言论",
+            "SourceID": "美国-韩国-军演",
+            "TargetID": "朝鲜采取军事行动等过激行为",
             "weight": 1
         },
         {
-            "SourceID": "美军-航母-南海",
-            "TargetID": "中方发布维护南海主权和权益言论",
+            "SourceID": "韩国-朝鲜-军演",
+            "TargetID": "朝鲜采取军事行动等过激行为",
             "weight": 1
         },
         {
-            "SourceID": "美军-侦察-南海",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
-        },
-        {
-            "SourceID": "美国-航行-自由",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
-        },
-        {
-            "SourceID": "南海-局势-升温",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
-        },
-        {
-            "SourceID": "美军机-飞入-南海",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
-        },
-        {
-            "SourceID": "军舰-进入-南海",
-            "TargetID": "中方在南海举行军事演习或其他部署",
-            "weight": 1
-        },
-        {
-            "SourceID": "美军-航母-南海",
-            "TargetID": "中方在南海举行军事演习或其他部署",
-            "weight": 1
-        },
-        {
-            "SourceID": "美军-侦察-南海",
-            "TargetID": "中方在南海举行军事演习或其他部署",
-            "weight": 1
-        },
-        {
-            "SourceID": "美-南海-军演",
-            "TargetID": "中方在南海举行军事演习或其他部署",
+            "SourceID": "美国-韩国-导弹-部署",
+            "TargetID": "朝鲜采取军事行动等过激行为",
             "weight": 1
         }
     ]
