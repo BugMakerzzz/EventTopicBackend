@@ -426,7 +426,7 @@ def search_main(request):
                 nextevent_dict[e_str] = int(weight)
 
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
-    result['debug_nextevent_dict'] = nextevent_dict
+    
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
@@ -459,6 +459,8 @@ def search_main(request):
 
     result['eventpre_data'] = eventpre_data # 事件预测数据
     result['graph_data'] = graph_data   # 主页面图谱数据
+    result['debug_nextevent_dict'] = nextevent_dict
+    result['debug_default_event_weight'] = default_event_weight
 
     # 右下角气泡图数据封装
     legend_data = []
@@ -1320,6 +1322,8 @@ def search_eventa(request):
     result['graph_data'] = nextevent_graph_data # 支撑材料转化的图谱数据
     result['nextevent_timeline_data'] = nextevent_timeline_data # 将用于支撑事件预测的新闻按照时间轴排列
     result['report_data'] = {"report_text": "text to WuHan"}
+    result['debug_nextevent_dict'] = nextevent_dict
+    result['debug_default_event_weight'] = default_event_weight
 
     if cathe_flag:
         # 将查询结果进行缓存
