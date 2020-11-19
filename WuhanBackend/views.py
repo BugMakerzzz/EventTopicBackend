@@ -787,9 +787,6 @@ def search_eventa(request):
     # 查询语句
     news_queryset = Newsinfo.objects.filter(q).order_by('-time')
     # print(news_queryset.count())
-    other_queryset = Newsinfo.objects.filter(Q(time__range=(start_time, end_time)) & (Q(title__contains='美国') | Q(title__contains='特朗普')| Q(title__contains='拜登')) & (Q(title__contains='选举') | Q(title__contains='大选'))) # 用于预测的补充新闻
-
-    news_queryset = news_queryset | other_queryset
 
     # 遍历新闻数据, 获取相关信息
     newsid_set = set()
