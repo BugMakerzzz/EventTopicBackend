@@ -1,0 +1,239 @@
+{
+    "nodelist": [
+        {
+            "ID": "美国进行南海航行自由行动",
+            "name": "美国进行南海航行自由行动",
+            "type": "NEXTEVENT",
+            "weight": 1
+        },
+        {
+            "ID": "美国-选举",
+            "name": "美国-选举",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "中国-军演",
+            "name": "中国-军演",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "中国-部署-南海",
+            "name": "中国-部署-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "解放军-军舰-南海",
+            "name": "解放军-军舰-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美国发布挑衅南海主权和权益言论",
+            "name": "美国发布挑衅南海主权和权益言论",
+            "type": "NEXTEVENT",
+            "weight": 1
+        },
+        {
+            "ID": "新冠-南海-军舰",
+            "name": "新冠-南海-军舰",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美国-选举",
+            "name": "美国-选举",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美-经济-下滑",
+            "name": "美-经济-下滑",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "中国-部署-南海",
+            "name": "中国-部署-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "外交部-南海-回应",
+            "name": "外交部-南海-回应",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "中方发布维护南海主权和权益言论",
+            "name": "中方发布维护南海主权和权益言论",
+            "type": "NEXTEVENT",
+            "weight": 1
+        },
+        {
+            "ID": "军舰-进入-南海",
+            "name": "军舰-进入-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美军-航母-南海",
+            "name": "美军-航母-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美军-侦察-南海",
+            "name": "美军-侦察-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美国-航行-自由",
+            "name": "美国-航行-自由",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "南海-局势-升温",
+            "name": "南海-局势-升温",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美军机-飞入-南海",
+            "name": "美军机-飞入-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "中方在南海举行军事演习或其他部署",
+            "name": "中方在南海举行军事演习或其他部署",
+            "type": "NEXTEVENT",
+            "weight": 1
+        },
+        {
+            "ID": "军舰-进入-南海",
+            "name": "军舰-进入-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美军-航母-南海",
+            "name": "美军-航母-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美军-侦察-南海",
+            "name": "美军-侦察-南海",
+            "type": "TRIGGER",
+            "weight": 1
+        },
+        {
+            "ID": "美-南海-军演",
+            "name": "美-南海-军演",
+            "type": "TRIGGER",
+            "weight": 1
+        }
+    ],
+    "linklist": [
+        {
+            "SourceID": "美国-选举",
+            "TargetID": "美国进行南海航行自由行动",
+            "weight": 1
+        },
+        {
+            "SourceID": "中国-军演",
+            "TargetID": "美国进行南海航行自由行动",
+            "weight": 1
+        },
+        {
+            "SourceID": "中国-部署-南海",
+            "TargetID": "美国进行南海航行自由行动",
+            "weight": 1
+        },
+        {
+            "SourceID": "解放军-军舰-南海",
+            "TargetID": "美国进行南海航行自由行动",
+            "weight": 1
+        },
+        {
+            "SourceID": "新冠-南海-军舰",
+            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "美国-选举",
+            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "美-经济-下滑",
+            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "中国-部署-南海",
+            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "外交部-南海-回应",
+            "TargetID": "美国发布挑衅南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "军舰-进入-南海",
+            "TargetID": "中方发布维护南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "美军-航母-南海",
+            "TargetID": "中方发布维护南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "美军-侦察-南海",
+            "TargetID": "中方发布维护南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "美国-航行-自由",
+            "TargetID": "中方发布维护南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "南海-局势-升温",
+            "TargetID": "中方发布维护南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "美军机-飞入-南海",
+            "TargetID": "中方发布维护南海主权和权益言论",
+            "weight": 1
+        },
+        {
+            "SourceID": "军舰-进入-南海",
+            "TargetID": "中方在南海举行军事演习或其他部署",
+            "weight": 1
+        },
+        {
+            "SourceID": "美军-航母-南海",
+            "TargetID": "中方在南海举行军事演习或其他部署",
+            "weight": 1
+        },
+        {
+            "SourceID": "美军-侦察-南海",
+            "TargetID": "中方在南海举行军事演习或其他部署",
+            "weight": 1
+        },
+        {
+            "SourceID": "美-南海-军演",
+            "TargetID": "中方在南海举行军事演习或其他部署",
+            "weight": 1
+        }
+    ]
+}
