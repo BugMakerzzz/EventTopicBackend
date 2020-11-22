@@ -775,7 +775,7 @@ def search_eventa(request):
     start_time = end_time - delta_time
 
     # 从前端获取的待预测事件
-    # eventpre_para = request.GET['predict_event']
+    eventpre_para = request.GET['predict_event']
     
     '''
     if start_time != end_time:
@@ -798,14 +798,14 @@ def search_eventa(request):
         result = pickle.load(pkl_rf)
         result_pro = {}
         # 依据事件参数返回对应的数据
-        # result_pro['nextevent_news_pro'] =  result['nextevent_news_pro'][eventpre_para]
-        # result_pro['nextevent_views_pro'] =  result['nextevent_views_pro'][eventpre_para]
-        # result_pro['graph_data'] = result['graph_data'][eventpre_para]
-        # result_pro['nextevent_timeline_data'] = result['nextevent_timeline_data'][eventpre_para]
-        # result_pro['nextevent_weight'] = result['nextevent_weight'][eventpre_para]
-        # result_pro['nextevent_content'] = result['nextevent_content'][eventpre_para]
-        # result_pro['report_data'] = result['report_data']
-        return JsonResponse(result)
+        result_pro['nextevent_news_pro'] =  result['nextevent_news_pro'][eventpre_para]
+        result_pro['nextevent_views_pro'] =  result['nextevent_views_pro'][eventpre_para]
+        result_pro['graph_data'] = result['graph_data'][eventpre_para]
+        result_pro['nextevent_timeline_data'] = result['nextevent_timeline_data'][eventpre_para]
+        result_pro['nextevent_weight'] = result['nextevent_weight'][eventpre_para]
+        result_pro['nextevent_content'] = result['nextevent_content'][eventpre_para]
+        result_pro['report_data'] = result['report_data']
+        return JsonResponse(result_pro)
 
 
     # 组合参数查询, 利用Q的多条件查询
@@ -1330,7 +1330,7 @@ def search_eventa(request):
     for k, v in nextevent_views_pro.items():
         views_count += len(v)
     for k, v in nextevent_dict.items():
-        nexte_str += "“"+ k + "”" + "发生的概率为" + format(v, '.2%') + ","
+        nexte_str += "“"+ k + "”" + "事件发生的概率为" + format(v, '.2%') + ","
     nexte_str = nexte_str[:-1]
 
     report_text = "根据对" + start_time.strftime('%Y%m%d') + "到" + end_time.strftime('%Y%m%d') + "时间段内的" + str(len(news_queryset)) + "条开源情报分析中，筛选出" + str(news_count) + "条值得关注的新闻情报和" + str(views_count) + "条观点情报，并据此计算出在未来一段时间，" + nexte_str + "。"
@@ -1338,9 +1338,9 @@ def search_eventa(request):
     # 数据返回封装
     result = {}
     result_pro = {}
-    result['tendency_data'] = tendency_data # 用于时间-趋势图
-    result['eventpre_data'] = eventpre_data # 用于事件预测模块
-    result['timeline_data'] = timeline_data # 用于时间轴数据处理
+    # result['tendency_data'] = tendency_data # 用于时间-趋势图
+    # result['eventpre_data'] = eventpre_data # 用于事件预测模块
+    # result['timeline_data'] = timeline_data # 用于时间轴数据处理
     result['nextevent_news_pro'] = nextevent_news_pro # 用于事件预测的支撑材料
     result['nextevent_views_pro'] = nextevent_views_pro # 用于事件预测的支撑观点
     result['graph_data'] = nextevent_graph_data # 支撑材料转化的图谱数据
@@ -1358,16 +1358,16 @@ def search_eventa(request):
         pickle.dump(result, pkwf)
 
     # 根据事件类型进行结果封装
-    # result_pro['nextevent_news_pro'] =  result['nextevent_news_pro'][eventpre_para]
-    # result_pro['nextevent_views_pro'] =  result['nextevent_views_pro'][eventpre_para]
-    # result_pro['graph_data'] = result['graph_data'][eventpre_para]
-    # result_pro['nextevent_timeline_data'] = result['nextevent_timeline_data'][eventpre_para]
-    # result_pro['nextevent_weight'] = result['nextevent_weight'][eventpre_para]
-    # result_pro['nextevent_content'] = result['nextevent_content'][eventpre_para]
-    # result_pro['report_data'] = result['report_data']
+    result_pro['nextevent_news_pro'] =  result['nextevent_news_pro'][eventpre_para]
+    result_pro['nextevent_views_pro'] =  result['nextevent_views_pro'][eventpre_para]
+    result_pro['graph_data'] = result['graph_data'][eventpre_para]
+    result_pro['nextevent_timeline_data'] = result['nextevent_timeline_data'][eventpre_para]
+    result_pro['nextevent_weight'] = result['nextevent_weight'][eventpre_para]
+    result_pro['nextevent_content'] = result['nextevent_content'][eventpre_para]
+    result_pro['report_data'] = result['report_data']
 
     # return JsonResponse({"foo":"title"})
-    return JsonResponse(result)
+    return JsonResponse(result_pro)
 
 
 
