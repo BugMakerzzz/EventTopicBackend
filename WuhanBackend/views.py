@@ -1276,7 +1276,7 @@ def search_eventa(request):
             view_set.add(v.viewpoint)
         views_list = sorted(views_list, key=lambda x: x['weight'], reverse=True) # 根据观点时间降序排序
         nextevent_views_pro[e_str] = views_list
-
+    '''
     # 事件分析左上角趋势处理
     tendency_time = [] # 用于事件分析页面的趋势数据
     tendency_news = []
@@ -1367,7 +1367,7 @@ def search_eventa(request):
     timeline_data = {
         "data": timeline_news
     }
-
+    '''
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
     
