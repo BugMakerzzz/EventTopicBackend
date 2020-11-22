@@ -1,239 +1,320 @@
 {
     "nodelist": [
         {
-            "ID": "美国进行南海航行自由行动",
-            "name": "美国进行南海航行自由行动",
-            "type": "NEXTEVENT",
-            "weight": 1
+            "ID": "南海专题",
+            "name": "南海专题",
+            "symbolSize": 16,
+            "category": "topic"
         },
         {
-            "ID": "美国-选举",
-            "name": "美国-选举",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "event",
+            "name": "event",
+            "symbolSize": 15,
+            "category": "event"
         },
         {
-            "ID": "中国-军演",
-            "name": "中国-军演",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "topic",
+            "name": "topic",
+            "symbolSize": 15,
+            "category": "topic"
         },
         {
-            "ID": "中国-部署-南海",
-            "name": "中国-部署-南海",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "orgnizations",
+            "name": "orgnizations",
+            "symbolSize": 15,
+            "category": "orgnizations"
         },
         {
-            "ID": "解放军-军舰-南海",
-            "name": "解放军-军舰-南海",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "美国进行南海“航行自由行动”",
+            "name": "美国进行南海“航行自由行动”",
+            "symbolSize": 14,
+            "category": "event"
         },
         {
             "ID": "美国发布挑衅南海主权和权益言论",
             "name": "美国发布挑衅南海主权和权益言论",
-            "type": "NEXTEVENT",
-            "weight": 1
-        },
-        {
-            "ID": "新冠-南海-军舰",
-            "name": "新冠-南海-军舰",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美国-选举",
-            "name": "美国-选举",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美-经济-下滑",
-            "name": "美-经济-下滑",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "中国-部署-南海",
-            "name": "中国-部署-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "外交部-南海-回应",
-            "name": "外交部-南海-回应",
-            "type": "TRIGGER",
-            "weight": 1
+            "symbolSize": 14,
+            "category": "event"
         },
         {
             "ID": "中方发布维护南海主权和权益言论",
             "name": "中方发布维护南海主权和权益言论",
-            "type": "NEXTEVENT",
-            "weight": 1
-        },
-        {
-            "ID": "军舰-进入-南海",
-            "name": "军舰-进入-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美军-航母-南海",
-            "name": "美军-航母-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美军-侦察-南海",
-            "name": "美军-侦察-南海",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美国-航行-自由",
-            "name": "美国-航行-自由",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "南海-局势-升温",
-            "name": "南海-局势-升温",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "美军机-飞入-南海",
-            "name": "美军机-飞入-南海",
-            "type": "TRIGGER",
-            "weight": 1
+            "symbolSize": 14,
+            "category": "event"
         },
         {
             "ID": "中方在南海举行军事演习或其他部署",
             "name": "中方在南海举行军事演习或其他部署",
-            "type": "NEXTEVENT",
-            "weight": 1
+            "symbolSize": 14,
+            "category": "event"
         },
         {
-            "ID": "军舰-进入-南海",
-            "name": "军舰-进入-南海",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "蓬佩奥",
+            "name": "蓬佩奥",
+            "symbolSize": 14,
+            "category": "expert"
         },
         {
-            "ID": "美军-航母-南海",
-            "name": "美军-航母-南海",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "李华敏",
+            "name": "李华敏",
+            "symbolSize": 14,
+            "category": "expert"
         },
         {
-            "ID": "美军-侦察-南海",
-            "name": "美军-侦察-南海",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "任国强",
+            "name": "任国强",
+            "symbolSize": 10,
+            "category": "expert"
         },
         {
-            "ID": "美-南海-军演",
-            "name": "美-南海-军演",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "华春莹",
+            "name": "华春莹",
+            "symbolSize": 14,
+            "category": "expert"
+        },
+        {
+            "ID": "五角大楼发言人霍夫曼",
+            "name": "五角大楼发言人霍夫曼",
+            "symbolSize": 9,
+            "category": "expert"
+        },
+        {
+            "ID": "汪文斌",
+            "name": "汪文斌",
+            "symbolSize": 9,
+            "category": "expert"
+        },
+        {
+            "ID": "美国第七舰队发言人安东尼.洪科",
+            "name": "美国第七舰队发言人安东尼.洪科",
+            "symbolSize": 9,
+            "category": "expert"
+        },
+        {
+            "ID": "美国海军作战部长麦克·吉尔迪",
+            "name": "美国海军作战部长麦克·吉尔迪",
+            "symbolSize": 12,
+            "category": "expert"
+        },
+        {
+            "ID": "美国印太司令部总司令戴维森",
+            "name": "美国印太司令部总司令戴维森",
+            "symbolSize": 12,
+            "category": "expert"
+        },
+        {
+            "ID": "美国国家安全顾问奥布莱恩",
+            "name": "美国国家安全顾问奥布莱恩",
+            "symbolSize": 9,
+            "category": "expert"
+        },
+        {
+            "ID": "美国国务院发言人摩根·奥塔格斯",
+            "name": "美国国务院发言人摩根·奥塔格斯",
+            "symbolSize": 12,
+            "category": "expert"
+        },
+        {
+            "ID": "美国第七舰队",
+            "name": "美国第七舰队",
+            "symbolSize": 14,
+            "category": "orgization"
+        },
+        {
+            "ID": "美国国防部",
+            "name": "美国国防部",
+            "symbolSize": 10,
+            "category": "orgization"
+        },
+        {
+            "ID": "美国国务院",
+            "name": "美国国务院",
+            "symbolSize": 14,
+            "category": "orgization"
+        },
+        {
+            "ID": "美国印太司令部",
+            "name": "美国印太司令部",
+            "symbolSize": 13,
+            "category": "orgization"
+        },
+        {
+            "ID": "美国外交部",
+            "name": "美国外交部",
+            "symbolSize": 11,
+            "category": "orgization"
+        },
+        {
+            "ID": "美国海军作战部",
+            "name": "美国海军作战部",
+            "symbolSize": 10,
+            "category": "orgization"
+        },
+        {
+            "ID": "五角大楼",
+            "name": "五角大楼",
+            "symbolSize": 13,
+            "category": "orgization"
+        },
+        {
+            "ID": "越南外交部",
+            "name": "越南外交部",
+            "symbolSize": 9,
+            "category": "orgization"
+        },
+        {
+            "ID": "中国外交部",
+            "name": "中国外交部",
+            "symbolSize": 12,
+            "category": "orgization"
+        },
+        {
+            "ID": "中国国防部",
+            "name": "中国国防部",
+            "symbolSize": 14,
+            "category": "orgization"
         }
     ],
     "linklist": [
         {
-            "SourceID": "美国-选举",
-            "TargetID": "美国进行南海航行自由行动",
-            "weight": 1
+            "source": "南海专题",
+            "target": "event",
+            "symbolSize": 1
         },
         {
-            "SourceID": "中国-军演",
-            "TargetID": "美国进行南海航行自由行动",
-            "weight": 1
+            "source": "南海专题",
+            "target": "topic",
+            "symbolSize": 1
         },
         {
-            "SourceID": "中国-部署-南海",
-            "TargetID": "美国进行南海航行自由行动",
-            "weight": 1
+            "source": "南海专题",
+            "target": "orgnizations",
+            "symbolSize": 1
         },
         {
-            "SourceID": "解放军-军舰-南海",
-            "TargetID": "美国进行南海航行自由行动",
-            "weight": 1
+            "source": "event",
+            "target": "美国进行南海“航行自由行动”",
+            "symbolSize": 1
         },
         {
-            "SourceID": "新冠-南海-军舰",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
-            "weight": 1
+            "source": "event",
+            "target": "美国发布挑衅南海主权和权益言论",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美国-选举",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
-            "weight": 1
+            "source": "event",
+            "target": "中方发布维护南海主权和权益言论",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美-经济-下滑",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
-            "weight": 1
+            "source": "event",
+            "target": "中方在南海举行军事演习或其他部署",
+            "symbolSize": 1
         },
         {
-            "SourceID": "中国-部署-南海",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
-            "weight": 1
+            "source": "topic",
+            "target": "蓬佩奥",
+            "symbolSize": 1
         },
         {
-            "SourceID": "外交部-南海-回应",
-            "TargetID": "美国发布挑衅南海主权和权益言论",
-            "weight": 1
+            "source": "topic",
+            "target": "李华敏",
+            "symbolSize": 1
         },
         {
-            "SourceID": "军舰-进入-南海",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
+            "source": "topic",
+            "target": "任国强",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美军-航母-南海",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
+            "source": "topic",
+            "target": "华春莹",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美军-侦察-南海",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
+            "source": "topic",
+            "target": "五角大楼发言人霍夫曼",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美国-航行-自由",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
+            "source": "topic",
+            "target": "汪文斌",
+            "symbolSize": 1
         },
         {
-            "SourceID": "南海-局势-升温",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
+            "source": "topic",
+            "target": "美国第七舰队发言人安东尼.洪科",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美军机-飞入-南海",
-            "TargetID": "中方发布维护南海主权和权益言论",
-            "weight": 1
+            "source": "topic",
+            "target": "美国海军作战部长麦克·吉尔迪",
+            "symbolSize": 1
         },
         {
-            "SourceID": "军舰-进入-南海",
-            "TargetID": "中方在南海举行军事演习或其他部署",
-            "weight": 1
+            "source": "topic",
+            "target": "美国印太司令部总司令戴维森",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美军-航母-南海",
-            "TargetID": "中方在南海举行军事演习或其他部署",
-            "weight": 1
+            "source": "topic",
+            "target": "美国国家安全顾问奥布莱恩",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美军-侦察-南海",
-            "TargetID": "中方在南海举行军事演习或其他部署",
-            "weight": 1
+            "source": "topic",
+            "target": "美国国务院发言人摩根·奥塔格斯",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美-南海-军演",
-            "TargetID": "中方在南海举行军事演习或其他部署",
-            "weight": 1
+            "source": "orgnizations",
+            "target": "美国第七舰队",
+            "symbolSize": 1
+        },
+        {
+            "source": "orgnizations",
+            "target": "美国国防部",
+            "symbolSize": 1
+        },
+        {
+            "source": "orgnizations",
+            "target": "美国国务院",
+            "symbolSize": 1
+        },
+        {
+            "source": "orgnizations",
+            "target": "美国印太司令部",
+            "symbolSize": 1
+        },
+        {
+            "source": "orgnizations",
+            "target": "美国外交部",
+            "symbolSize": 1
+        },
+        {
+            "source": "orgnizations",
+            "target": "美国海军作战部",
+            "symbolSize": 1
+        },
+        {
+            "source": "orgnizations",
+            "target": "五角大楼",
+            "symbolSize": 1
+        },
+        {
+            "source": "orgnizations",
+            "target": "越南外交部",
+            "symbolSize": 1
+        },
+        {
+            "source": "orgnizations",
+            "target": "中国外交部",
+            "symbolSize": 1
+        },
+        {
+            "source": "orgnizations",
+            "target": "中国国防部",
+            "symbolSize": 1
         }
     ]
 }

@@ -980,6 +980,15 @@ def search_eventa(request):
                         'foreign': False,
                         'dateDay': n.time.strftime('%Y-%m-%d %H:%M:%S')
                     }]
+
+                    # 增加待预测事件节点
+                    nextevent_graph_data[e_str]['nodelist'].append({
+                        "ID": e_str,
+                        "name": e_str,
+                        "type": "NEXTEVENT",
+                        "category": 6,
+                        "symbolSize": 14
+                    })
                     nextevent_graph_data[e_str] = {}
                     nextevent_graph_data[e_str]['nodelist'] = []
                     nextevent_graph_data[e_str]['linklist'] = []
@@ -1079,15 +1088,7 @@ def search_eventa(request):
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = []
 
-            # 增加待预测事件节点
-            if e_str != '无风险事件':
-                nextevent_graph_data[e_str]['nodelist'].append({
-                    "ID": e_str,
-                    "name": e_str,
-                    "type": "NEXTEVENT",
-                    "category": 6,
-                    "symbolSize": 14
-                })
+
         title_set.add(n_title)
     # print(time_news_dict)
 
