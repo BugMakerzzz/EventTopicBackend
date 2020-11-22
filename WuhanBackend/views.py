@@ -1221,7 +1221,7 @@ def search_eventa(request):
                     n_title = new_foo.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "source": n_title + " " + new_foo.time.strftime('%Y-%m-%d %H:%M:%S'),,
+                            "source": n_title + " " + new_foo.time.strftime('%Y-%m-%d %H:%M:%S'),
                             "target": v.personname,
                             "symbolSize": 10
                         }
