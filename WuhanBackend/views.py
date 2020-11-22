@@ -1330,7 +1330,7 @@ def search_eventa(request):
     for k, v in nextevent_views_pro.items():
         views_count += len(v)
     for k, v in nextevent_dict.items():
-        nexte_str += "“"+ k + "”" + "发生的概率为" + v.format('.2%') + ","
+        nexte_str += "“"+ k + "”" + "发生的概率为" + format(v, '.2%') + ","
     nexte_str = nexte_str[:-1]
 
     report_text = "根据对" + start_time.strftime('%Y%m%d') + "到" + end_time.strftime('%Y%m%d') + "时间段内的" + str(len(news_queryset)) + "条开源情报分析中，筛选出" + str(news_count) + "条值得关注的新闻情报和" + str(views_count) + "条观点情报，并据此计算出在未来一段时间，" + nexte_str + "。"
