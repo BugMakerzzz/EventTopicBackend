@@ -1351,12 +1351,6 @@ def search_eventa(request):
                 # 将数据增添进列表中
                 timeline_news.append(tmp)
 
-                '''
-                tmp['title_list'] = []
-                for i in k_means_result[0][key]:
-                    tmp['title_list'].append(title_list[i])
-                '''
-
     # 趋势轴数据
     tendency_data = {
         "tendency_time": tendency_time,
