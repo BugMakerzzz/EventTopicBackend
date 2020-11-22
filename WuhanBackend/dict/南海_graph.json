@@ -25,8 +25,8 @@
             "category": "orgnizations"
         },
         {
-            "ID": "美国进行南海“航行自由行动”",
-            "name": "美国进行南海“航行自由行动”",
+            "ID": "美国进行南海航行自由行动",
+            "name": "美国进行南海航行自由行动",
             "symbolSize": 14,
             "category": "event"
         },
@@ -193,7 +193,7 @@
         },
         {
             "source": "event",
-            "target": "美国进行南海“航行自由行动”",
+            "target": "美国进行南海航行自由行动",
             "symbolSize": 1
         },
         {
