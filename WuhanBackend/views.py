@@ -980,6 +980,9 @@ def search_eventa(request):
                         'foreign': False,
                         'dateDay': n.time.strftime('%Y-%m-%d %H:%M:%S')
                     }]
+                                        nextevent_graph_data[e_str] = {}
+                    nextevent_graph_data[e_str]['nodelist'] = []
+                    nextevent_graph_data[e_str]['linklist'] = []
 
                     # 增加待预测事件节点
                     nextevent_graph_data[e_str]['nodelist'].append({
@@ -989,9 +992,7 @@ def search_eventa(request):
                         "category": 6,
                         "symbolSize": 14
                     })
-                    nextevent_graph_data[e_str] = {}
-                    nextevent_graph_data[e_str]['nodelist'] = []
-                    nextevent_graph_data[e_str]['linklist'] = []
+
 
                     # 增加支撑新闻信息
                     tmp = {}
