@@ -906,7 +906,7 @@ def search_eventa(request):
                         media_set.add(n.customer)
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "source": n.newsid,
+                            "source": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
                             "target": n.customer,
                             "symbolSize": 10
                         }
@@ -951,7 +951,7 @@ def search_eventa(request):
 
                             nextevent_graph_data[e_str]['linklist'].append(
                                 {
-                                    "source": n.newsid,
+                                    "source": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
                                     "target": trigger,
                                     "symbolSize": 10
                                 }
@@ -983,6 +983,15 @@ def search_eventa(request):
                     nextevent_graph_data[e_str] = {}
                     nextevent_graph_data[e_str]['nodelist'] = []
                     nextevent_graph_data[e_str]['linklist'] = []
+                    nextevent_graph_data[e_str]['categories'] = [
+                        {'name':"新闻"},
+                        {'name':"媒体"},
+                        {'name':"触发词"},
+                        {'name':"人物"},
+                        {'name':"观点"},
+                        {'name':"职位"},
+                        {'name':"待预测事件"}
+                    ]
 
                     # 增加待预测事件节点
                     nextevent_graph_data[e_str]['nodelist'].append({
@@ -1026,7 +1035,7 @@ def search_eventa(request):
                         media_set.add(n.customer)
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "source": n.newsid,
+                            "source": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
                             "target": n.customer,
                             "symbolSize": 10
                         }
@@ -1071,7 +1080,7 @@ def search_eventa(request):
                                 )
                             nextevent_graph_data[e_str]['linklist'].append(
                                 {
-                                    "source": n.newsid,
+                                    "source": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
                                     "target": trigger,
                                     "symbolSize": 10
                                 }
@@ -1135,10 +1144,12 @@ def search_eventa(request):
                         "symbolSize": 10
                     }
                 )
+                new_foo = v.newsid
+                n_title = new_foo.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
                 # 增加新闻与人名之间的关系
                 nextevent_graph_data[e_str]['linklist'].append(
                     {
-                        "source": v.newsid.newsid, # newsid 在这里为Newsinfo的数据
+                        "source": n_title + " " + new_foo.time.strftime('%Y-%m-%d %H:%M:%S'), # newsid 在这里为Newsinfo的数据
                         "target": v.personname,
                         "symbolSize": 10
                     }
@@ -1158,7 +1169,7 @@ def search_eventa(request):
                 # 增加人名与观点间的关系
                 nextevent_graph_data[e_str]['linklist'].append(
                     {
-                        "source": v.viewid,
+                        "source": v.verb + v.viewpoint + " " + v.time.strftime('%Y-%m-%d %H:%M:%S'),
                         "target": v.personname,
                         "symbolSize": 10
                       }
@@ -1206,9 +1217,11 @@ def search_eventa(request):
                         }
                     )
                     # 增加新闻与人名之间的关系
+                    new_foo = v.newsid
+                    n_title = new_foo.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "source": v.newsid.newsid,
+                            "source": n_title + " " + new_foo.time.strftime('%Y-%m-%d %H:%M:%S'),,
                             "target": v.personname,
                             "symbolSize": 10
                         }
@@ -1227,7 +1240,7 @@ def search_eventa(request):
                         per_set.add(v.personname)
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "source": v.viewid,
+                            "source": v.verb + v.viewpoint + " " + v.time.strftime('%Y-%m-%d %H:%M:%S'),
                             "target": v.personname,
                             "symbolSize": 10
                         }
