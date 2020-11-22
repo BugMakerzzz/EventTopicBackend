@@ -860,15 +860,7 @@ def search_eventa(request):
         event_list = n.nextevent.split(',') # 根据','分割多个候选事件
         for e in event_list:
             e_str, weight = e.split(':')
-            # 增加待预测事件节点
-            if e_str != '无风险事件':
-                nextevent_graph_data[e_str]['nodelist'].append({
-                    "ID": e_str,
-                    "name": e_str,
-                    "type": "NEXTEVENT",
-                    "category": 6,
-                    "symbolSize": 14
-                })
+
             if e_str in nextevent_dict:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] += int(weight)
@@ -1086,7 +1078,16 @@ def search_eventa(request):
                 else:
                     nextevent_dict[e_str] = int(weight)
                     nextevent_news[e_str] = []
-        
+
+            # 增加待预测事件节点
+            if e_str != '无风险事件':
+                nextevent_graph_data[e_str]['nodelist'].append({
+                    "ID": e_str,
+                    "name": e_str,
+                    "type": "NEXTEVENT",
+                    "category": 6,
+                    "symbolSize": 14
+                })
         title_set.add(n_title)
     # print(time_news_dict)
 
