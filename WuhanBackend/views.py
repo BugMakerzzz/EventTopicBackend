@@ -860,6 +860,15 @@ def search_eventa(request):
         event_list = n.nextevent.split(',') # 根据','分割多个候选事件
         for e in event_list:
             e_str, weight = e.split(':')
+            # 增加待预测事件节点
+            if e_str != '无风险事件':
+                nextevent_graph_data[e_str]['nodelist'].append({
+                    "ID": e_str,
+                    "name": e_str,
+                    "type": "NEXTEVENT",
+                    "category": 6,
+                    "symbolSize": 14
+                })
             if e_str in nextevent_dict:
                 if e_str != '无风险事件':
                     nextevent_dict[e_str] += int(weight)
@@ -888,7 +897,8 @@ def search_eventa(request):
                             "ID": n.newsid,
                             "name": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
                             "type": "NEW",
-                            "weight": 1
+                            "category": 0,
+                            "symbolSize": 10
                         }
                     )
                     if n.customer not in media_set:
@@ -897,15 +907,16 @@ def search_eventa(request):
                                 "ID": n.customer,
                                 "name": n.customer,
                                 "type": "MEDIA",
-                                "weight": 1
+                                "category": 1,
+                                "symbolSize": 10
                             }
                         )
                         media_set.add(n.customer)
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "SourceID": n.newsid,
-                            "TargetID": n.customer,
-                            "weight": 1
+                            "source": n.newsid,
+                            "target": n.customer,
+                            "symbolSize": 10
                         }
                     )
                     # 处理新闻title, 根据新闻危机词高亮新闻title, 在原字符串增加html高亮标签
@@ -932,15 +943,25 @@ def search_eventa(request):
                                         "ID": trigger,
                                         "name": trigger,
                                         "type": "TRIGGER",
-                                        "weight": 1
+                                        "category": 2,
+                                        "symbolSize": 12
                                     }
                                 )
                                 tri_set.add(trigger)
+                                # 增加 Tri 与 NEXTEVENT之间的关系
+                                nextevent_graph_data[e_str]['linklist'].append(
+                                    {
+                                        "source": trigger,
+                                        "target": e_str,
+                                        "symbolSize": 10
+                                    }
+                                )
+
                             nextevent_graph_data[e_str]['linklist'].append(
                                 {
-                                    "SourceID": n.newsid,
-                                    "TargetID": trigger,
-                                    "weight": 1
+                                    "source": n.newsid,
+                                    "target": trigger,
+                                    "symbolSize": 10
                                 }
                             )
                             for w in wjwords.split(":")[0].split("-"):
@@ -986,7 +1007,8 @@ def search_eventa(request):
                             "ID": n.newsid,
                             "name": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
                             "type": "NEW",
-                            "weight": 1
+                            "category": 0,
+                            "symbolSize": 10
                         }
                     )
                     if n.customer not in media_set:
@@ -995,15 +1017,16 @@ def search_eventa(request):
                                 "ID": n.customer,
                                 "name": n.customer,
                                 "type": "MEDIA",
-                                "weight": 1
+                                "category": 1,
+                                "symbolSize": 10
                             }
                         )
                         media_set.add(n.customer)
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "SourceID": n.newsid,
-                            "TargetID": n.customer,
-                            "weight": 1
+                            "source": n.newsid,
+                            "target": n.customer,
+                            "symbolSize": 10
                         }
                     )
 
@@ -1031,15 +1054,24 @@ def search_eventa(request):
                                         "ID": trigger,
                                         "name": trigger,
                                         "type": "TRIGGER",
-                                        "weight": 1
+                                        "category": 2,
+                                        "symbolSize": 12
                                     }
                                 )
                                 tri_set.add(trigger)
+                                
+                                nextevent_graph_data[e_str]['linklist'].append(
+                                    {
+                                        "source": trigger,
+                                        "target": e_str,
+                                        "symbolSize": 10
+                                    }
+                                )
                             nextevent_graph_data[e_str]['linklist'].append(
                                 {
-                                    "SourceID": n.newsid,
-                                    "TargetID": trigger,
-                                    "weight": 1
+                                    "source": n.newsid,
+                                    "target": trigger,
+                                    "symbolSize": 10
                                 }
                             )
                             for w in wjwords.split(":")[0].split("-"):
@@ -1096,15 +1128,16 @@ def search_eventa(request):
                         "ID": v.viewid,
                         "name": v.verb + v.viewpoint + " " + v.time.strftime('%Y-%m-%d %H:%M:%S'),
                         "type": "VIEW",
-                        "weight": 1
+                        "category": 4,
+                        "symbolSize": 10
                     }
                 )
                 # 增加新闻与人名之间的关系
                 nextevent_graph_data[e_str]['linklist'].append(
                     {
-                        "SourceID": v.newsid.newsid, # newsid 在这里为Newsinfo的数据
-                        "TargetID": v.personname,
-                        "weight": 1
+                        "source": v.newsid.newsid, # newsid 在这里为Newsinfo的数据
+                        "target": v.personname,
+                        "symbolSize": 10
                     }
                 )
                 # 增加人名节点
@@ -1114,16 +1147,17 @@ def search_eventa(request):
                             "ID": v.personname,
                             "name": v.personname,
                             "type": "PERSON",
-                            "weight": 1
+                            "category": 3,
+                            "symbolSize": 10
                         }
                     )
                     per_set.add(v.personname)
                 # 增加人名与观点间的关系
                 nextevent_graph_data[e_str]['linklist'].append(
                     {
-                        "SourceID": v.viewid,
-                        "TargetID": v.personname,
-                        "weight": 1
+                        "source": v.viewid,
+                        "target": v.personname,
+                        "symbolSize": 10
                       }
                 )
                 # 增加职位节点
@@ -1133,16 +1167,17 @@ def search_eventa(request):
                             "ID": v.orgname + v.pos,
                             "name": v.orgname + v.pos,
                             "type": "ORG",
-                            "weight": 1
+                            "category": 5,
+                            "symbolSize": 10
                         }
                     )
                     org_set.add(v.orgname + v.pos)
                 # 增加人名与职位间的关系
                 nextevent_graph_data[e_str]['linklist'].append(
                     {
-                        "SourceID": v.personname,
-                        "TargetID": v.orgname + v.pos,
-                        "weight": 1
+                        "source": v.personname,
+                        "target": v.orgname + v.pos,
+                        "symbolSize": 10
                     }
                 )
             else:
@@ -1152,7 +1187,7 @@ def search_eventa(request):
                         "viewpoint": v.verb + v.viewpoint,
                         "eventname": e_str,
                         "time": v.time.strftime('%Y-%m-%d %H:%M:%S'),
-                        "weight": 1,
+                        "symbolSize": 10,
                         "recommend": 0
                     }
                 )
@@ -1163,15 +1198,16 @@ def search_eventa(request):
                             "ID": v.viewid,
                             "name": v.verb + v.viewpoint + " " + v.time.strftime('%Y-%m-%d %H:%M:%S'),
                             "type": "VIEW",
-                            "weight": 1
+                            "category": 4,
+                            "symbolSize": 10
                         }
                     )
                     # 增加新闻与人名之间的关系
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "SourceID": v.newsid.newsid,
-                            "TargetID": v.personname,
-                            "weight": 1
+                            "source": v.newsid.newsid,
+                            "target": v.personname,
+                            "symbolSize": 10
                         }
                     )
                     # 增加人名与观点间的关系
@@ -1181,15 +1217,16 @@ def search_eventa(request):
                                 "ID": v.personname,
                                 "name": v.personname,
                                 "type": "PERSON",
-                                "weight": 1
+                                "category": 3,
+                                "symbolSize": 10
                             }
                         )
                         per_set.add(v.personname)
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
-                            "SourceID": v.viewid,
-                            "TargetID": v.personname,
-                            "weight": 1
+                            "source": v.viewid,
+                            "target": v.personname,
+                            "symbolSize": 10
                         }
                     )
 
@@ -1201,15 +1238,16 @@ def search_eventa(request):
                                     "ID": v.orgname + v.pos,
                                     "name": v.orgname + v.pos,
                                     "type": "ORG",
-                                    "weight": 1
+                                    "category": 5,
+                                    "symbolSize": 10
                                 }
                             )
                             org_set.add(v.orgname + v.pos)
                         nextevent_graph_data[e_str]['linklist'].append(
                             {
-                                "SourceID": v.personname,
-                                "TargetID": v.orgname + v.pos,
-                                "weight": 1
+                                "source": v.personname,
+                                "target": v.orgname + v.pos,
+                                "symbolSize": 10
                             }
                         )
 
