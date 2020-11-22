@@ -1112,7 +1112,8 @@ def search_eventa(request):
     # 加载关键专家字典
     with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/theme_person.json"),'r','utf-8') as rf:
         theme_person_dict = json.load(rf)
-
+    black_per_set = set()
+    black_per_set.add("邓小平")
     for e_str, newsid_list in nextevent_views.items():
         view_query_tmp = Viewsinfo.objects.filter(newsid__in=newsid_list)
         views_list = []
@@ -1127,6 +1128,7 @@ def search_eventa(request):
                     sim_flag = True
                     break
             if sim_flag: continue
+            if v.personname in black_per_set: continue
             if v.personname in theme_person_dict: # 从特定的专家字典中展现观点数据
                 views_list.append(
                     {
