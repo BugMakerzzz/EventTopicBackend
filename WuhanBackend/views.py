@@ -773,6 +773,9 @@ def search_eventa(request):
     # 获取30天内的数据进行分析
     delta_time = datetime.timedelta(days=30)  
     start_time = end_time - delta_time
+
+    # 从前端获取的待预测事件
+    # eventpre_para = request.GET['predict_event']
     
     '''
     if start_time != end_time:
@@ -793,6 +796,15 @@ def search_eventa(request):
     if cathe_flag and os.path.exists(cache_file_name): # 缓存已经存在
         pkl_rf = open(cache_file_name,'rb')
         result = pickle.load(pkl_rf)
+        result_pro = {}
+        # 依据事件参数返回对应的数据
+        # result_pro['nextevent_news_pro'] =  result['nextevent_news_pro'][eventpre_para]
+        # result_pro['nextevent_views_pro'] =  result['nextevent_views_pro'][eventpre_para]
+        # result_pro['graph_data'] = result['graph_data'][eventpre_para]
+        # result_pro['nextevent_timeline_data'] = result['nextevent_timeline_data'][eventpre_para]
+        # result_pro['nextevent_weight'] = result['nextevent_weight'][eventpre_para]
+        # result_pro['nextevent_content'] = result['nextevent_content'][eventpre_para]
+        # result_pro['report_data'] = result['report_data']
         return JsonResponse(result)
 
 
@@ -1298,18 +1310,34 @@ def search_eventa(request):
 
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
+    
+    # 更新事件权重
+    for k in nextevent_dict.keys():
+        nextevent_dict[k] = float(nextevent_dict[k])/(nextevent_dict[k] + default_event_weight)
+    
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
         'data': [{'name': x, 'value': y, 'news': nextevent_news[x], 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()],
-        'data_pro': [{'name': x, 'value': float(y)/(y + default_event_weight), 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
+        'data_pro': [{'name': x, 'value': y, 'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
     }
     
-    # print(default_event_weight)
-    
-    # print(eventpre_data)
+    # 新闻数量 len(title_set), 有价值观点数量 nextevent_views_pro中, 有价值新闻数量 next_news_pro中
+    news_count = 0
+    views_count = 0
+    nexte_str = ""
+    for k, v in nextevent_news_pro.items():
+        news_count += len(v)
+    for k, v in nextevent_views_pro.items():
+        views_count += len(v)
+    for k, v in nextevent_dict.items():
+        nexte_str += "“"+ k + "”" + "发生的概率为" + v.format('.2%') + ","
+    nexte_str = nexte_str[:-1]
+
+    report_text = "根据对" + start_time.strftime('%Y%m%d') + "到" + end_time.strftime('%Y%m%d') + "时间段内的" + str(len(news_queryset)) + "条开源情报分析中，筛选出" + str(news_count) + "条值得关注的新闻情报和" + str(views_count) + "条观点情报，并据此计算出在未来一段时间，" + nexte_str + "。"
 
     # 数据返回封装
     result = {}
+    result_pro = {}
     result['tendency_data'] = tendency_data # 用于时间-趋势图
     result['eventpre_data'] = eventpre_data # 用于事件预测模块
     result['timeline_data'] = timeline_data # 用于时间轴数据处理
@@ -1317,14 +1345,26 @@ def search_eventa(request):
     result['nextevent_views_pro'] = nextevent_views_pro # 用于事件预测的支撑观点
     result['graph_data'] = nextevent_graph_data # 支撑材料转化的图谱数据
     result['nextevent_timeline_data'] = nextevent_timeline_data # 将用于支撑事件预测的新闻按照时间轴排列
-    result['report_data'] = {"report_text": "text to WuHan"}
-    result['debug_nextevent_dict'] = nextevent_dict
-    result['debug_default_event_weight'] = default_event_weight
+    result['report_data'] = report_text
+    result['nextevent_weight'] = nextevent_dict
+    result['nextevent_content'] = nextevent_content
+    
+    # result['debug_nextevent_dict'] = nextevent_dict
+    # result['debug_default_event_weight'] = default_event_weight
 
     if cathe_flag:
         # 将查询结果进行缓存
         pkwf = open(cache_file_name,"wb") 
-        pickle.dump(result, pkwf) 
+        pickle.dump(result, pkwf)
+
+    # 根据事件类型进行结果封装
+    # result_pro['nextevent_news_pro'] =  result['nextevent_news_pro'][eventpre_para]
+    # result_pro['nextevent_views_pro'] =  result['nextevent_views_pro'][eventpre_para]
+    # result_pro['graph_data'] = result['graph_data'][eventpre_para]
+    # result_pro['nextevent_timeline_data'] = result['nextevent_timeline_data'][eventpre_para]
+    # result_pro['nextevent_weight'] = result['nextevent_weight'][eventpre_para]
+    # result_pro['nextevent_content'] = result['nextevent_content'][eventpre_para]
+    # result_pro['report_data'] = result['report_data']
 
     # return JsonResponse({"foo":"title"})
     return JsonResponse(result)
