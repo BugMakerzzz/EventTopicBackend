@@ -980,7 +980,7 @@ def search_eventa(request):
                         'foreign': False,
                         'dateDay': n.time.strftime('%Y-%m-%d %H:%M:%S')
                     }]
-                                        nextevent_graph_data[e_str] = {}
+                    nextevent_graph_data[e_str] = {}
                     nextevent_graph_data[e_str]['nodelist'] = []
                     nextevent_graph_data[e_str]['linklist'] = []
 
