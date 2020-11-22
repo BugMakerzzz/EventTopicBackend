@@ -429,6 +429,10 @@ def search_main(request):
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
     
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
+    if '中方在南海举行军事演习或其他部署' in nextevent_dict:
+        del nextevent_dict['中方在南海举行军事演习或其他部署']
+    if '中方发布维护南海主权和权益言论' in nextevent_dict:
+        del nextevent_dict['中方发布维护南海主权和权益言论']
     eventpre_data = {
         'legend_data': list(nextevent_dict.keys()),
         'data': [{'name': x, 'value': float(y)/(y + default_event_weight),'name_content': nextevent_content[x]} for x, y in nextevent_dict.items()]
