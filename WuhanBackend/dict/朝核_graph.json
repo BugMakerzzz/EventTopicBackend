@@ -1,150 +1,265 @@
 {
     "nodelist": [
         {
+            "ID": "朝核专题",
+            "name": "朝核专题",
+            "symbolSize": 16,
+            "category": "专题"
+        },
+        {
+            "ID": "事件",
+            "name": "事件",
+            "symbolSize": 15,
+            "category": "事件"
+        },
+        {
+            "ID": "专家",
+            "name": "专家",
+            "symbolSize": 15,
+            "category": "专家"
+        },
+        {
+            "ID": "组织",
+            "name": "组织",
+            "symbolSize": 15,
+            "category": "组织"
+        },
+        {
             "ID": "西方国家针对朝鲜进行制裁",
             "name": "西方国家针对朝鲜进行制裁",
-            "type": "NEXTEVENT",
-            "weight": 1
-        },
-        {
-            "ID": "金正恩-核试验",
-            "name": "金正恩-核试验",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "金正恩-核武器",
-            "name": "金正恩-核武器",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "朝鲜-核试验",
-            "name": "朝鲜-核试验",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "朝鲜-导弹-发射",
-            "name": "朝鲜-导弹-发射",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "朝鲜-阅兵-金正恩",
-            "name": "朝鲜-阅兵-金正恩",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "朝鲜-核武器",
-            "name": "朝鲜-核武器",
-            "type": "TRIGGER",
-            "weight": 1
-        },
-        {
-            "ID": "朝鲜-军演",
-            "name": "朝鲜-军演",
-            "type": "TRIGGER",
-            "weight": 1
+            "symbolSize": 14,
+            "category": "事件"
         },
         {
             "ID": "朝鲜采取军事行动等过激行为",
             "name": "朝鲜采取军事行动等过激行为",
-            "type": "NEXTEVENT",
-            "weight": 1
+            "symbolSize": 14,
+            "category": "事件"
         },
         {
-            "ID": "美国-朝鲜-制裁",
-            "name": "美国-朝鲜-制裁",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "中国外交部发言人赵立坚",
+            "name": "中国外交部发言人赵立坚",
+            "symbolSize": 14,
+            "category": "专家"
         },
         {
-            "ID": "美国-导弹-半岛",
-            "name": "美国-导弹-半岛",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "美国陆军参谋长米莱",
+            "name": "美国陆军参谋长米莱",
+            "symbolSize": 14,
+            "category": "专家"
         },
         {
-            "ID": "美国-韩国-军演",
-            "name": "美国-韩国-军演",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "朝鲜劳动党委员长金正恩",
+            "name": "朝鲜劳动党委员长金正恩",
+            "symbolSize": 10,
+            "category": "专家"
         },
         {
-            "ID": "韩国-朝鲜-军演",
-            "name": "韩国-朝鲜-军演",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "韩国总统文在寅",
+            "name": "韩国总统文在寅",
+            "symbolSize": 14,
+            "category": "专家"
         },
         {
-            "ID": "美国-韩国-导弹-部署",
-            "name": "美国-韩国-导弹-部署",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "美国对朝特别代表比根",
+            "name": "美国对朝特别代表比根",
+            "symbolSize": 9,
+            "category": "专家"
+        },
+        {
+            "ID": "朝鲜外务省负责美国事务局长权正根",
+            "name": "朝鲜外务省负责美国事务局长权正根",
+            "symbolSize": 9,
+            "category": "专家"
+        },
+        {
+            "ID": "朝鲜外务相李善权",
+            "name": "朝鲜外务相李善权",
+            "symbolSize": 9,
+            "category": "专家"
+        },
+        {
+            "ID": "中国社科院美国所副研究员李枏",
+            "name": "中国社科院美国所副研究员李枏",
+            "symbolSize": 9,
+            "category": "专家"
+        },
+        {
+            "ID": "五角大楼发言人霍夫曼",
+            "name": "五角大楼发言人霍夫曼",
+            "symbolSize": 9,
+            "category": "专家"
+        },
+        {
+            "ID": "美国国家安全顾问奥布莱恩",
+            "name": "美国国家安全顾问奥布莱恩",
+            "symbolSize": 9,
+            "category": "专家"
+        },
+        {
+            "ID": "韩国联合参谋本部",
+            "name": "韩国联合参谋本部",
+            "symbolSize": 10,
+            "category": "组织"
+        },
+        {
+            "ID": "美国国防部",
+            "name": "美国国防部",
+            "symbolSize": 10,
+            "category": "组织"
+        },
+        {
+            "ID": "朝鲜军方",
+            "name": "朝鲜军方",
+            "symbolSize": 14,
+            "category": "组织"
+        },
+        {
+            "ID": "朝鲜外务省",
+            "name": "朝鲜外务省",
+            "symbolSize": 12,
+            "category": "组织"
+        },
+        {
+            "ID": "朝鲜国务委员会",
+            "name": "朝鲜国务委员会",
+            "symbolSize": 13,
+            "category": "组织"
+        },
+        {
+            "ID": "中国社科院美国所",
+            "name": "中国社科院美国所",
+            "symbolSize": 9,
+            "category": "组织"
+        },
+        {
+            "ID": "美国白宫",
+            "name": "美国白宫",
+            "symbolSize": 12,
+            "category": "组织"
+        },
+        {
+            "ID": "美国国务院",
+            "name": "美国国务院",
+            "symbolSize": 13,
+            "category": "组织"
         }
     ],
     "linklist": [
         {
-            "SourceID": "金正恩-核试验",
-            "TargetID": "西方国家针对朝鲜进行制裁",
-            "weight": 1
+            "source": "朝核专题",
+            "target": "事件",
+            "symbolSize": 1
         },
         {
-            "SourceID": "金正恩-核武器",
-            "TargetID": "西方国家针对朝鲜进行制裁",
-            "weight": 1
+            "source": "朝核专题",
+            "target": "专家",
+            "symbolSize": 1
         },
         {
-            "SourceID": "朝鲜-核试验",
-            "TargetID": "西方国家针对朝鲜进行制裁",
-            "weight": 1
+            "source": "朝核专题",
+            "target": "组织",
+            "symbolSize": 1
         },
         {
-            "SourceID": "朝鲜-导弹-发射",
-            "TargetID": "西方国家针对朝鲜进行制裁",
-            "weight": 1
+            "source": "事件",
+            "target": "西方国家针对朝鲜进行制裁",
+            "symbolSize": 1
         },
         {
-            "SourceID": "朝鲜-阅兵-金正恩",
-            "TargetID": "西方国家针对朝鲜进行制裁",
-            "weight": 1
+            "source": "事件",
+            "target": "朝鲜采取军事行动等过激行为",
+            "symbolSize": 1
         },
         {
-            "SourceID": "朝鲜-核武器",
-            "TargetID": "西方国家针对朝鲜进行制裁",
-            "weight": 1
+            "source": "专家",
+            "target": "中国外交部发言人赵立坚",
+            "symbolSize": 1
         },
         {
-            "SourceID": "朝鲜-军演",
-            "TargetID": "西方国家针对朝鲜进行制裁",
-            "weight": 1
+            "source": "专家",
+            "target": "美国陆军参谋长米莱",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美国-朝鲜-制裁",
-            "TargetID": "朝鲜采取军事行动等过激行为",
-            "weight": 1
+            "source": "专家",
+            "target": "朝鲜劳动党委员长金正恩",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美国-导弹-半岛",
-            "TargetID": "朝鲜采取军事行动等过激行为",
-            "weight": 1
+            "source": "专家",
+            "target": "韩国总统文在寅",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美国-韩国-军演",
-            "TargetID": "朝鲜采取军事行动等过激行为",
-            "weight": 1
+            "source": "专家",
+            "target": "美国对朝特别代表比根",
+            "symbolSize": 1
         },
         {
-            "SourceID": "韩国-朝鲜-军演",
-            "TargetID": "朝鲜采取军事行动等过激行为",
-            "weight": 1
+            "source": "专家",
+            "target": "朝鲜外务省负责美国事务局长权正根",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美国-韩国-导弹-部署",
-            "TargetID": "朝鲜采取军事行动等过激行为",
-            "weight": 1
+            "source": "专家",
+            "target": "朝鲜外务相李善权",
+            "symbolSize": 1
+        },
+        {
+            "source": "专家",
+            "target": "中国社科院美国所副研究员李枏",
+            "symbolSize": 1
+        },
+        {
+            "source": "专家",
+            "target": "五角大楼发言人霍夫曼",
+            "symbolSize": 1
+        },
+        {
+            "source": "专家",
+            "target": "美国国家安全顾问奥布莱恩",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "韩国联合参谋本部",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "美国国防部",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "朝鲜军方",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "朝鲜外务省",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "朝鲜国务委员会",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "中国社科院美国所",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "美国白宫",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "美国国务院",
+            "symbolSize": 1
         }
     ]
 }

@@ -1,117 +1,265 @@
 {
     "nodelist": [
         {
-            "ID": "台湾政局核心人物股鼓动台独",
-            "name": "台湾政局核心人物股鼓动台独",
-            "type": "NEXTEVENT",
-            "weight": 1
+            "ID": "台湾问题专题",
+            "name": "台湾问题专题",
+            "symbolSize": 16,
+            "category": "专题"
         },
         {
-            "ID": "美国-台湾-外交",
-            "name": "美国-台湾-外交",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "事件",
+            "name": "事件",
+            "symbolSize": 15,
+            "category": "事件"
         },
         {
-            "ID": "美国-台湾-军售",
-            "name": "美国-台湾-军售",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "专家",
+            "name": "专家",
+            "symbolSize": 15,
+            "category": "专家"
         },
         {
-            "ID": "美国-访台",
-            "name": "美国-访台",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "组织",
+            "name": "组织",
+            "symbolSize": 15,
+            "category": "组织"
         },
         {
-            "ID": "美军-外长-台湾",
-            "name": "美军-外长-台湾",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "西方国家针对朝鲜进行制裁",
+            "name": "西方国家针对朝鲜进行制裁",
+            "symbolSize": 14,
+            "category": "事件"
         },
         {
-            "ID": "蔡英文-美国总统-交流",
-            "name": "蔡英文-美国总统-交流",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "朝鲜采取军事行动等过激行为",
+            "name": "朝鲜采取军事行动等过激行为",
+            "symbolSize": 14,
+            "category": "事件"
         },
         {
-            "ID": "台湾政局发生大规模人事变化",
-            "name": "台湾政局发生大规模人事变化",
-            "type": "NEXTEVENT",
-            "weight": 1
+            "ID": "国防部新闻发言人任国强",
+            "name": "国防部新闻发言人任国强",
+            "symbolSize": 14,
+            "category": "专家"
         },
         {
-            "ID": "台湾-大选",
-            "name": "台湾-大选",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "中国外交部发言人赵立坚",
+            "name": "中国外交部发言人赵立坚",
+            "symbolSize": 10,
+            "category": "专家"
         },
         {
-            "ID": "台湾-地区-选举",
-            "name": "台湾-地区-选举",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "国台办发言人朱凤莲",
+            "name": "国台办发言人朱凤莲",
+            "symbolSize": 10,
+            "category": "专家"
         },
         {
-            "ID": "台湾-民进党-国民党-选举",
-            "name": "台湾-民进党-国民党-选举",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "美国国务卿蓬佩奥",
+            "name": "美国国务卿蓬佩奥",
+            "symbolSize": 14,
+            "category": "专家"
         },
         {
-            "ID": "台湾-蔡英文-立法会",
-            "name": "台湾-蔡英文-立法会",
-            "type": "TRIGGER",
-            "weight": 1
+            "ID": "台湾中国文化大学社会科学学院邵宗海",
+            "name": "台湾中国文化大学社会科学学院邵宗海",
+            "symbolSize": 9,
+            "category": "专家"
+        },
+        {
+            "ID": "台湾陆委会主委陈明通",
+            "name": "台湾陆委会主委陈明通",
+            "symbolSize": 9,
+            "category": "专家"
+        },
+        {
+            "ID": "台湾地区领导人蔡英文",
+            "name": "台湾地区领导人蔡英文",
+            "symbolSize": 14,
+            "category": "专家"
+        },
+        {
+            "ID": "美国参议员贾德纳",
+            "name": "美国参议员贾德纳",
+            "symbolSize": 11,
+            "category": "专家"
+        },
+        {
+            "ID": "台湾“外交部”发言人欧江安",
+            "name": "台湾“外交部”发言人欧江安",
+            "symbolSize": 10,
+            "category": "专家"
+        },
+        {
+            "ID": "台湾当局防务部门负责人严德发",
+            "name": "台湾当局防务部门负责人严德发",
+            "symbolSize": 9,
+            "category": "专家"
+        },
+        {
+            "ID": "美国国务院",
+            "name": "美国国务院",
+            "symbolSize": 14,
+            "category": "组织"
+        },
+        {
+            "ID": "国台办",
+            "name": "国台办",
+            "symbolSize": 13,
+            "category": "组织"
+        },
+        {
+            "ID": "美国参议院",
+            "name": "美国参议院",
+            "symbolSize": 10,
+            "category": "组织"
+        },
+        {
+            "ID": "中国外交部",
+            "name": "中国外交部",
+            "symbolSize": 10,
+            "category": "组织"
+        },
+        {
+            "ID": "中国国防部",
+            "name": "中国国防部",
+            "symbolSize": 14,
+            "category": "组织"
+        },
+        {
+            "ID": "美国众议院院",
+            "name": "美国众议院院",
+            "symbolSize": 13,
+            "category": "组织"
+        },
+        {
+            "ID": "台湾当局防务部门",
+            "name": "台湾当局防务部门",
+            "symbolSize": 9,
+            "category": "组织"
+        },
+        {
+            "ID": "台湾陆委会",
+            "name": "台湾陆委会",
+            "symbolSize": 9,
+            "category": "组织"
         }
     ],
     "linklist": [
         {
-            "SourceID": "美国-台湾-外交",
-            "TargetID": "台湾政局核心人物股鼓动台独",
-            "weight": 1
+            "source": "台湾问题专题",
+            "target": "事件",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美国-台湾-军售",
-            "TargetID": "台湾政局核心人物股鼓动台独",
-            "weight": 1
+            "source": "台湾问题专题",
+            "target": "专家",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美国-访台",
-            "TargetID": "台湾政局核心人物股鼓动台独",
-            "weight": 1
+            "source": "台湾问题专题",
+            "target": "组织",
+            "symbolSize": 1
         },
         {
-            "SourceID": "美军-外长-台湾",
-            "TargetID": "台湾政局核心人物股鼓动台独",
-            "weight": 1
+            "source": "事件",
+            "target": "西方国家针对朝鲜进行制裁",
+            "symbolSize": 1
         },
         {
-            "SourceID": "蔡英文-美国总统-交流",
-            "TargetID": "台湾政局核心人物股鼓动台独",
-            "weight": 1
+            "source": "事件",
+            "target": "朝鲜采取军事行动等过激行为",
+            "symbolSize": 1
         },
         {
-            "SourceID": "台湾-大选",
-            "TargetID": "台湾政局发生大规模人事变化",
-            "weight": 1
+            "source": "专家",
+            "target": "国防部新闻发言人任国强",
+            "symbolSize": 1
         },
         {
-            "SourceID": "台湾-地区-选举",
-            "TargetID": "台湾政局发生大规模人事变化",
-            "weight": 1
+            "source": "专家",
+            "target": "中国外交部发言人赵立坚",
+            "symbolSize": 1
         },
         {
-            "SourceID": "台湾-民进党-国民党-选举",
-            "TargetID": "台湾政局发生大规模人事变化",
-            "weight": 1
+            "source": "专家",
+            "target": "国台办发言人朱凤莲",
+            "symbolSize": 1
         },
         {
-            "SourceID": "台湾-蔡英文-立法会",
-            "TargetID": "台湾政局发生大规模人事变化",
-            "weight": 1
+            "source": "专家",
+            "target": "美国国务卿蓬佩奥",
+            "symbolSize": 1
+        },
+        {
+            "source": "专家",
+            "target": "台湾中国文化大学社会科学学院邵宗海",
+            "symbolSize": 1
+        },
+        {
+            "source": "专家",
+            "target": "台湾陆委会主委陈明通",
+            "symbolSize": 1
+        },
+        {
+            "source": "专家",
+            "target": "台湾地区领导人蔡英文",
+            "symbolSize": 1
+        },
+        {
+            "source": "专家",
+            "target": "美国参议员贾德纳",
+            "symbolSize": 1
+        },
+        {
+            "source": "专家",
+            "target": "台湾“外交部”发言人欧江安",
+            "symbolSize": 1
+        },
+        {
+            "source": "专家",
+            "target": "台湾当局防务部门负责人严德发",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "美国国务院",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "国台办",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "美国参议院",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "中国外交部",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "中国国防部",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "美国众议院院",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "台湾当局防务部门",
+            "symbolSize": 1
+        },
+        {
+            "source": "组织",
+            "target": "台湾陆委会",
+            "symbolSize": 1
         }
     ]
 }
