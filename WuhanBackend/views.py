@@ -832,8 +832,8 @@ def search_eventa(request):
     nextevent_timeline_data = {}
     nextevent_graph_data = {} # 根据支撑素材构造的图谱数据
 
-    media_set = set()
-    
+    nextevent_media_dict = {} # [event: media_set]
+    nextevent_tri_dict = {} # [event: tri_set]
     title_set = set() # 根据title进行去重
     # 根据查询日期按天递增构建初始化字典
     nowtime = start_time
@@ -895,7 +895,7 @@ def search_eventa(request):
                             "symbolSize": 10
                         }
                     )
-                    if n.customer not in media_set:
+                    if n.customer not in nextevent_media_dict[e_str]:
                         nextevent_graph_data[e_str]['nodelist'].append(
                             {
                                 "ID": n.customer,
@@ -905,7 +905,7 @@ def search_eventa(request):
                                 "symbolSize": 10
                             }
                         )
-                        media_set.add(n.customer)
+                        nextevent_media_dict[e_str].add(n.customer)
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
                             "source": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
@@ -931,7 +931,7 @@ def search_eventa(request):
                         for wjwords in n.wjwords.split(" "):
                             trigger = wjwords.split(":")[0]
                             # 增加 NEW 与 Tri 之间的关系
-                            if trigger not in tri_set:
+                            if trigger not in nextevent_tri_dict[e_str]:
                                 nextevent_graph_data[e_str]['nodelist'].append(
                                     {
                                         "ID": trigger,
@@ -941,7 +941,7 @@ def search_eventa(request):
                                         "symbolSize": 12
                                     }
                                 )
-                                tri_set.add(trigger)
+                                nextevent_tri_dict[e_str].add(trigger)
                                 # 增加 Tri 与 NEXTEVENT之间的关系
                                 nextevent_graph_data[e_str]['linklist'].append(
                                     {
@@ -995,6 +995,9 @@ def search_eventa(request):
                         {'name':"待预测事件"}
                     ]
 
+                    nextevent_media_dict[e_str] = set() # 针对事件子图的节点去重设计
+                    nextevent_tri_dict[e_str] = set()
+
                     # 增加待预测事件节点
                     nextevent_graph_data[e_str]['nodelist'].append({
                         "ID": e_str,
@@ -1024,7 +1027,7 @@ def search_eventa(request):
                             "symbolSize": 10
                         }
                     )
-                    if n.customer not in media_set:
+                    if n.customer not in nextevent_media_dict[e_str]:
                         nextevent_graph_data[e_str]['nodelist'].append(
                             {
                                 "ID": n.customer,
@@ -1034,7 +1037,7 @@ def search_eventa(request):
                                 "symbolSize": 10
                             }
                         )
-                        media_set.add(n.customer)
+                        nextevent_media_dict[e_str].add(n.customer)
                     nextevent_graph_data[e_str]['linklist'].append(
                         {
                             "source": n_title + " " + n.time.strftime('%Y-%m-%d %H:%M:%S'),
@@ -1061,7 +1064,7 @@ def search_eventa(request):
                         for wjwords in n.wjwords.split(" "):
                             trigger = wjwords.split(":")[0]
                             # 增加 NEW 与 Tri 之间的关系
-                            if trigger not in tri_set: # 如果未出现过改节点则新加
+                            if trigger not in nextevent_tri_dict[e_str]: # 如果未出现过改节点则新加
                                 nextevent_graph_data[e_str]['nodelist'].append(
                                     {
                                         "ID": trigger,
@@ -1071,7 +1074,7 @@ def search_eventa(request):
                                         "symbolSize": 12
                                     }
                                 )
-                                tri_set.add(trigger)
+                                nextevent_tri_dict[e_str].add(trigger)
                                 
                                 nextevent_graph_data[e_str]['linklist'].append(
                                     {
@@ -1119,7 +1122,7 @@ def search_eventa(request):
         # 根据事件子图去重
         per_set = set() # 用于节点去重
         org_set = set()
-        tri_set = set()
+
         for v in view_query_tmp:
             sim_flag = False
             if v.viewpoint in view_set: continue    # 观点去重
