@@ -439,7 +439,12 @@ def search_main(request):
     }
 
     # 主页面图谱数据
-    with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/" + theme+ "_graph.json"),'r','utf-8') as rf:
+    theme_dict = {
+        "南海":'NH',
+        "朝核":'CH',
+        "台选":'TX'
+    }
+    with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/" + theme_dict[theme] + "_graph.json"),'r','utf-8') as rf:
         graph_data = json.load(rf)
     
     # 结果封装
