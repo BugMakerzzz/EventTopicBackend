@@ -831,10 +831,8 @@ def search_eventa(request):
     nextevent_views_pro = {}
     nextevent_timeline_data = {}
     nextevent_graph_data = {} # 根据支撑素材构造的图谱数据
-    per_set = set() # 用于节点去重
-    org_set = set()
+
     media_set = set()
-    tri_set = set()
     
     title_set = set() # 根据title进行去重
     # 根据查询日期按天递增构建初始化字典
@@ -1118,6 +1116,10 @@ def search_eventa(request):
         view_query_tmp = Viewsinfo.objects.filter(newsid__in=newsid_list)
         views_list = []
         view_set = set()
+        # 根据事件子图去重
+        per_set = set() # 用于节点去重
+        org_set = set()
+        tri_set = set()
         for v in view_query_tmp:
             sim_flag = False
             if v.viewpoint in view_set: continue    # 观点去重
