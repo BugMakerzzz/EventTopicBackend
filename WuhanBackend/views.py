@@ -1186,22 +1186,22 @@ def search_eventa(request):
                       }
                 )
                 # 增加职位节点
-                if v.orgname + v.pos not in org_set:
+                if theme_person_dict[v.personname]['org'] not in org_set:
                     nextevent_graph_data[e_str]['nodelist'].append(
                         {
-                            "ID": v.orgname + v.pos,
-                            "name": v.orgname + v.pos,
+                            "ID": theme_person_dict[v.personname]['org'],
+                            "name": theme_person_dict[v.personname]['org'],
                             "type": "ORG",
                             "category": 5,
                             "symbolSize": 10
                         }
                     )
-                    org_set.add(v.orgname + v.pos)
+                    org_set.add(theme_person_dict[v.personname]['org'])
                 # 增加人名与职位间的关系
                 nextevent_graph_data[e_str]['linklist'].append(
                     {
                         "source": v.personname,
-                        "target": v.orgname + v.pos,
+                        "target": theme_person_dict[v.personname]['org'],
                         "symbolSize": 10
                     }
                 )
