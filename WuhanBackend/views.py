@@ -1374,6 +1374,10 @@ def search_eventa(request):
     '''
     default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
     del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
+    if '中方在南海举行军事演习或其他部署' in nextevent_dict:
+        del nextevent_dict['中方在南海举行军事演习或其他部署']
+    if '中方发布维护南海主权和权益言论' in nextevent_dict:
+        del nextevent_dict['中方发布维护南海主权和权益言论']
     
     # 更新事件权重
     for k in nextevent_dict.keys():
@@ -1433,6 +1437,127 @@ def search_eventa(request):
     # return JsonResponse({"foo":"title"})
     return JsonResponse(result_pro)
 
+# 提供给武大的情报生成接口
+def get_report(request):
+    
+    # 主题处理
+    theme = request.GET['theme']   # 主题参数
 
+    # 时间处理    
+    end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')
+    
+    # 获取30天内的数据进行分析
+    delta_time = datetime.timedelta(days=30)  
+    start_time = end_time - delta_time
+
+    # 组合参数查询, 利用Q的多条件查询
+    q = Q()
+    q = q & Q(theme_label=theme)
+    q = q & Q(time__range=(start_time, end_time))
+
+    news_queryset = Newsinfo.objects.filter(q)
+    title_set = set()
+    media_set = set()
+    wjword_set = set()
+    person_set = set()
+    news_count = 0
+    newsid_list = []
+    nextevent_dict = {}
+    for n in news_queryset:
+        # print(type(news.viewsinfo_set))
+        sim_flag = False
+        n_title = n.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
+        if len(n_title) < 10: continue
+        for old_t in title_set:
+            if fuzz.partial_ratio(n_title, old_t) > 80:
+                sim_flag = True
+                break
+        if sim_flag: continue
+        if n.crisis > 0: 
+            news_count += 1
+            newsid_list.append(n.newsid)
+        media_set.add(n.customer) # 添加媒体统计
+        event_list = n.nextevent.split(',') # 根据','分割多个候选事件
+        for e in event_list:
+            e_str, weight = e.split(':')
+            if e_str in nextevent_dict:
+                nextevent_dict[e_str] += int(weight)
+            else:
+                nextevent_dict[e_str] = int(weight)
+        
+        if n.crisis > 0:
+            for wjwords in n.wjwords.split(" "):
+                trigger = wjwords.split(":")[0]
+                wjword_set.add(trigger)
+
+        title_set.add(n_title)
+
+    view_query_tmp = Viewsinfo.objects.filter(newsid__in=newsid_list)
+
+    for v in view_query_tmp:
+        if len(v.viewpoint) < 10: continue  
+        if len(v.personname) < 2: continue
+        person_set.add(v.personname)
+
+
+    default_event_weight = nextevent_dict['无风险事件'] # 概率计算方式 e1 发生概率 = e1/(e1 + e(无风险事件))
+    
+    del nextevent_dict['无风险事件'] # 从字典中剔除"无风险事件"
+    if '中方在南海举行军事演习或其他部署' in nextevent_dict:
+        del nextevent_dict['中方在南海举行军事演习或其他部署']
+    if '中方发布维护南海主权和权益言论' in nextevent_dict:
+        del nextevent_dict['中方发布维护南海主权和权益言论']
+    
+    # 更新事件权重
+    for k in nextevent_dict.keys():
+        nextevent_dict[k] = float(nextevent_dict[k])/(nextevent_dict[k] + default_event_weight)
+
+    views_count = 0
+    wjword_str = ""
+    media_str = ""
+    per_str = ""
+    nexte_str = ""
+    
+    # 触发词信息
+    count_tmp = 0
+    for w in wjword_set:
+        wjword_str += "“"+ w + "”" + "、"
+        count_tmp += 1
+        if count_tmp > 4:
+            break
+    wjword_str = wjword_str[:-1] + "等" + str(len(wjword_set)) + "个关键触发词,"
+    
+    # 媒体信息
+    count_tmp = 0
+    for m in media_set:
+        media_str += "“"+ m + "”" + "、"
+        count_tmp += 1
+        if count_tmp > 4:
+            break
+    media_str = media_str[:-1] + "等" + str(len(media_set)) + "个媒体,"
+
+    # 专家信息
+    count_tmp = 0
+    # 加载关键专家字典
+    with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/theme_person.json"),'r','utf-8') as rf:
+        theme_person_dict = json.load(rf)
+    for per in person_set:
+        if per in theme_person_dict:
+            per_str += "“"+ per + "”" + "、"
+            count_tmp += 1
+    if count_tmp > 1:
+        per_str = per_str[:-1] + "等" + str(len(person_set)) + "名专家的言论观点，"
+    else:   # 所有专家都不在白名单里
+        per_str = str(len(person_set)) + "名专家的言论观点，"
+
+    # 事件预测信息
+    for k, v in nextevent_dict.items():
+        nexte_str += "“"+ k + "”" + "事件发生的概率为" + format(v, '.2%') + ","
+    nexte_str = nexte_str[:-1]
+
+    report_text = "根据对" + start_time.strftime('%Y%m%d') + "到" + end_time.strftime('%Y%m%d') + "时间段内的" + str(len(news_queryset)) + "条开源情报分析中，筛选出" + str(news_count) + "条值得关注的新闻情报和" + str(len(view_query_tmp)) + "条观点情报，" + "从中识别出" + media_str + wjword_str + "涉及" + per_str + "并据此计算出在未来一段时间，" + nexte_str + "。"
+
+
+    return JsonResponse({"date": end_time.strftime('%Y-%m-%d'), "report_text": report_text})
 
    

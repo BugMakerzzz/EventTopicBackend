@@ -26,7 +26,8 @@ urlpatterns = [
     path('search_xuanti', views.search_xuanti, name='search_news_url'),
     path('search_view', views.search_view, name='search_view_url'),
     path('search_eventa',views.search_eventa, name="search_eventa_url"),
-    path('clear_cathe',views.clear_cathe, name="clear_cathe_url")
+    path('clear_cathe',views.clear_cathe, name="clear_cathe_url"),
+    path('get_report', views.get_report, name="get_report url")
     # path('api/views/', views.foo, name='foo_url'),
     # path('api/events/', views.foo, name='foo_url'),
 
