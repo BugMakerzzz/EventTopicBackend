@@ -194,6 +194,10 @@ def search_main(request):
     # theme = '南海'   # 主题参数
     cathe_flag = True # 是否使用cache
 
+    # 用于20201128演示数据
+    if theme == "2022":
+        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/main_demo.json"),'r','utf-8') as rf:
+            return JsonResponse(json.load(rf))
 
     # 根据theme检查缓存
     search_key = theme + "_mainpage"
@@ -510,16 +514,15 @@ def search_xuanti(request):
     theme = request.GET['theme']   # 主题参数
     # theme = '南海'   # 主题参数
     
+    # 用于20201128演示数据
+    if theme == "2022":
+        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/xuanti_demo.json"),'r','utf-8') as rf:
+            return JsonResponse(json.load(rf))
+    
     # 如果参数列表(dict类型)中没有language字段, 则返回默认值
     language = request.GET.get('language', '中文') # 语言参数
+    
 
-    '''
-    try:
-        language = request.GET['language'] # 语言参数
-        print("lack of language para")
-    except:
-        language = '中文'
-    '''
 
     # 如果没有
     if language == "":
@@ -642,7 +645,12 @@ def search_view(request):
     
     # 主题处理
     theme = request.GET['theme']   # 主题参数
-    
+
+    # 用于20201128演示数据
+    if theme == "2022":
+        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/view_demo.json"),'r','utf-8') as rf:
+            return JsonResponse(json.load(rf))
+
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
     end_time = datetime.datetime.strptime(request.GET['date_to'], '%Y-%m-%d')
@@ -775,6 +783,11 @@ def search_eventa(request):
         
     # 主题处理
     theme = request.GET['theme']   # 主题参数
+
+    # 用于20201128演示数据
+    if theme == "2022":
+        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/event_demo.json"),'r','utf-8') as rf:
+            return JsonResponse(json.load(rf))
 
     # 时间处理    
     # start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
