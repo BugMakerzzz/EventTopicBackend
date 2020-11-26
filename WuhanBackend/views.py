@@ -358,27 +358,27 @@ def search_main(request):
         count += 1
         if count >= show_size: break 
  
-    # 选取crisis前100的数据进行右下角的危机事件展示
-    count = 0
-    title_set = set()
-    crisis_data = {} # {content_label:[n_data1, n_data2} 
-    for n in reliability_queryset: # 根据可靠性选取100条可靠性高的新闻
-        # 右下角事件危机指数处理
-        title = n.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
-        if title in title_set: continue # 如果title已经出现过, 则进行去重
-        crisis_value = n.crisis
-        if crisis_value < 1: continue # 选取具有风险度的新闻
-        n_data = [n.time.strftime('%Y-%m-%d %H:%M:%S'), crisis_value, title]
-        crisis_label = n.content_label.split(' ')[0] # 此处仅显示新闻的第一个标签作为新闻分类
+    # # 选取crisis前100的数据进行右下角的危机事件展示
+    # count = 0
+    # title_set = set()
+    # crisis_data = {} # {content_label:[n_data1, n_data2} 
+    # for n in reliability_queryset: # 根据可靠性选取100条可靠性高的新闻
+    #     # 右下角事件危机指数处理
+    #     title = n.title.replace("原创",'').replace("转帖",'').replace("参考消息",'')
+    #     if title in title_set: continue # 如果title已经出现过, 则进行去重
+    #     crisis_value = n.crisis
+    #     if crisis_value < 1: continue # 选取具有风险度的新闻
+    #     n_data = [n.time.strftime('%Y-%m-%d %H:%M:%S'), crisis_value, title]
+    #     crisis_label = n.content_label.split(' ')[0] # 此处仅显示新闻的第一个标签作为新闻分类
             
-        if crisis_label in crisis_data:
-            crisis_data[crisis_label].append(n_data)
-        else:
-            crisis_data[crisis_label] = [n_data]
+    #     if crisis_label in crisis_data:
+    #         crisis_data[crisis_label].append(n_data)
+    #     else:
+    #         crisis_data[crisis_label] = [n_data]
         
-        title_set.add(title)
-        count += 1
-        if count >= 100: break 
+    #     title_set.add(title)
+    #     count += 1
+    #     if count >= 100: break 
 
     # 加载专题下国家-观点数量数据
     pkl_rf = open(os.path.join(BASE_DIR,"WuhanBackend/dict/echarts_zhcountry_set.pkl"),'rb')
@@ -461,33 +461,33 @@ def search_main(request):
     result['hot_data'] = {  # 下左数据
         'data': [[date_list[i], hot_num[i]] for i in range(len(date_list))]
     }
-    result['sentiment_data'] = {    #下中数据
-        'sentiment_date': date_list,
-        'sentiment_pos': sentiment_pos,
-        'sentiment_neg': sentiment_neg
-    }
+    # result['sentiment_data'] = {    #下中数据
+    #     'sentiment_date': date_list,
+    #     'sentiment_pos': sentiment_pos,
+    #     'sentiment_neg': sentiment_neg
+    # }
 
     result['eventpre_data'] = eventpre_data # 事件预测数据
     result['graph_data'] = graph_data   # 主页面图谱数据
-    result['debug_nextevent_dict'] = nextevent_dict
-    result['debug_default_event_weight'] = default_event_weight
+    # result['debug_nextevent_dict'] = nextevent_dict
+    # result['debug_default_event_weight'] = default_event_weight
 
-    # 右下角气泡图数据封装
-    legend_data = []
-    series_data = []
-    for key, value in crisis_data.items():
-        legend_data.append(key)
-        series_data.append({
-            'name': key,
-            'type': 'scatter',
-            'data': value
-        })
+    # # 右下角气泡图数据封装
+    # legend_data = []
+    # series_data = []
+    # for key, value in crisis_data.items():
+    #     legend_data.append(key)
+    #     series_data.append({
+    #         'name': key,
+    #         'type': 'scatter',
+    #         'data': value
+    #     })
 
 
-    result['event_data'] = {
-        "lengend": legend_data,
-        "series": series_data
-    }
+    # result['event_data'] = {
+    #     "lengend": legend_data,
+    #     "series": series_data
+    # }
 
     if cathe_flag:
         # 将查询结果进行缓存
