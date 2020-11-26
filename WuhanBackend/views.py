@@ -195,7 +195,7 @@ def search_main(request):
     cathe_flag = True # 是否使用cache
 
     # 用于20201128演示数据
-    if theme == "2022":
+    if theme == "预演":
         with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/main_demo.json"),'r','utf-8') as rf:
             return JsonResponse(json.load(rf))
 
@@ -515,7 +515,7 @@ def search_xuanti(request):
     # theme = '南海'   # 主题参数
     
     # 用于20201128演示数据
-    if theme == "2022":
+    if theme == "预演":
         with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/xuanti_demo.json"),'r','utf-8') as rf:
             return JsonResponse(json.load(rf))
     
@@ -647,7 +647,7 @@ def search_view(request):
     theme = request.GET['theme']   # 主题参数
 
     # 用于20201128演示数据
-    if theme == "2022":
+    if theme == "预演":
         with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/view_demo.json"),'r','utf-8') as rf:
             return JsonResponse(json.load(rf))
 
@@ -785,7 +785,7 @@ def search_eventa(request):
     theme = request.GET['theme']   # 主题参数
 
     # 用于20201128演示数据
-    if theme == "2022":
+    if theme == "预演":
         with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/event_demo.json"),'r','utf-8') as rf:
             return JsonResponse(json.load(rf))
 
