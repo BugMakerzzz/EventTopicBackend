@@ -514,10 +514,7 @@ def search_xuanti(request):
     theme = request.GET['theme']   # 主题参数
     # theme = '南海'   # 主题参数
     
-    # 用于20201128演示数据
-    if theme == "预演":
-        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/xuanti_demo.json"),'r','utf-8') as rf:
-            return JsonResponse(json.load(rf))
+
     
     # 如果参数列表(dict类型)中没有language字段, 则返回默认值
     language = request.GET.get('language', '中文') # 语言参数
@@ -556,6 +553,16 @@ def search_xuanti(request):
         
     pageno = int(request.GET['pageno']) # 当前页面编号
     pagesize = int(request.GET['size']) # 页面数据个数
+
+    # 用于20201128演示数据
+    if theme == "预演":
+        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/xuanti_demo.json"),'r','utf-8') as rf:
+            result = {}
+            news_list = json.load(rf)['newsList']
+            newsList = newsList[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
+            result['newsList'] = newsList
+            result['totalElements'] = len(news_list)
+            return JsonResponse(result)
 
 
     
@@ -646,10 +653,7 @@ def search_view(request):
     # 主题处理
     theme = request.GET['theme']   # 主题参数
 
-    # 用于20201128演示数据
-    if theme == "预演":
-        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/view_demo.json"),'r','utf-8') as rf:
-            return JsonResponse(json.load(rf))
+
 
     # 时间处理    
     start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
@@ -671,6 +675,15 @@ def search_view(request):
 
     pageno = int(request.GET['pageno']) # 当前页面编号
     pagesize = int(request.GET['size']) # 页面数据个数
+
+    # 用于20201128演示数据
+    if theme == "预演":
+        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/view_demo.json"),'r','utf-8') as rf:
+            result = {}
+            view_list = json.load(rf)['viewsList']
+            result['viewsList'] = view_list[(pageno - 1) * pagesize: pageno * pagesize]
+            result['totalElements'] = len(view_list)
+            return JsonResponse(result)
     
 
     
