@@ -784,10 +784,6 @@ def search_eventa(request):
     # 主题处理
     theme = request.GET['theme']   # 主题参数
 
-    # 用于20201128演示数据
-    if theme == "预演":
-        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/event_demo.json"),'r','utf-8') as rf:
-            return JsonResponse(json.load(rf))
 
     # 时间处理    
     # start_time = datetime.datetime.strptime(request.GET['date_from'], '%Y-%m-%d')
@@ -798,6 +794,21 @@ def search_eventa(request):
 
     # 从前端获取的待预测事件
     eventpre_para = request.GET['predict_event']
+    
+    # 用于20201128演示数据
+    if theme == "预演":
+        with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/event_demo.json"),'r','utf-8') as rf:
+            result = json.load(rf)
+            result_pro = {}
+            # 依据事件参数返回对应的数据
+            result_pro['nextevent_news_pro'] =  result['nextevent_news_pro'][eventpre_para]
+            result_pro['nextevent_views_pro'] =  result['nextevent_views_pro'][eventpre_para]
+            result_pro['graph_data'] = result['graph_data'][eventpre_para]
+            result_pro['nextevent_timeline_data'] = result['nextevent_timeline_data'][eventpre_para]
+            result_pro['nextevent_weight'] = result['nextevent_weight'][eventpre_para]
+            result_pro['nextevent_content'] = ''
+            result_pro['report_data'] = ''
+            return JsonResponse(result_pro)
     
     '''
     if start_time != end_time:
