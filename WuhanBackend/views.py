@@ -559,7 +559,7 @@ def search_xuanti(request):
         with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/xuanti_demo.json"),'r','utf-8') as rf:
             result = {}
             news_list = json.load(rf)['newsList']
-            newsList = newsList[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
+            newsList = news_list[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
             result['newsList'] = newsList
             result['totalElements'] = len(news_list)
             return JsonResponse(result)
