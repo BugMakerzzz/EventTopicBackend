@@ -1028,7 +1028,7 @@ def search_eventa(request):
                     nextevent_graph_data[e_str]['nodelist'] = []
                     nextevent_graph_data[e_str]['linklist'] = []
                     nextevent_graph_data[e_str]['categories'] = [
-                        {'name':"新闻"},
+                        {'name':"情报"},
                         {'name':"媒体"},
                         {'name':"触发词"},
                         {'name':"人物"},
