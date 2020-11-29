@@ -3897,13 +3897,6 @@
                     "symbolSize": 10
                 },
                 {
-                    "ID": "台湾媒体",
-                    "name": "台湾媒体",
-                    "type": "MEDIA",
-                    "category": 1,
-                    "symbolSize": 10
-                },
-                {
                     "ID": "美-反对-南海",
                     "name": "美-反对-南海",
                     "type": "TRIGGER",
@@ -5589,13 +5582,6 @@
                     "name": "想拿台湾、牵制美国　解放军潜舰藏身西南海域 2022-08-12 04:48:15",
                     "type": "NEW",
                     "category": 0,
-                    "symbolSize": 10
-                },
-                {
-                    "ID": "台湾媒体",
-                    "name": "台湾媒体",
-                    "type": "MEDIA",
-                    "category": 1,
                     "symbolSize": 10
                 },
                 {
@@ -7736,13 +7722,6 @@
                     "symbolSize": 10
                 },
                 {
-                    "ID": "中国国防部发言人",
-                    "name": "中国国防部发言人",
-                    "type": "ORG",
-                    "category": 5,
-                    "symbolSize": 10
-                },
-                {
                     "ID": "39d93392-2ff2-11eb-ac8e-dc1ba173f501",
                     "name": "宣称美国海军派双航母到南海军演，是“兴风作浪”云云。",
                     "type": "VIEW",
@@ -8013,13 +7992,6 @@
                     "name": "和中国同场较劲！美国派2艘航母赴南海军演 2022-08-11 21:14:57",
                     "type": "NEW",
                     "category": 0,
-                    "symbolSize": 10
-                },
-                {
-                    "ID": "台湾媒体",
-                    "name": "台湾媒体",
-                    "type": "MEDIA",
-                    "category": 1,
                     "symbolSize": 10
                 },
                 {
@@ -12244,13 +12216,6 @@
                     "symbolSize": 10
                 },
                 {
-                    "ID": "台湾媒体",
-                    "name": "台湾媒体",
-                    "type": "MEDIA",
-                    "category": 1,
-                    "symbolSize": 10
-                },
-                {
                     "ID": "42616bfe-2ff2-11eb-942b-dc1ba173f501",
                     "name": "说「（此次军演）目的是为了展现美国对合作伙伴及盟友的明确支持，及我方承诺的区域安全稳定性。",
                     "type": "VIEW",
@@ -14258,13 +14223,6 @@
                     "name": "想拿台湾、牵制美国　解放军潜舰藏身西南海域 2022-08-12 04:48:15",
                     "type": "NEW",
                     "category": 0,
-                    "symbolSize": 10
-                },
-                {
-                    "ID": "台湾媒体",
-                    "name": "台湾媒体",
-                    "type": "MEDIA",
-                    "category": 1,
                     "symbolSize": 10
                 },
                 {
