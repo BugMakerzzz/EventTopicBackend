@@ -558,7 +558,7 @@ def search_xuanti(request):
     if theme == "预演":
         with codecs.open(os.path.join(BASE_DIR,"WuhanBackend/dict/xuanti_demo.json"),'r','utf-8') as rf:
             result = {}
-            news_list = json.load(rf)['newsList']
+            news_list = json.load(rf)[language]
             newsList = news_list[(pageno - 1) * pagesize: pageno * pagesize] # 根据前端分页进行切片处理
             result['newsList'] = newsList
             result['totalElements'] = len(news_list)
